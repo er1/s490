@@ -2,6 +2,11 @@
 
 clock_t endwait;
 
+void power_exec()
+{
+  printf("Power Module Executing...\n");
+}
+
 void setSleepDuration(int seconds)
 {
   endwait = clock () + seconds * CLOCKS_PER_SEC ;
@@ -16,3 +21,4 @@ void lowPowerSleep()
       perror("sched_yield()");
   }
 }
+
