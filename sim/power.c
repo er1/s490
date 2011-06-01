@@ -1,6 +1,6 @@
 #include "power.h"
 
-clock_t endwait;
+int durr;
 
 void power_exec()
 {
@@ -9,16 +9,21 @@ void power_exec()
 
 void setSleepDuration(int seconds)
 {
-  endwait = clock () + seconds * CLOCKS_PER_SEC ;
+  durr = seconds;
 }
 
 void lowPowerSleep()
 {
-  int sysret;
-  while (clock() < endwait){
-    sysret = sched_yield();
+  int sysret, now;
+  struct timespec ts;
+  ts.tv_sec = 0;
+  ts.tv_nsec = 500000;
+
+  now = getTimeInSec();
+  while (getTimeInSec() < now + 10){
+    sysret = nanosleep(&ts, NULL);
     if(sysret == -1)
-      perror("sched_yield()");
+      perror("nanosleep()");
   }
 }
 

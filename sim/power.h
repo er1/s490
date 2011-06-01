@@ -5,6 +5,8 @@
 #include <time.h>
 #include <stdio.h>
 
+#include "rtc.h"
+
 void power_exec();
 
 void setSleepDuration(int seconds);
