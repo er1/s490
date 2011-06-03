@@ -12,6 +12,9 @@
 #include "comms.h"
 #include "rtc.h"
 
+//utils
+#include "rand.h" 
+
 struct routine_t{
   int priority;
   void (*run)();

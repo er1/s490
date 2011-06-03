@@ -4,6 +4,10 @@
 int main(int argc, char ** argv)
 {
   
+  // Generate seed - this should probably be removed from the end product :P 
+  rand_init(); 
+  // END Generate seed 
+
   //first activation
   if(argc > 1 && !strncmp(argv[1], "-launch", 7))
     {
@@ -24,8 +28,8 @@ int main(int argc, char ** argv)
   schedule[2]->run = aocs_exec;
   schedule[3]->run = rtc_exec;
 
-  //super simple scheduler
-  setSleepDuration(10);
+  //super simple scheduler - NOTE : I'm reducing this for the momment. 
+  setSleepDuration(1);
 
   while(1){
     int cSched;

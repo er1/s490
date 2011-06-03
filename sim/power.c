@@ -1,6 +1,6 @@
 #include "power.h"
 
-int durr;
+int power_durr;
 
 void power_exec()
 {
@@ -9,7 +9,7 @@ void power_exec()
 
 void setSleepDuration(int seconds)
 {
-  durr = seconds;
+  power_durr = seconds;
 }
 
 void lowPowerSleep()
