@@ -79,21 +79,21 @@ short comms_check()
 
 
 /** Check yourself before you wreck yourself **/
-uint32_t crc32(char * data, size_t numBytes)
+uint32_t crc32(char * data, size_t numBytes) //crc is fast might want crc16 instead
 {
   MHASH td;
   uint32_t hash;
 
   td = mhash_init(MHASH_CRC32);
 
-  if (td == MHASH_FAILED){
+  if (td == MHASH_FAILED){//this might not be meaningful
     perror("mhash_init");
     return 0;
   }
 
   mhash(td, data, numBytes);
 
-  mhash_deinit(td, hash);
+  mhash_deinit(td, hash); 
 
   return hash;
 }

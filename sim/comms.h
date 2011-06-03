@@ -4,7 +4,7 @@
 // Libs 
 #include <stdio.h>
 #include <stdint.h>
-#include <mhash.h> //linux kernel hash library
+#include <mhash.h> //linux hash library
 
 /** The buffer used for receiving stuff. */
 char* comms_buffer; 
@@ -16,6 +16,7 @@ short comms_send();
 short comms_receive();
 short comms_check();
 
+//checksum
 uint32_t crc32(char * data, size_t bytes);
 
 #endif
