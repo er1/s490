@@ -8,9 +8,9 @@ void comms_exec()
   printf("Communications Module Executing...\n");
 
   // Check if everything is ok with circuitry! 
-  if (comms_OK()){
+  if (!comms_OK()){
     
-    printf("  :: Comms are OK\n");
+    printf("  :: Comms module OK\n");
 
     // Try to send something to base 
     printf("  :: Attempting to send message... "); 
@@ -39,14 +39,14 @@ void comms_exec()
 short comms_OK(){
   // TODO - Proper code probably has to go here :P 
   switch (rand_get_u8()%30){
-    case 0: // FATAL
-      return 0; 
+    case 1: // FATAL
+      return 1; 
       break;
     default: // OK
-      return 1; 
+      return 0; 
       break; 
   }
-  return 1; // so compiler doesn't have the chance to complain - if it does, change your compiler. 
+  return 0; // so compiler doesn't have the chance to complain - if it does, change your compiler. 
 }
 
 /** Send a message back to base station. */

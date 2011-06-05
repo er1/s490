@@ -10,5 +10,5 @@ CONFIG -= qt
 OBJECTS_DIR = obj
 
 # Input
-HEADERS += aocs.h comms.h power.h rtc.h sim.h rand.h
-SOURCES += aocs.c comms.c power.c rtc.c sim.c rand.c 
+HEADERS += aocs.h comms.h power.h rtc.h sim.h rand.h log.h zerog_module.h
+SOURCES += aocs.c comms.c power.c rtc.c sim.c rand.c log.c zerog_module.c

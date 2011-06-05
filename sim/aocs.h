@@ -5,4 +5,6 @@
 
 void aocs_exec();
 
+unsigned short aocs_OK();
+
 #endif

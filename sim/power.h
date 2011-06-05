@@ -13,4 +13,6 @@ void setSleepDuration(int seconds);
 
 void lowPowerSleep();
 
+unsigned short power_OK(); 
+
 #endif

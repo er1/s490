@@ -4,14 +4,13 @@
 int main(int argc, char ** argv)
 {
   
-  // Generate seed - this should probably be removed from the end product :P 
-  rand_init(); 
-  // END Generate seed 
+  zerog_init(); 
 
   //first activation
   if(argc > 1 && !strncmp(argv[1], "-launch", 7))
     {
       printf("Launch condition\n");
+      log_message("Satelite has been launched.\n");
     }
 
   //set up the modules

@@ -4,7 +4,16 @@ int power_durr;
 
 void power_exec()
 {
+  int ret; 
   printf("Power Module Executing...\n");
+  
+  ret = power_OK();
+
+  if (!ret){
+    printf("  :: Power Module OK \n"); 
+  } else {
+    perror("Problem with the power module ");
+  }
 }
 
 void setSleepDuration(int seconds)
@@ -27,3 +36,8 @@ void lowPowerSleep()
   }
 }
 
+/** Small routine that will check out if the power module is ok. 
+\return 0 on success. Error code if not. */
+unsigned short power_OK(){
+  return 0;  
+}

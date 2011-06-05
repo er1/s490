@@ -1,7 +1,5 @@
 #include "rand.h" 
 
-// Commit
-
 /** Seed */
 void rand_init(){
   srand( time(0) ); 
