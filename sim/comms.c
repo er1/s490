@@ -67,7 +67,7 @@ short comms_send()
 /** Gentlemen. ALL YOUR BASE R BELONG TO US. */
 short comms_receive()
 {
-  return 1; 
+  return 1; // TODO
 }
 
 /** Some checking to see if message is ok. */

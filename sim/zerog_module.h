@@ -2,6 +2,7 @@
 #define ZEROG_MODULE_H
 
 #include "rand.h"
+#include <stdint.h>
 
 /** This is a module that will 'encapsulate' the functions we will be using in the simulation
 with the actual code for the hardware. This is achieved by changing the compiling conditions in 
@@ -14,5 +15,8 @@ char* zerog_comms_receive();
 //void zerog_power_
 void zerog_distortion(void*); 
 
+struct zerog_parts_t {
+  uint16_t battery; 
+};
 
 #endif 

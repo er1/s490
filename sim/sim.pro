@@ -8,6 +8,7 @@ DEPENDPATH += .
 INCLUDEPATH += .
 CONFIG -= qt
 OBJECTS_DIR = obj
+LIBS += -lmhash
 
 # Input
 HEADERS += aocs.h comms.h power.h rtc.h sim.h rand.h log.h zerog_module.h
