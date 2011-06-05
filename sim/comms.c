@@ -36,7 +36,8 @@ void comms_exec()
 }
 
 /** Simple routine to see if Communication circuitry is fried or not */
-short comms_OK(){
+short comms_OK()
+{
   // TODO - Proper code probably has to go here :P 
   switch (rand_get_u8()%30){
     case 1: // FATAL
@@ -50,10 +51,12 @@ short comms_OK(){
 }
 
 /** Send a message back to base station. */
-short comms_send(){
+short comms_send()
+{
   // So this should probably 
   //   1) Send something and wait
   //   2) Double check with base that that was indeed what was sent
+  //  ----- I'm not sure if we will be able to check that the base recieved the last message. Will have to check with the comms guys (SPACEACK?)
   
   if(rand_get_u8() > 64) // number is there for whatever reason - it's just to demo fail/succ scenarios 
     return 1; // Success 
@@ -62,12 +65,34 @@ short comms_send(){
 }
 
 /** Gentlemen. ALL YOUR BASE R BELONG TO US. */
-short comms_receive(){
+short comms_receive()
+{
   return 1; 
 }
 
 /** Some checking to see if message is ok. */
-short comms_check(){
+short comms_check()
+{
   return 0; // TODO 
 }
 
+
+/** Check yourself before you wreck yourself **/
+uint32_t crc32(char * data, size_t numBytes) //crc is fast might want crc16 instead
+{
+  MHASH td;
+  uint32_t hash;
+
+  td = mhash_init(MHASH_CRC32);
+
+  if (td == MHASH_FAILED){//this might not be meaningful
+    perror("mhash_init");
+    return 0;
+  }
+
+  mhash(td, data, numBytes);
+
+  mhash_deinit(td, hash); 
+
+  return hash;
+}
