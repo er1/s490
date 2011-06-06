@@ -23,3 +23,4 @@ short comms_check();
 uint32_t crc32(char * data, size_t bytes);
 
 #endif
+

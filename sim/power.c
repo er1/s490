@@ -38,6 +38,15 @@ void lowPowerSleep()
 
 /** Small routine that will check out if the power module is ok. 
 \return 0 on success. Error code if not. */
-unsigned short power_OK(){
+short power_OK(){
   return 0;  
 }
+
+/** This is a routine that will check whether the panels are working
+properly or not. 
+TODO would be nice to have a scenario that this fails, and this module
+must act accordingly to save power. */
+short power_check_panels() {
+  return 0;
+}
+

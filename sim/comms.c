@@ -5,7 +5,7 @@
 
 void comms_exec()
 {
-  int ret; 
+  int ret;  // Return value 
   printf("Communications Module Executing...\n");
 
   // Check if everything is ok with circuitry! 
@@ -24,11 +24,14 @@ void comms_exec()
     
     // Try to receive something from base 
     printf("  :: Attempting to receive messasge... ");
-    if (comms_receive()) {
+    
+    ret = comms_receive(); 
+
+    if (!ret) {
       printf(" [DONE] : ");
       printf("[%s]\n", comms_buffer); 
     } else {
-      printf(" [FAIL] "); 
+      printf(" [FAIL] Error : %d \n", ret); 
     }
 
   }
@@ -69,7 +72,7 @@ short comms_send()
 short comms_receive()
 {
   comms_buffer = zerog_comms_receive();
-  return 1; // TODO
+  return 0; // TODO
 }
 
 /** Some checking to see if message is ok. */
@@ -79,7 +82,13 @@ short comms_check()
 }
 
 
-/** Check yourself before you wreck yourself **/
+/** Check yourself before you wreck yourself 
+
+-> TODO I'm not a C wizard, but could the data pointer be turned into a void 
+pointer in order to have some sort of templating? I've seen that before, but I'm
+not sure if that's possible. 
+
+**/
 uint32_t crc32(char * data, size_t numBytes) //crc is fast might want crc16 instead
 {
   MHASH td;
@@ -98,3 +107,5 @@ uint32_t crc32(char * data, size_t numBytes) //crc is fast might want crc16 inst
 
   return hash;
 }
+
+

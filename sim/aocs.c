@@ -8,10 +8,12 @@ void aocs_exec()
 
   ret = aocs_OK();
 
-  if (!aocs_OK()) {
-    printf("  :: AOCS module OK "); 
+  printf("  :: AOCS module "); 
+
+  if (!ret) {
+    printf(" [ OK ] \n"); 
   } else {
-    printf("  :: AOCS module BAD : %d", ret); 
+    printf(" [FAIL] Error : %d\n", ret); 
   }
 }
 

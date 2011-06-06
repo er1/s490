@@ -15,7 +15,9 @@ Must be able to monitor batteries
 Must be able to monitor Solar Panels
 
 Must be able to monitor power usage
-
+  -> Suggestion: What if we keep some sort of array or other data structure that
+     stores power fluctuation over time. Then, we just need to iterate through the
+     array and perform calculations like that. 
 
 ====TIME SYSTEM======
 Must be able to accurately measure the change in time
@@ -40,11 +42,13 @@ Must be able to determine orientation of the satellite
 Must be able to determine the orbit of the satellite
 
 
+ 
+   /\,,,/\
+  ( O w O )/ ____________________
 
-
-
-
-
+     NYAN
+       NYAN
+         NYAN 
 
 
 

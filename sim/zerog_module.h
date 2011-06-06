@@ -21,8 +21,10 @@ uint8_t zerog_get_bin_mode();
 
 
 struct zerog_parts_t {
-  uint16_t battery; /** The virtual battery. Initially set to max -> 2^16 */
-  uint8_t binmode; /** Info for how our binary was compiled. */
+  /** The virtual battery. Initially set to max -> 2^16 */
+  uint16_t battery; 
+  /** Info for how our binary was compiled. */
+  uint8_t binmode; 
 };
 
 #endif 

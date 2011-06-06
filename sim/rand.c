@@ -1,5 +1,7 @@
 #include "rand.h" 
 
+static char* PHRASE = 0; /** Store the string pointer somewhere in order to free later.*/
+
 /** Seed */
 void rand_init(){
   srand( time(0) ); 
@@ -36,7 +38,7 @@ char* rand_phrase(){
     "ostrich", "PAIN"
   };
 
-  free(strdup(phrase));
+  free(PHRASE);
 
   memset(phrase, 0, sizeof(phrase)); 
 
@@ -46,6 +48,8 @@ char* rand_phrase(){
   strcat(phrase, "_"); 
   strcat(phrase, dict[rand_get_u8()%10]); 
 
-  return strdup(phrase); 
+  PHRASE = strdup(phrase); 
+  
+  return PHRASE; 
 }
 

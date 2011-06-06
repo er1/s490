@@ -1,5 +1,5 @@
-#ifndef _PWR_H_
-#define _PWR_H_
+#ifndef _POWER_H_
+#define _POWER_H_
 
 #include <sched.h>
 #include <time.h>
@@ -13,6 +13,8 @@ void setSleepDuration(int seconds);
 
 void lowPowerSleep();
 
-unsigned short power_OK(); 
+short power_OK(); 
+
+short power_check_panels(); 
 
 #endif

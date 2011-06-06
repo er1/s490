@@ -68,9 +68,7 @@ void zerog_cycle() {
 /** All the initialization steps the zerog module needs to be done
 should be included here. */
 void zerog_init() {
-  rand_init(); // Random seed for the simulation   
-  zerog_parts.battery = ~0; 
-  zerog_parts.binmode = 1; 
+  // TODO
 }
 
 #endif
