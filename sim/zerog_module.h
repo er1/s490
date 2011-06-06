@@ -14,7 +14,7 @@ zerog_module.c to HARDWARE (TODO name might change).
 void zerog_init(); 
 void zerog_comms_send(char*);
 char* zerog_comms_receive();
-void zerog_distortion(void*); 
+void zerog_distortion(char * data, int size); 
 void zerog_cycle();
 void zerog_print(); 
 uint8_t zerog_get_bin_mode();

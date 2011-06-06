@@ -103,7 +103,7 @@ uint32_t crc32(char * data, size_t numBytes) //crc is fast might want crc16 inst
 
   mhash(td, data, numBytes);
 
-  mhash_deinit(td, hash); 
+  mhash_deinit(td, &hash); 
 
   return hash;
 }

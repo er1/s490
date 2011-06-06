@@ -17,8 +17,8 @@ void timesys_exec() {
   printf("  :: Timesys module "); 
   if(!ret) {
     printf(" [ OK ]\n");
-    printf("  :: Measuring change : %d\n", timesys_measure()); 
-    printf("  :: Measuring ground time : %d\n", timesys_ground_time());
+    printf("  :: Measuring change : %llu\n", timesys_measure()); 
+    printf("  :: Measuring ground time : %llu\n", timesys_ground_time());
   } else {
     printf(" [FAIL] : %d \n", ret); 
   }
