@@ -5,10 +5,12 @@
 
 void comms_exec()
 {
+  int ret; 
   printf("Communications Module Executing...\n");
 
   // Check if everything is ok with circuitry! 
-  if (!comms_OK()){
+  ret = comms_OK(); 
+  if (!ret){
     
     printf("  :: Comms module OK\n");
 
@@ -24,15 +26,14 @@ void comms_exec()
     printf("  :: Attempting to receive messasge... ");
     if (comms_receive()) {
       printf(" [DONE] : ");
-      printf("%c%c%c%c", rand_ascii(), rand_ascii(), rand_ascii(), rand_ascii()); 
-      printf("\n"); 
+      printf("[%s]\n", comms_buffer); 
     } else {
       printf(" [FAIL] "); 
     }
 
   }
   else 
-    printf(" :: Comms PROBLEM!\n");
+    printf(" :: Comms PROBLEM! Error number : %d\n", ret);
 }
 
 /** Simple routine to see if Communication circuitry is fried or not */
@@ -67,6 +68,7 @@ short comms_send()
 /** Gentlemen. ALL YOUR BASE R BELONG TO US. */
 short comms_receive()
 {
+  comms_buffer = zerog_comms_receive();
   return 1; // TODO
 }
 

@@ -7,11 +7,24 @@
 
 #define ZEROG_COMPILE (0) 
 
+// Code which shouldn't change on either implementation  
+
+struct zerog_parts_t zerog_parts;
+
+/** Return the binary mode of compilation */
+uint8_t zerog_get_bin_mode(){
+  return zerog_parts.binmode; 
+}
+
+/** This just prints the information of the zerog_parts struct */
+void zerog_print() {
+  printf("[Cube]stats : \n");
+  printf("  :: Battery : %3.2f%% \n", (float) zerog_parts.battery / (uint16_t)(~0)* 100); 
+}
+
 #if ZEROG_COMPILE == 0
 
 // Simulation Code 
-
-struct zerog_parts_t zerog_parts;
 
 /** All the initialization steps the zerog module needs to be done
 should be included here. */
@@ -29,7 +42,8 @@ void zerog_comms_send(char* msg){
 
 /** Function to receive a message from the base */
 char* zerog_comms_receive(){
-  return "temp receive message from zerog"; 
+  // Probably have to add a distortion routine here. 
+  return rand_phrase(); 
 }
 
 /** Function to perform artificial corruption of a message. Not sure
@@ -51,8 +65,6 @@ void zerog_cycle() {
 
 // Here, code specific to hardware will be put. 
 
-struct zerog_parts_t zerog_parts;
-
 /** All the initialization steps the zerog module needs to be done
 should be included here. */
 void zerog_init() {
@@ -62,12 +74,4 @@ void zerog_init() {
 }
 
 #endif
-
-// Code which shouldn't change on either compilation. 
-
-/** Return the binary mode of compilation */
-uint8_t zerog_get_bin_mode(){
-  return zerog_parts.binmode; 
-}
-
 

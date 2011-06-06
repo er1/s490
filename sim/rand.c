@@ -24,3 +24,28 @@ uint8_t rand_ascii() {
   return 65 + (rand() % 26);  
 }
 
+/** This should return a random phrase, composed of three words, picked from
+an array of 12 words. */
+char* rand_phrase(){ 
+  char phrase[100];
+  char dict[10][10] = {
+    "sheep", "flaming",
+    "machine", "he-man", 
+    "derp", "satan",
+    "coke", "food",
+    "ostrich", "PAIN"
+  };
+
+  free(strdup(phrase));
+
+  memset(phrase, 0, sizeof(phrase)); 
+
+  strcat(phrase, dict[rand_get_u8()%10]); 
+  strcat(phrase, "_"); 
+  strcat(phrase, dict[rand_get_u8()%10]); 
+  strcat(phrase, "_"); 
+  strcat(phrase, dict[rand_get_u8()%10]); 
+
+  return strdup(phrase); 
+}
+

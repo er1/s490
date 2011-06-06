@@ -6,6 +6,9 @@
 #include <stdint.h>
 #include <mhash.h> //linux hash library
 
+// modules
+#include "zerog_module.h"
+
 /** The buffer used for receiving stuff. */
 char* comms_buffer; 
 

@@ -38,6 +38,7 @@ int main(int argc, char ** argv)
 
   while(1){
     int cSched;
+    zerog_print();
     lowPowerSleep();
     printf("Beep!\n");
     for(cSched=0; cSched<8; cSched++){
@@ -50,3 +51,5 @@ int main(int argc, char ** argv)
 
   return 0;
 }
+
+
