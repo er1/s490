@@ -50,10 +50,10 @@ char* zerog_comms_receive(){
 if this will be needed - cool thing to have in the simulation imo. 
 This will be performed with a random bitwise operation upon bytes of 
 data. */
-void zerog_distortion(char * data, int size){
+void zerog_distortion(char* data, int size){
   //stub
   int byteCount;
-  for(byteCount=0; byteCount>size; byteCount++){
+  for(byteCount=0; byteCount<size; byteCount++){
     if(rand_get_u8() < 64) //lets say 25% of the time we corrupt a byte
       {
 	//flip a some random bits

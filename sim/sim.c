@@ -12,6 +12,11 @@ int main(int argc, char ** argv)
     default: printf("phngui mgwlnafh Cthulhu Rlyeh wgahnagl fhtang\n");
   }
 
+  char mess[] = "hello";
+
+  zerog_distortion(mess, sizeof mess); 
+  printf("%d : %s", sizeof mess, mess);
+
   //first activation
   if(argc > 1 && !strncmp(argv[1], "-launch", 7))
     {
