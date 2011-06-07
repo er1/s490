@@ -18,6 +18,7 @@
 //utils
 #include "rand.h" 
 #include "log.h"
+#include "util.h"
 
 struct routine_t{
   int priority;
