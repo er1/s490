@@ -73,11 +73,6 @@ void zerog_cycle() {
 
 // Here, code specific to hardware will be put. 
 
-/** All the initialization steps the zerog module needs to be done
-should be included here. */
-void zerog_init() {
-  // TODO
-}
 
 #endif
 

@@ -88,6 +88,12 @@ short comms_check()
 pointer in order to have some sort of templating? I've seen that before, but I'm
 not sure if that's possible. 
 
+-- a void pointer is useful in being able to point to anything. When you say templating
+I'm not sure what you mean exactly but you can definitely do some common operations to 
+a set of data types that are yet to be defined using void pointers. In this case one 
+example would be to pass an array of bytes, 16 bit words, 32 bit words etc. In that case
+you would have to have a (void * data, size_t dataSize, size_t numElem)
+ 
 **/
 uint32_t crc32(char * data, size_t numBytes) //crc is fast might want crc16 instead
 {
