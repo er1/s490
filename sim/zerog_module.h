@@ -1,6 +1,13 @@
 #ifndef ZEROG_MODULE_H
 #define ZEROG_MODULE_H
 
+#define ZEROG_MODE_SIMULATION 0
+#define ZEROG_MODE_HARDWARE 1
+
+#ifndef ZEROG_MODE
+#define ZEROG_MODE ZEROG_MODE_SIMULATION
+#endif
+
 #include <stdint.h>
 #include <stdio.h>
 

@@ -1,12 +1,5 @@
 #include "zerog_module.h" 
 
-/* 
-   0 -> Simulation code 
-   1 -> Hardware code 
-*/
-
-#define ZEROG_COMPILE (0) 
-
 // Code which shouldn't change on either implementation  
 
 struct zerog_parts_t zerog_parts;
@@ -22,7 +15,7 @@ void zerog_print() {
   printf("  :: Battery : %3.2f%% \n", (float) zerog_parts.battery / (uint16_t)(~0)* 100); 
 }
 
-#if ZEROG_COMPILE == 0
+#if ZEROG_MODE == ZEROG_MODE_SIMULATION
 
 // Simulation Code 
 
@@ -31,7 +24,7 @@ should be included here. */
 void zerog_init() {
   rand_init(); // Random seed for the simulation   
   zerog_parts.battery = ~0; 
-  zerog_parts.binmode = 0; 
+  zerog_parts.binmode = ZEROG_MODE_SIMULATION; 
 }
 
 /** Function to send the message back to earth. This function should
@@ -69,10 +62,17 @@ battery. */
 void zerog_cycle() { 
   zerog_parts.battery -= 1000; // max is 65k, so this will ensure about 65 iterations before need to recharge. 
 }
-#elif ZEROG_COMPILE == 1 
+#elif ZEROG_MODE == ZEROG_MODE_HARDWARE
 
 // Here, code specific to hardware will be put. 
 
+/** All the initialization steps the zerog module needs to be done
+should be included here. */
+void zerog_init() {
+  rand_init(); // Random seed for the simulation   
+  zerog_parts.battery = ~0; 
+  zerog_parts.binmode = ZEROG_MODE_HARDWARE;
+}
 
 #endif
 

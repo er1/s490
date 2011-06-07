@@ -7,9 +7,9 @@ int main(int argc, char ** argv)
   zerog_init(); 
   printf("zerog module in ");
   switch(zerog_get_bin_mode()){
-    case 0:  printf("emulation mode\n"); break;
-    case 1:  printf("hardware mode\n"); break; 
-    default: printf("phngui mgwlnafh Cthulhu Rlyeh wgahnagl fhtang\n");
+  case ZEROG_MODE_SIMULATION:  printf("emulation mode\n"); break;
+  case ZEROG_MODE_HARDWARE:  printf("hardware mode\n"); break; 
+  default: printf("phngui mgwlnafh Cthulhu Rlyeh wgahnagl fhtang\n");
   }
 
   char mess[] = "hello";
