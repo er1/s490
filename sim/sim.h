@@ -13,7 +13,6 @@
 #include "comms.h"
 #include "rtc.h"
 #include "zerog_module.h"
-#include "timesys.h"
 
 //utils
 #include "rand.h" 
