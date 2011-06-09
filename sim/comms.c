@@ -94,6 +94,8 @@ a set of data types that are yet to be defined using void pointers. In this case
 example would be to pass an array of bytes, 16 bit words, 32 bit words etc. In that case
 you would have to have a (void * data, size_t dataSize, size_t numElem)
  
+-- Sweet! Thanks for the info. 
+
 **/
 uint32_t crc32(char * data, size_t numBytes) //crc is fast might want crc16 instead
 {

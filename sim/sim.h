@@ -13,6 +13,7 @@
 #include "comms.h"
 #include "rtc.h"
 #include "zerog_module.h"
+#include "base_module.h" 
 
 //utils
 #include "rand.h" 
