@@ -6,8 +6,8 @@
 
 void base_init(); 
 void base_exec(); 
-void base_send(char*);
-char* base_receive(); 
+void base_send();
+void base_receive(); 
 
 #endif 
 

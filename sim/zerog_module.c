@@ -9,6 +9,10 @@ uint8_t zerog_get_bin_mode(){
   return zerog_parts.binmode; 
 }
 
+uint16_t zerog_get_battery(){
+  return zerog_parts.battery; 
+}
+
 /** This just prints the information of the zerog_parts struct */
 void zerog_print() {
   printf("[Cube]stats : \n");
@@ -36,7 +40,9 @@ void zerog_comms_send(char* msg){
 /** Function to receive a message from the base */
 char* zerog_comms_receive(){
   // Probably have to add a distortion routine here. 
-  return rand_phrase(); 
+  char* tmp = rand_phrase(); 
+  zerog_distortion(tmp, strlen(tmp));
+  return tmp; 
 }
 
 /** Function to perform artificial corruption of a message. Not sure
@@ -60,7 +66,8 @@ emulation code, this will take care to generate new information for
 sending or receiving and will also dissipate power from a virtual
 battery. */ 
 void zerog_cycle() { 
-  zerog_parts.battery -= 1000; // max is 65k, so this will ensure about 65 iterations before need to recharge. 
+  if (zerog_parts.battery >= 1000)
+    zerog_parts.battery -= 1000; // max is 65k, so this will ensure about 65 iterations before need to recharge. 
 }
 #elif ZEROG_MODE == ZEROG_MODE_HARDWARE
 

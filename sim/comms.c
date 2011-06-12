@@ -36,7 +36,7 @@ void comms_exec()
 
   }
   else 
-    printf(" :: Comms PROBLEM! Error number : %d\n", ret);
+    printf("  :: Comms PROBLEM! Error number : %d\n", ret);
 }
 
 /** Simple routine to see if Communication circuitry is fried or not */

@@ -47,7 +47,7 @@ int main(int argc, char ** argv)
 	schedule[cSched]->run();
     }
     zerog_cycle(); 
-    setSleepDuration(10);
+    setSleepDuration(1);
   }
 
   return 0;
