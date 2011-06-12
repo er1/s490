@@ -16,13 +16,13 @@ void power_exec()
   ret = power_OK();
 
   if (!ret){
-    printf("  :: Power Module OK \n"); 
+    printf("  :: Power Module [ OK ]\n"); 
   } else {
-    perror("Problem with the power module. Error: ");
+    printf("  :: Power Module ");
     switch(ret){
-      case 1: perror("[WARN] : Low Batteries\n"); break; 
-      case 2: perror("[CR!T] : VERY LOW BATTERIES\n"); break; 
-      case 3: perror("[WHAT] : Unreachable code reached\n"); break; 
+      case 1: printf("[WARN] : Low Batteries\n"); break; 
+      case 2: printf("[CR!T] : VERY LOW BATTERIES\n"); break; 
+      case 3: printf("[WHAT] : Unreachable code reached\n"); break; 
     }
   }
 }

@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include <mhash.h> 
 
 #include "rand.h"
 
@@ -25,6 +26,8 @@ void zerog_distortion(char * data, int size);
 void zerog_cycle();
 void zerog_print(); 
 uint8_t zerog_get_bin_mode();
+uint32_t zerog_crc32(char*,size_t); 
+uint32_t zerog_get_hash(); 
 
 
 struct zerog_parts_t {
@@ -32,6 +35,8 @@ struct zerog_parts_t {
   uint16_t battery; 
   /** Info for how our binary was compiled. */
   uint8_t binmode; 
+  /** The last messages' hash stored in the struct. */
+  uint32_t hash; 
 };
 
 #endif 

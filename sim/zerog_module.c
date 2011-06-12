@@ -9,9 +9,36 @@ uint8_t zerog_get_bin_mode(){
   return zerog_parts.binmode; 
 }
 
+/** \return the battery power from the structure */
 uint16_t zerog_get_battery(){
   return zerog_parts.battery; 
 }
+
+/** \return the hash from the structure */
+uint32_t zerog_get_hash(){
+  return zerog_parts.hash; 
+}
+
+/** Base, hash calculator. Plagiarized from comms.c :D */
+uint32_t zerog_crc32(char * data, size_t numBytes) //crc is fast might want crc16 instead
+{
+  MHASH td;
+  uint32_t hash;
+
+  td = mhash_init(MHASH_CRC32);
+
+  if (td == MHASH_FAILED){//this might not be meaningful
+    perror("mhash_init");
+    return 0;
+  }
+
+  mhash(td, data, numBytes);
+
+  mhash_deinit(td, &hash); 
+
+  return hash;
+}
+
 
 /** This just prints the information of the zerog_parts struct */
 void zerog_print() {
@@ -41,6 +68,7 @@ void zerog_comms_send(char* msg){
 char* zerog_comms_receive(){
   // Probably have to add a distortion routine here. 
   char* tmp = rand_phrase(); 
+  zerog_parts.hash = zerog_crc32(tmp, strlen(tmp)); 
   zerog_distortion(tmp, strlen(tmp));
   return tmp; 
 }

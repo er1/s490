@@ -12,7 +12,7 @@ void comms_exec()
   ret = comms_OK(); 
   if (!ret){
     
-    printf("  :: Comms module OK\n");
+    printf("  :: Comms module [ OK ] \n");
 
     // Try to send something to base 
     printf("  :: Attempting to send message... "); 
@@ -30,6 +30,8 @@ void comms_exec()
     if (!ret) {
       printf(" [DONE] : ");
       printf("[%s]\n", comms_buffer); 
+      printf("  :: Checksum of buffer received   : %x \n", zerog_get_hash()); 
+      printf("  :: Checksum of buffer calculated : %x \n", crc32(comms_buffer, strlen(comms_buffer))); 
     } else {
       printf(" [FAIL] Error : %d \n", ret); 
     }
