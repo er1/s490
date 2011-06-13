@@ -1,5 +1,4 @@
 #include "power.h"
-#include "zerog_module.h" 
 
 int power_durr;
 

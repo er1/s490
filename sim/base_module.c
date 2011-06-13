@@ -14,4 +14,5 @@ void base_exec(){
 }
 
 void base_send(char* message){
+  if(message) message = 0;//stop warning me! This is just a stub!!
 }

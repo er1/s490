@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 #include "rtc.h"
+#include "zerog_module.h" 
 
 void power_exec();
 

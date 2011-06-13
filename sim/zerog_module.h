@@ -28,7 +28,7 @@ void zerog_print();
 uint8_t zerog_get_bin_mode();
 uint32_t zerog_crc32(char*,size_t); 
 uint32_t zerog_get_hash(); 
-
+uint16_t zerog_get_battery();
 
 struct zerog_parts_t {
   /** The virtual battery. Initially set to max -> 2^16 */
