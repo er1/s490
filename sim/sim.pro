@@ -13,5 +13,5 @@ LIBS += -lmhash
 
 
 # Input
-HEADERS += aocs.h comms.h power.h rtc.h sim.h rand.h log.h zerog_module.h util.h base_module.h
-SOURCES += aocs.c comms.c power.c rtc.c sim.c rand.c log.c zerog_module.c util.c base_module.c 
+HEADERS += aocs.h comms.h power.h rtc.h sim.h rand.h log.h zerog_module.h util.h base_module.h core.h
+SOURCES += aocs.c comms.c power.c rtc.c sim.c rand.c log.c zerog_module.c util.c base_module.c core.c
