@@ -5,7 +5,7 @@
 TEMPLATE = app
 TARGET = 
 DEPENDPATH += .
-INCLUDEPATH += .
+INCLUDEPATH += . ../sat
 CONFIG -= qt
 CONFIG += debug
 OBJECTS_DIR = obj
@@ -13,5 +13,13 @@ LIBS += -lmhash
 
 
 # Input
-HEADERS += aocs.h comms.h power.h rtc.h sim.h rand.h log.h zerog_module.h util.h base_module.h core.h
-SOURCES += aocs.c comms.c power.c rtc.c sim.c rand.c log.c zerog_module.c util.c base_module.c core.c
+HEADERS += sim.h
+HEADERS += ../sat/aocs.h ../sat/comms.h ../sat/power.h ../sat/rtc.h
+HEADERS += ../sat/rand.h ../sat/log.h ../sat/zerog_module.h ../sat/util.h
+HEADERS += ../sat/base_module.h ../sat/core.h
+
+SOURCES += sim.c
+SOURCES += ../sat/aocs.c ../sat/comms.c ../sat/power.c ../sat/rtc.c
+SOURCES += ../sat/rand.c ../sat/log.c ../sat/zerog_module.c
+SOURCES += ../sat/util.c ../sat/base_module.c ../sat/core.c
+
