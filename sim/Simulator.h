@@ -1,4 +1,9 @@
+#include <stdarg.h>
+
 #include <QObject>
+#include <QMainWindow>
+
+#include "ui_SimSat.h"
 
 class Simulator : public QObject
 {

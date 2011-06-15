@@ -1,12 +1,14 @@
 #include "sim.h"
 
+Simulator *sim;
+
 int main(int argc, char *argv[])
 {
   printf("\tCSat Simulator loaded.\n");
 
   QApplication app(argc, argv);
 
-  Simulator * sim = new Simulator(); 
+  sim = new Simulator(); 
 
   return app.exec();
 

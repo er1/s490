@@ -12,40 +12,38 @@ Simulator::Simulator()
   ui.setupUi(window);
 
   //connect the our slots to the signals we want
-  QObject::connect(window->btnStart, SIGNAL(clicked()), this, SLOT(simStart()));
-  QObject::connect(window->btnStop, SIGNAL(clicked()), this, SLOT(simStop()));
+  QObject::connect(ui.btn_Start, SIGNAL(clicked()), this, SLOT(simStart()));
+  QObject::connect(ui.btn_Stop, SIGNAL(clicked()), this, SLOT(simStop()));
 
-  QObject::connect(this, SIGNAL(appendConsole(const QString &)), window->txt_SimConsole, SLOT(simStop()));
+  QObject::connect(this, SIGNAL(appendConsole(const QString &)), ui.txt_SimConsole, SLOT(append(const QString)));
 
   window->show();
 }
 
-void _simprintf(char * fmt, ...)
+void Simulator::_simprintf(char * fmt, ...)
 {
-  va_ list args;
-  va_ start(args,fmt);
+  va_list args;
+  va_start(args,fmt);
 
   //create the qstring
-  QString * qs = QString::vsprintf(fmt, args);
-  va_ end(args);
+  QString qs("test");
+  qs.vsprintf(fmt, args);
+  //= QString::vsprintf(fmt, args);
+  va_end(args);
 
   //send the signal
   emit appendConsole(qs);
 }
 
-void appendConsole(const QString &txt)
-{
-  
-}
 
 void Simulator::simStart()
 {
-  
+  _simprintf("herp\n");
 }
 
 void Simulator::simStop()
 {
-  
+  _simprintf("derp\n");
 }
 
 
