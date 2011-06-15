@@ -26,9 +26,8 @@ void Simulator::_simprintf(char * fmt, ...)
   va_start(args,fmt);
 
   //create the qstring
-  QString qs("test");
+  QString qs;
   qs.vsprintf(fmt, args);
-  //= QString::vsprintf(fmt, args);
   va_end(args);
 
   //send the signal
@@ -38,12 +37,12 @@ void Simulator::_simprintf(char * fmt, ...)
 
 void Simulator::simStart()
 {
-  _simprintf("herp\n");
+  _simprintf((char *)"herp\n");
 }
 
 void Simulator::simStop()
 {
-  _simprintf("derp\n");
+  _simprintf((char *)"derp\n");
 }
 
 
