@@ -17,11 +17,11 @@ FORMS = UI/SimSat.ui
 HEADERS += sim.h
 HEADERS += ../sat/aocs.h ../sat/comms.h ../sat/power.h ../sat/rtc.h
 HEADERS += ../sat/rand.h ../sat/log.h ../sat/zerog_module.h ../sat/util.h
-HEADERS += ../sat/base_module.h ../sat/core.h
-HEADERS += ui_SimSat.h
+HEADERS += ../sat/base_module.h ../sat/core.h 
+HEADERS += Simulator.h
 
 SOURCES += sim.cpp
 SOURCES += ../sat/aocs.c ../sat/comms.c ../sat/power.c ../sat/rtc.c
 SOURCES += ../sat/rand.c ../sat/log.c ../sat/zerog_module.c
 SOURCES += ../sat/util.c ../sat/base_module.c ../sat/core.c
-
+SOURCES += Simulator.cpp

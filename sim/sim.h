@@ -12,5 +12,7 @@ extern "C"
 
 #include <QMainWindow>
 
+#include "Simulator.h"
+
 #endif
 
