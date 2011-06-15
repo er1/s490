@@ -20,7 +20,8 @@
 #include "log.h"
 #include "util.h"
 
-void core_start();
+void core_init();
+void core_loop();
 
 struct routine_t{
   int priority;
