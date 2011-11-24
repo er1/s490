@@ -57,7 +57,7 @@ int main()
     exit(1);
   }
 
-  handle2 = dlopen("testJob1.so", RTLD_LAZY); 
+  handle2 = dlopen("testJob2.so", RTLD_LAZY); 
   if(!handle2){
     fprintf (stderr, "%s\n", dlerror());
     exit(1);
@@ -77,8 +77,8 @@ int main()
 
   printf("Spawning threads...\n");
 
-  pthread_create(&thread1, NULL, (void *)&runJ1, (void *)&s1);
-  pthread_create(&thread2, NULL, (void *)&runJ2, (void *)&s2);
+  pthread_create(&thread1, NULL, (void *)runJ1, (void *)&s1);
+  pthread_create(&thread2, NULL, (void *)runJ2, (void *)&s2);
 
   printf("done!\n");
 
