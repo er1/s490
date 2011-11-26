@@ -20,11 +20,11 @@ testJob2.o:
 	gcc -g -c -fPIC testJob2.c
 
 proto.o:
-	gcc -g -rdynamic -ldl -lpthread -c proto.c 
+	gcc -g -rdynamic -c proto.c 
 
 proto: proto.o
 	gcc -g -ldl -lpthread proto.o -o proto
 
 
 clean:
-	rm *o
+	rm *.o *.so proto
