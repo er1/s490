@@ -2,6 +2,7 @@
 Prototype Job Manager (Incubator)
 
 Author: Corey Clayton, November 2011
+        Eric Chan, November 2011
 
 The job manager is responcible for controlling the execution of 
 'Jobs' which are mostly pre-determined. A thread will exist for
@@ -23,87 +24,87 @@ allow them to run using semaphores.
 *******************************************************************/
 
 #include <stdio.h>
-#include <pthread.h>    /* POSIX Threads */
-#include <semaphore.h>  /* Semaphore */
 #include <stdlib.h>
-#include <dlfcn.h>    /* Dynamic object loading */
-
-//void testThread1(void *);
-//void testThread2(void *);
-
+#include <pthread.h>   /* POSIX Threads */
+#include <semaphore.h> /* Semaphore */
+#include <dlfcn.h>     /* Dynamic object loading */
 
 int main()
 {
+	// shared object handles
+	void * handleRead;
+	void * handleProc;
+	void * handleWrite;
 
-  void * handle1; 
-  void * handle2; //shared obj handles
-  void (*runJ1)(sem_t *); //function pointers for imports
-  void (*runJ2)(sem_t *); 
+	// function pointers for imports
+	void (*runRead)(sem_t *);
+	void (*runProc)(sem_t *);
+	void (*runWrite)(sem_t *);
 
-  pthread_t thread1;
-  pthread_t thread2;
+	// threads
+	pthread_t threadRead;
+	pthread_t threadProc;
+	pthread_t threadWrite;
 
-  sem_t s1;
-  sem_t s2;
+	// semaphores
+	sem_t semRead;
+	sem_t semProc;
+	sem_t semWrite;
 
-  
-  printf("Started.\nLoading shared objects...");
-  
-  //now lets try loading the objects
+	puts("Started");
+	puts("Loading shared objects...");
+	
+	// TODO: probably make into a function...
+	// load reader
+	handleRead = dlopen("testread.so", RTLD_LAZY); //TODO: look in to which LDflag is best for us
+	if (!handleRead) {
+		fprintf(stderr, "%s\n", dlerror());
+		exit(1);
+	}
 
-  handle1 = dlopen("testJob1.so", RTLD_LAZY); //TODO: look in to which LDflag is best for us
-  if(!handle1){
-    fprintf (stderr, "%s\n", dlerror());
-    exit(1);
-  }
+	// load processor
+	handleProc = dlopen("testproc.so", RTLD_LAZY); //TODO: look in to which LDflag is best for us
+	if (!handleProc) {
+		fprintf(stderr, "%s\n", dlerror());
+		exit(1);
+	}
 
-  handle2 = dlopen("testJob2.so", RTLD_LAZY); 
-  if(!handle2){
-    fprintf (stderr, "%s\n", dlerror());
-    exit(1);
-  }
+	// load writer
+	handleWrite = dlopen("testwrite.so", RTLD_LAZY); //TODO: look in to which LDflag is best for us
+	if (!handleWrite) {
+		fprintf(stderr, "%s\n", dlerror());
+		exit(1);
+	}
 
-  dlerror(); //clear any remenants
+	// clear any other potential loader errors
+	dlerror();
 
-  runJ1 = dlsym(handle1, "run");
-  runJ2 = dlsym(handle2, "run");
+	runRead = dlsym(handleRead, "run");
+	runProc = dlsym(handleProc, "run");
+	runWrite = dlsym(handleWrite, "run");
 
-  printf(" done.\n");
+	puts("done!");
 
-  printf("initialize semaphores\n");
-  
-  sem_init(&s1, 0, 1);
-  sem_init(&s2, 0, 1);
+	puts("initialize semaphores...");
 
-  printf("Spawning threads...\n");
+	sem_init(&semRead, 0, 1);
+	sem_init(&semProc, 0, 1);
+	sem_init(&semWrite, 0, 1);
 
-  pthread_create(&thread1, NULL, (void *)runJ1, (void *)&s1);
-  pthread_create(&thread2, NULL, (void *)runJ2, (void *)&s2);
+	puts("spawning threads...");
 
-  printf("done!\n");
+	pthread_create(&threadRead, NULL, (void *)runRead, &semRead);
+	pthread_create(&threadProc, NULL, (void *)runProc, &semProc);
+	pthread_create(&threadWrite, NULL, (void *)runWrite, &semWrite);
 
-  //wait? 
+	puts("done!");
 
-  pthread_join(thread1, NULL);
-  pthread_join(thread2, NULL);
+	//wait? 
 
-  printf("Done!\n");
-  return 0;
+	pthread_join(threadRead, NULL);
+	pthread_join(threadProc, NULL);
+	pthread_join(threadWrite, NULL);
+
+	puts("complete!");
+	return 0;
 }
-
-/*
-void testThread1(void * ptr)
-{
-  sem_wait(&s1);
-  printf("T1 reporting in\n");
-  sem_post(&s1);
-}
-
-void testThread2(void * ptr)
-{
-  sem_wait(&s2);
-  printf("T2 reporting in\n");
-  sem_post(&s2);
-}
-*/
-

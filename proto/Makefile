@@ -5,7 +5,26 @@
 # Derp
 #
 
-all: proto testJob1.so testJob2.so
+all: proto testRead.so testProc.so testWrite.so
+
+testRead.so: testRead.o
+	gcc -g -shared -o testRead.so testRead.o
+
+testRead.o:
+	gcc -g -c -fPIC testRead.c
+
+testProc.so: testProc.o
+	gcc -g -shared -o testProc.so testProc.o
+
+testProc.o:
+	gcc -g -c -fPIC testProc.c
+
+testWrite.so: testWrite.o
+	gcc -g -shared -o testWrite.so testWrite.o
+
+testWrite.o:
+	gcc -g -c -fPIC testWrite.c
+
 
 testJob1.so: testJob1.o
 	gcc -g -shared -o testJob1.so testJob1.o
