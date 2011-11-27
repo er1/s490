@@ -38,7 +38,7 @@ testJob2.so: testJob2.o
 testJob2.o:
 	gcc -g -c -fPIC testJob2.c
 
-proto.o:
+proto.o: proto.c
 	gcc -g -rdynamic -c proto.c 
 
 proto: proto.o

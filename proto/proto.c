@@ -51,7 +51,7 @@ int main()
 	sem_t semProc;
 	sem_t semWrite;
 
-	puts("Started");
+	puts("[01;32m\nStarted[0m");
 	puts("Loading shared objects...");
 	
 	// TODO: probably make into a function...

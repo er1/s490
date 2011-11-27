@@ -1,15 +1,40 @@
 #include "testRead.h"
 
+#define DATAPATH ("data/testdata1.fifo")
+
 void run(sem_t * semaphore)
 {
 	int sysret, now;
 	struct timespec ts;
+	struct stat filestat;
+
 	ts.tv_sec = 1;
 	ts.tv_nsec = 0;
 
 	int p;
 	
 	puts("Test Datareader");
+
+	// create relevant files
+	
+	// create the buffer for the data
+	if (stat(DATAPATH, &filestat) == -1) {
+		if (errno == EEXIST) {
+			if (mkfifo(DATAPATH, 0666)) {
+				perror("mkfifo");
+				return;
+			}
+		} else {
+			perror("stat");
+			return;
+		}
+	}
+
+	// check it still exists
+	if (stat(DATAPATH, &filestat) == -1) {
+		perror("stat");
+		return;
+	}
 
 	//TODO change to while(something) so we can stop it
 	while (1) {
