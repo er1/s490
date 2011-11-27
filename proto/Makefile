@@ -8,7 +8,7 @@
 all: proto testRead.so testProc.so testWrite.so
 
 testRead.so: testRead.o
-	gcc -g -shared -o testRead.so testRead.o
+	gcc -g -shared -o testRead.so testRead.o -lm
 
 testRead.o: testRead.c testRead.h
 	gcc -g -c -fPIC testRead.c
