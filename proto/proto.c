@@ -56,21 +56,21 @@ int main()
 	
 	// TODO: probably make into a function...
 	// load reader
-	handleRead = dlopen("testRead.so", RTLD_LAZY); //TODO: look in to which LDflag is best for us
+	handleRead = dlopen("./testRead.so", RTLD_LAZY); //TODO: look in to which LDflag is best for us
 	if (!handleRead) {
 		fprintf(stderr, "%s\n", dlerror());
 		exit(1);
 	}
 
 	// load processor
-	handleProc = dlopen("testProc.so", RTLD_LAZY); //TODO: look in to which LDflag is best for us
+	handleProc = dlopen("./testProc.so", RTLD_LAZY); //TODO: look in to which LDflag is best for us
 	if (!handleProc) {
 		fprintf(stderr, "%s\n", dlerror());
 		exit(1);
 	}
 
 	// load writer
-	handleWrite = dlopen("testWrite.so", RTLD_LAZY); //TODO: look in to which LDflag is best for us
+	handleWrite = dlopen("./testWrite.so", RTLD_LAZY); //TODO: look in to which LDflag is best for us
 	if (!handleWrite) {
 		fprintf(stderr, "%s\n", dlerror());
 		exit(1);
