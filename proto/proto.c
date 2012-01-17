@@ -16,6 +16,12 @@ So we will have ThreadA ThreadB ThreadC ThreadD for handling
 when those jobs may need to run. It is possible that only a 
 subset of those are expected to run. 
 
+*Jan 16, 2012*
+We decided to go with processes rather than threads for now. 
+Using a process isolation model allows for a higher degree of 
+reliability (can restart processes with independent memory 
+spaces) at the cost of more overhead.
+
 The operator may decide to run only a subset {A, B} periodically
 and thus the Job manager will spawn ThreadA and ThreadB and
 allow them to run using semaphores. 
@@ -50,6 +56,10 @@ int main()
 	sem_t semRead;
 	sem_t semProc;
 	sem_t semWrite;
+
+	//we should probably do set up our IPC mechanism here...
+	//Then do some checks to see what other components
+	//are running and act accordingly.
 
 	puts("[01;32m\nStarted[0m");
 	puts("Loading shared objects...");
