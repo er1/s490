@@ -19,13 +19,15 @@ void run(sem_t * semaphore)
 	
 	// create the buffer for the data
 	if (stat(DATAPATH, &filestat) == -1) {
-		if (errno == EEXIST) {
+	  //it seems you need to use ENOENT if the file does not exist on linux
+		if (errno == EEXIST || errno == ENOENT) { 
 			if (mkfifo(DATAPATH, 0666)) {
 				perror("mkfifo");
 				return;
 			}
 		} else {
 			perror("stat");
+			printf("errno: %d\n", errno);
 			return;
 		}
 	}
