@@ -24,7 +24,8 @@ int job_spawn(job_instance* job) {
 	// handle the child spawning
 	if (pid == 0) {
 		// run the new process executable
-		job->ps_name && execve(job->ps_name);
+		if (job->ps_name)
+			execve(job->ps_name, NULL, NULL); // FIXME: remove NULL
 
 		// exit if a failiure occurs
 		_exit(-1);
@@ -64,10 +65,12 @@ int job_block(job_instance* job) {
 	}
 
 	if (!job->running) {
-		return 0;
+		return JOB_SUCCESS;
 	}
 
 	// SEND SIGSTOP
+
+	return JOB_ERROR; // FIXME: BASE STOP CASE
 }
 
 	// spawn a new process
@@ -80,7 +83,40 @@ int job_block(job_instance* job) {
 
 // recv commands through some means
 
+//need a list of jobs
+job_instance * jList;
+int jList_cap = 0;
+int jList_num = 0;
+
+void addJob(char * n, int id)
+{
+  //jList[jList_num] = 
+}
+
 int main() {
+  
+  //start with an empty list of size 8
+  jList_cap = 8;
+  //jList = ;
+  
+
+  //read some config that tells us what to run.
+  char jName[64];
+  int id = 0;
+  FILE * fd = fopen("jobs.txt", "r");
+  if(!fd)
+    {
+      printf("Failed to open jobs.txt\n");
+    }
+
+  while(1)
+    {
+      int t = fscanf(fd, "%s %d\n", jName, &id);
+      if(t == EOF)
+	break;
+      
+      printf("Found Job [%s] with ID=%d\n", jName, id);
+    }
 
 	log("Starting up...\n");
 
