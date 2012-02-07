@@ -30,4 +30,4 @@ testProducer : testProducer.o common.o
 	$(CC) $(CFLAGS) -o $@ $<
 
 clean:
-	rm -f *.o dispatcher testRead
+	rm -f *.o dispatcher testRead testProducer
