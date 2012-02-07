@@ -20,10 +20,10 @@ all : dispatcher testRead testProducer
 dispatcher : dispatcher.o common.o
 	$(CC) $(LFLAGS) -o $@ dispatcher.o common.o
 
-testRead : TestRead.o common.o
+testRead : testRead.o common.o
 	$(CC) $(LFLAGS) -o $@ testRead.o common.o
 
-testProducer : TestProducer.o common.o
+testProducer : testProducer.o common.o
 	$(CC) $(LFLAGS) -o $@ testProducer.o common.o
 
 %.o : %.c
