@@ -19,16 +19,21 @@ job_instance * jList;
 int jList_cap = 0;
 int jList_num = 0;
 
-void addJob(char * n, int id)
+void addJob(job_instance * n)
 {
-  jList[jList_num] = 
+  //go through the list
+  int i;
+  for(i=0; i<jList_cap; ++i)
+    {
+      
+    }
 }
 
 int main() {
   
   //start with an empty list of size 8
   jList_cap = 8;
-  jList = ;
+  jList_num = 0;
   
 
   //read some config that tells us what to run.
