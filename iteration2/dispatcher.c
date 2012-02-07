@@ -6,17 +6,19 @@
 #include "jobdef.h"
 
 // create the process for a job
-int job_spawn(job_instance* job) 
+int job_spawn(job_instance* job)
 {
 	pid_t pid;
 
 	// return if null pointer
-	if (job == NULL) {
+	if (job == NULL)
+	{
 		return JOB_ERROR;
 	}
 	
 	// return if process exists
-	if (job->running) {
+	if (job->running)
+	{
 		return JOB_SUCCESS;
 	}
 
@@ -24,17 +26,23 @@ int job_spawn(job_instance* job)
 	pid = vfork();
 
 	// handle the child spawning
-	if (pid == 0) {
+	if (pid == 0)
+	{
 		// run the new process executable
 		if (job->ps_name)
-			execve(job->ps_name, NULL, NULL); // FIXME: remove NULL
+		{
+			char* newargv[] = { job->ps_name, NULL };
+			char* newenv[] = { NULL };
+			execve(job->ps_name, newargv, newenv);
+		}
 
 		// exit if a failiure occurs
 		_exit(-1);
 	}
 
 	// error if new process cannot be created
-	if (pid == -1) {
+	if (pid == -1)	
+	{
 		job->running = 0;
 		job->pid = 0;
 		return JOB_ERROR;
@@ -48,42 +56,59 @@ int job_spawn(job_instance* job)
 }
 
 // allow a job to run
-int job_allow(job_instance* job) {
-	if (job == NULL) {
+int job_allow(job_instance* job)
+{
+	// return if null pointer
+	if (job == NULL)
+	{
 		return JOB_ERROR;
 	}
 
-	if (!job->running) {
+	// if the job is not running, start it, otherwise let it continue
+	if (!job->running)
+	{
 		job_spawn(job);
-	} else {
-		// send SIGCONT
+	}
+	else
+	{
+		// send SIGCONT (continue)
+		if (kill(job->pid, SIGCONT) != 0)
+		{
+			// TODO: define behavior for continue not working
+			return JOB_ERROR;
+		}
 	}
 	return JOB_SUCCESS;
 }
 
-int job_block(job_instance* job) {
-	if (job == NULL) {
+int job_block(job_instance* job)
+{
+	if (job == NULL)
+	{
 		return JOB_ERROR;
 	}
 
-	if (!job->running) {
+	if (!job->running)
+	{
 		return JOB_SUCCESS;
 	}
 
-	// SEND SIGSTOP
+	// send SIGSTOP (stop)
+	if (kill(job->pid, SIGSTOP) != 0);
+	{
+		// it didn't work if we are here
+		// TODO: define behavior for stop not working
+		return JOB_ERROR;
+	}
 
-	return JOB_ERROR; // FIXME: BASE STOP CASE
+	return JOB_SUCCESS;
 }
 
-	// spawn a new process
-	// start a paused process
-
-// stop a job from running
-	// notify process to cease running
-	// force pause a process
-	// kill a process under extreme condition
-
+// TODO:
+// notify process to cease running (SIGUSR1)
+// kill a process under extreme condition
 // recv commands through some means
+// handle SIGCHLD (child dies for whatever reason)
 
 //need a list of jobs
 job_instance ** jList = 0;
