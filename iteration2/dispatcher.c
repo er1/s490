@@ -5,7 +5,25 @@
 #include "common.h"
 #include "jobdef.h"
 
-// create the process for a job
+//
+// Dispatcher
+//
+//
+
+// TODO:
+// notify process to cease running (SIGUSR1)
+// kill a process under extreme condition
+// recv commands through some means
+// handle SIGCHLD (child dies for whatever reason)
+
+// data structure for job instances
+job_instance ** job_list = 0;
+int job_list_capacity = 0;
+int job_list_size = 0;
+
+// ---- //
+
+// create a process for a job and start it
 int job_spawn(job_instance* job)
 {
 	pid_t pid;
@@ -67,20 +85,21 @@ int job_allow(job_instance* job)
 	// if the job is not running, start it, otherwise let it continue
 	if (!job->running)
 	{
-		job_spawn(job);
+		return job_spawn(job);
 	}
-	else
+
+	// it is running, send SIGCONT (continue)
+	if (kill(job->pid, SIGCONT) != 0)
 	{
-		// send SIGCONT (continue)
-		if (kill(job->pid, SIGCONT) != 0)
-		{
-			// TODO: define behavior for continue not working
-			return JOB_ERROR;
-		}
+		// TODO: define behavior for continue not working
+		return JOB_ERROR;
 	}
+
 	return JOB_SUCCESS;
 }
 
+// hard stop a job from running
+// TODO: define what happens if we have to kill a stopped job
 int job_block(job_instance* job)
 {
 	if (job == NULL)
@@ -104,78 +123,51 @@ int job_block(job_instance* job)
 	return JOB_SUCCESS;
 }
 
-// TODO:
-// notify process to cease running (SIGUSR1)
-// kill a process under extreme condition
-// recv commands through some means
-// handle SIGCHLD (child dies for whatever reason)
-
-//need a list of jobs
-job_instance ** jList = 0;
-int jList_cap = 0;
-int jList_num = 0;
-
-void addJob(job_instance * n)
+void job_add(job_instance * job)
 {
-	//if we are at capacity 
-	//TODO optimize this
-	if(jList_cap == jList_num)
-		{
-			int i;
-			job_instance ** tmp = (job_instance *)calloc(jList_cap+8, sizeof(job_instance *));
-			
-			//copy everything over
-			for(i=0; i<jList_cap; ++i)
-				{
-					tmp[i] = jList[i];
-				}
-			
-			if(jList)
-				free(jList);
+	// no jobs defined yet? create the list and set the initial size to 1
+	if (job_list == NULL)
+	{
+		job_list_capacity = 1;
+		job_list = malloc(sizeof(job_instance) * job_list_capacity);
+		// TODO: if malloc fails...
+	}
 
-			jList = tmp;
-		}
-
-	//go through the list
-	int i;
-	for(i=0; i<jList_cap; ++i)
-		{
-			//if we find a gap, add and break
-			if(jList[i] == 0)
-				{
-					jList[i] = n;
-					++jList_num;
-					break; //get out of this loop!
-				}
-		}
+	// job_list is full? resize it
+	if (job_list_size == job_list_capacity)
+	{
+		job_list_capacity *= 2; // double makes amortized resizes in O(1)
+		job_list = realloc(job_list, sizeof(job_instance) * job_list_capacity);
+		// TODO: if realloc fails...
+	}
 }
 
 int main() 
 {
-	//start with an empty list of size 8
-    //jList_cap = 8;
-	//jList_num = 0;
-  
-	//read some config that tells us what to run.
-	char jName[64];
-	int id = 0;
-	FILE * fd = fopen("jobs.txt", "r");
-	if(!fd)
-		{
-			printf("Failed to open jobs.txt\n");
-		}
-	
-	while(1)
-		{
-			int t = fscanf(fd, "%s %d\n", jName, &id);
-			
-			if(t == EOF)
-				break;
-			
-			printf("Found Job [%s] with ID=%d\n", jName, id);
-		}
-	
+	char job_file_name[64];
+	int job_file_id;
+	FILE* job_file_handle;
+
 	log("Starting up...\n");
+
+	// open our job description file and catch is opening fails
+	job_file_handle = fopen("jobs.txt", "r");
+	if (!job_file_handle)
+	{
+		log("Failed to open jobs.txt\n");
+		return -1;
+	}
+	
+	while (1) // end of file breaks out of loop
+	{
+		// read job from file
+		int t = fscanf(job_file_handle, "%s %d\n", job_file_name, &job_file_id);
+		
+		if (t == EOF)
+			break;
+			
+		printf("Found Job [%s] with ID=%d\n", job_file_name, job_file_id);
+	}
 	
 	log("Shutting down...\n");
 	
