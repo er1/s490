@@ -6,13 +6,17 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 
-#define SOCK_PATH "/tmp/rpc_socket"
+#include "rpc.h"
+
+#define BUFFSIZE 255
 
 int main(void)
 {
     int s, t, len;
     struct sockaddr_un remote;
-    unsigned char buf[100];
+    unsigned char buf[BUFFSIZE];
+
+	memset(&buf, 0, BUFFSIZE - 1);
 
     if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
         perror("socket");
@@ -31,13 +35,29 @@ int main(void)
 
     printf("Connected.\n");
 
+	//this is like a test case
+	////////////////////////////////////
 	buf[0] = 0;
 	send(s, buf, 1, 0);
+	//server gets invalid opcode
+	////////////////////////////////////
 
+	////////////////////////////////////
 	buf[0] = 1;
 	send(s, buf, 1, 0);
+	//sent request for event list
 
-	buf[0] = 1;
+	//try to recieve that
+	read(s, buf, 2);
+	printf("[%#X][%#X]...\n", buf[0], buf[1]);
+	read(s, buf+2, buf[1]);
+	printf("[%#X][%#X][%#X][%#X][%#X][%#X]...\n",
+		   buf[0], buf[1],
+		buf[2], buf[3], buf[4], buf[5]);
+
+
+
+/*	buf[0] = 1;
 	send(s, buf, 1, 0);
 
 	buf[0] = 2;

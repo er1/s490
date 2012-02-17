@@ -6,25 +6,33 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 
+#include "rpc.h"
+
 #define BUFFSIZE 255
-
-#define SOCK_PATH "/tmp/rpc_socket"
-
-#define OP_GET_EVENT_LIST 1
-
-
-#define EVENT_A 1
-#define EVENT_B 2
-#define EVENT_C 4
-#define EVENT_D 8
 
 int event_list[] = { EVENT_A,
 					 EVENT_B,
 					 EVENT_C,
 					 EVENT_D };
 
+int num_events = sizeof(event_list)/sizeof(int);
 
-
+void doEventA()
+{
+	printf("A >>\n");
+}
+void doEventB()
+{
+	printf("B >>\n");
+}
+void doEventC()
+{
+	printf("C >>\n");
+}
+void doEventD()
+{
+	printf("D >>\n");
+}
 
 void handlebars(int sockFD)
 {
@@ -58,8 +66,17 @@ void handlebars(int sockFD)
 
 			if(opcode == OP_GET_EVENT_LIST)
 			{
-				//do something
+				
 				printf("[%#X] requested event list\n");
+				//do this with the common buffer for now
+				buffer[0] = OP_SEND_EVENT_LIST;
+				buffer[1] = (unsigned char)num_events;
+				int i;
+				for(i=0; i<num_events; ++i)
+				{
+					buffer[2+i] = (unsigned char)event_list[i];
+				}
+				send(sockFD, buffer, num_events+1, 0);
 			}
 			else
 			{
@@ -125,7 +142,15 @@ int main(void)
         } while (!done);
 */
 
+		//logic should be 
+
+		//if connected -> handlecommand
+		//if not -> wait for connection
+		//then.. oh crap maybe i should add a thread...
+
 		handlebars(s2);
+
+		
 
         close(s2);
     }
