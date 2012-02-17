@@ -76,7 +76,7 @@ void handlebars(int sockFD)
 				{
 					buffer[2+i] = (unsigned char)event_list[i];
 				}
-				send(sockFD, buffer, num_events+1, 0);
+				send(sockFD, buffer, num_events+2, 0);
 			}
 			else
 			{
