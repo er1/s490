@@ -1,3 +1,6 @@
+#ifndef __COMMON__
+#define __COMMON__
+
 /*
 	Defines for commonly used functions
 
@@ -14,4 +17,6 @@
 #define log(a) ;
 #endif
 
-void delay(int);
+int delay(int);
+
+#endif

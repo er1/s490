@@ -7,12 +7,23 @@
 
 #include <stdio.h>
 #include <time.h>
+#include <errno.h>
 
-
-void delay(int span) {
-        struct timespec ts;
-        ts.tv_sec  = span / 1000000000;
-        ts.tv_nsec = span % 1000000000;
-        if (nanosleep(&ts, NULL) == -1)
-                perror("nanosleep()");
+int delay(int span)
+{
+        struct timespec ts_in;
+        struct timespec ts_out;
+	int rspan;
+	const int mult = 1000000000;
+        ts_in.tv_sec  = span / mult;
+        ts_in.tv_nsec = span % mult;
+        if (nanosleep(&ts_in, &ts_out) == -1)
+	{
+		if (errno != EINTR)
+		{
+			perror("nanosleep()");
+		}
+	}
+	rspan = ts_out.tv_sec * mult + ts_out.tv_nsec;
+	return rspan;
 }
