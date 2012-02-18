@@ -21,8 +21,13 @@ void rot13(char* buf, int len) {
 int main(int argc, char** argv) {
 	int sock_ax;
 	int conn_sock_ax;
-	const char* ve2ecq = "VE2ECQ-1";
-	const char* ve2ecqlist[] = { ve2ecq, 0 };
+
+	if (argc != 2) {
+		fprintf(stderr, "usage: %s <callsign>\n", (argc>0)?argv[0]:"???");
+		exit(-1);
+	}
+
+	const char* local_call = argv[1];
 
 	const int bufferlen = 1024;
 	char buffer[bufferlen];
@@ -41,7 +46,7 @@ int main(int argc, char** argv) {
 	// define address
 	sa_bind.fsa_ax25.sax25_family = AF_AX25;
 	sa_bind.fsa_ax25.sax25_ndigis = 0;
-	ax25_aton_entry(ve2ecq, sa_bind.fsa_ax25.sax25_call.ax25_call);
+	ax25_aton_entry(local_call, sa_bind.fsa_ax25.sax25_call.ax25_call);
 
 	puts("bind...");
 
