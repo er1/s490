@@ -1,11 +1,18 @@
+#include "rpcSrv.h"
 #include "srvThread.h"
 
+int event_list[] = { EVENT_A,
+					 EVENT_B,
+					 EVENT_C,
+					 EVENT_D };
+
+int num_events = sizeof(event_list)/sizeof(int);
 
 void * runServer(void * arg)
 {
 	int s, s2, t, len;
     struct sockaddr_un local, remote;
-    char str[100];
+    //char str[100];
 
     if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
         perror("socket");
@@ -27,10 +34,10 @@ void * runServer(void * arg)
     }
 
     for(;;) {
-        int done, n;
+        //int done, n;
         printf("Waiting for a connection...\n");
         t = sizeof(remote);
-        if ((s2 = accept(s, (struct sockaddr *)&remote, &t)) == -1) {
+        if ((s2 = accept(s, (struct sockaddr *)&remote, (socklen_t*)&t)) == -1) {
             perror("accept");
             exit(1);
         }
@@ -39,6 +46,7 @@ void * runServer(void * arg)
 
 		handleConnection(s2);
         close(s2);
+	}
 }
 
 
@@ -76,7 +84,7 @@ void handleConnection(int sockFD)
 			if(opcode == OP_GET_EVENT_LIST)
 			{
 				
-				printf("[%#X] requested event list\n");
+				printf("[%#X] requested event list\n", sockFD);
 				//do this with the common buffer for now
 				buffer[0] = OP_SEND_EVENT_LIST;
 				buffer[1] = (unsigned char)num_events;
@@ -89,7 +97,7 @@ void handleConnection(int sockFD)
 			}
 			else
 			{
-				printf("invalid opcod					printf("e %d\n", (unsigned char)event_list[i]);e!!!!! [%d]\n", opcode);
+				printf("invalid opcode!!!!! [%d]\n", opcode);
 			}
 			
 		}
