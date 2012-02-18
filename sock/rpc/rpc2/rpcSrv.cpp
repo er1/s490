@@ -4,7 +4,7 @@ int main()
 {
 	//initialize some things
 	pthread_t ptSrv;
-	//pthread_t ptUserx;
+	pthread_t ptUI;
 	
 	//start the server thread
 	printf("starting server thread...");
@@ -12,9 +12,11 @@ int main()
 	printf("\tdone!\n");
 	//start the interface thread
 	printf("starting client thread...");
+	pthread_create(&ptUI, NULL, runUI, (void *)NULL);
 	printf("\tdone!\n");
 
 	pthread_join(ptSrv, NULL);
+	pthread_join(ptUI, NULL);
 }
 
 

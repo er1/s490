@@ -7,6 +7,7 @@
 #include <pthread.h>
 
 #include "srvThread.h"
+#include "uiThread.h"
 
 #define SOCK_PATH "/tmp/rpc_sock"
 
