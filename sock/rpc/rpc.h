@@ -23,5 +23,10 @@ typedef struct {
 
 } EVENT_LIST;
 
+typedef struct {
+	int socket;
+	int addr;
+} remote_callback;
+
 
 #endif
