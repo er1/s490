@@ -36,6 +36,7 @@ void doEventD()
 
 void handlebars(int sockFD)
 {
+
 	unsigned char buffer[BUFFSIZE]; // buffer for received data
 
 	memset(&buffer, 0, BUFFSIZE - 1);
