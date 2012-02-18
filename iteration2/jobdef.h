@@ -1,3 +1,5 @@
+#ifndef __JOBDEF__
+#define __JOBDEF__
 
 #define JOB_SUCCESS (0)
 #define JOB_ERROR (-1)
@@ -15,3 +17,5 @@ typedef struct {
 typedef struct { // unused
 	int id; // FIXME: hardcoded value
 } job_attribute;
+
+#endif
