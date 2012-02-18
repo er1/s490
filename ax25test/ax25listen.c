@@ -10,10 +10,10 @@ void rot13(char* buf, int len) {
 	for (i = 0; i < len; ++i) {
 		char up = buf[i] &~ 0x20;
 		if (up >= 'A' && up <= 'M') {
-			buf += 13;
+			buf[i] += 13;
 		}
 		if (up >= 'N' && up <= 'Z') {
-			buf -= 13;
+			buf[i] -= 13;
 		}
 	}
 }
@@ -77,19 +77,19 @@ int main(int argc, char** argv) {
 
 		puts("accepted!");
 		
-		while (recvlen = recv(conn_sock_ax, buffer, bufferlen, 0) > 0) {
+		while ((recvlen = recv(conn_sock_ax, buffer, bufferlen, 0)) > 0) {
 
-			printf("recv: ");
-			write(1, buffer, recvlen);
+			printf("recv %d bytes\n", recvlen);
+
 			rot13(buffer, recvlen);
-			printf("send: ");
-			write(1, buffer, recvlen);
 
 			recvlen = send(conn_sock_ax, buffer, recvlen, 0);
 			if (recvlen < 0) {
 				perror("recv");
 				exit(-1);
 			}
+
+			printf("send %d bytes\n", recvlen);
 			
 		}
 		if (recvlen < 0) {
