@@ -4,7 +4,7 @@
 
 #include <vector>
 #include <cstdio>
-
+#include "rpcSrv.h"
 
 using namespace std;
 

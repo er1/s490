@@ -61,6 +61,34 @@ int main(void)
 	*(unsigned long*)(buf+2) = 0x12345678;
 	send(s, buf, 6, 0);
 
+	while(1)
+	{
+		int rcv = recv(s, buf, 1, 0);
+
+		if(rcv < 0)
+		{
+			printf("read error");
+			break;
+		}
+		else if(rcv == 0)
+		{
+			printf("Remote Host Closed Connection\n");
+			break;
+		}
+		else
+		{
+			if(buf[0] == 2)//callback
+			{
+				recv(s, buf+1, 4, 0);
+				printf("CALLBACK: %#X\n", *(unsigned long  *)(buf+1));
+			}
+			else
+			{
+				printf("invalid opcode!!!!! [%#X]\n", buf[0]);
+			}
+		}
+	}
+
 
 /*	buf[0] = 1;
 	send(s, buf, 1, 0);

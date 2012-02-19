@@ -1,7 +1,7 @@
 #ifndef _UI_H_
 #define _UI_H_
 
-#include <cstdio>
+#include "rpcSrv.h"
 
 void doEventA();
 
