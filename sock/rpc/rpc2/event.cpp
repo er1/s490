@@ -12,6 +12,6 @@ void event::updateListeners()
 	for(unsigned int i = 0; i < listeners.size(); ++i)
 	{
 		rc = listeners[i];
-		printf("<event %d> %#X, %#X\n", id, rc->socket, rc->addr);
+		printf("<event %d> %#X, %#lX\n", id, rc->socket, rc->addr);
 	}
 }

@@ -55,6 +55,11 @@ int main(void)
 		   buf[0], buf[1],
 		buf[2], buf[3], buf[4], buf[5]);
 
+	//now try to register for something
+	buf[0] = 2;
+	buf[1] = 1;
+	*(unsigned long*)(buf+2) = 0x12345678;
+	send(s, buf, 6, 0);
 
 
 /*	buf[0] = 1;

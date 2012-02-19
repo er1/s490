@@ -26,7 +26,7 @@ int main()
 	e->id = EVENT_D;
 	events->push_back(e);
 
-		
+	
 	//start the server thread
 	printf("starting server thread...");
 	pthread_create(&ptSrv, NULL, runServer, (void *)NULL);

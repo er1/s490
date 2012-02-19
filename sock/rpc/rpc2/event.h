@@ -12,7 +12,7 @@ class remote_callback
 {
 public:
 	int socket;
-	int addr;
+	unsigned long addr;
 };
 
 class event

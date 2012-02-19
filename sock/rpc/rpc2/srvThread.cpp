@@ -102,9 +102,38 @@ void handleConnection(int sockFD)
 				}
 				send(sockFD, buffer, num_events+2, 0);
 			}
+			else if(opcode == OP_REG_EVENT)
+			{
+				//8bits opcode
+				//8bits event id
+				//32bits addr
+				read(sockFD, buffer+1, 5);
+				unsigned char eId = buffer[1];
+				unsigned long cbAddr = *(unsigned long *)(buffer + 2);
+				printf("[%#X] requested event registration\n", sockFD);
+				printf("\t event %d, addr[%#lX]\n", eId, cbAddr);
+
+				
+				for(unsigned int i=0; i< events->size(); ++i)
+				{
+					//check if the event is valid
+					if((*events)[i]->id == eId)
+					{
+						//add a listener
+						printf("event found...\n");
+						remote_callback * rcb = new remote_callback;
+						rcb->socket = sockFD;
+						rcb->addr = cbAddr;
+						(*events)[i]->listeners.push_back(rcb);
+						printf("callback added!\n");
+					}
+
+				}
+				
+			}
 			else
 			{
-				printf("invalid opcode!!!!! [%d]\n", opcode);
+				printf("invalid opcode!!!!! [%#X]\n", opcode);
 			}
 			
 		}
