@@ -88,10 +88,17 @@ void handleConnection(int sockFD)
 				//do this with the common buffer for now
 				buffer[0] = OP_SEND_EVENT_LIST;
 				buffer[1] = (unsigned char)num_events;
-				int i;
+				/*int i;
 				for(i=0; i<num_events; ++i)
 				{
 					buffer[2+i] = (unsigned char)event_list[i];
+				}
+				*/
+
+				for(unsigned int i=0; i< events->size(); ++i)
+				{
+					printf("%d\n", (*events)[i]->id);
+					buffer[2+i] = (unsigned char)(*events)[i]->id;
 				}
 				send(sockFD, buffer, num_events+2, 0);
 			}

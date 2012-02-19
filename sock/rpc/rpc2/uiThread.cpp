@@ -35,4 +35,5 @@ void * runUI(void * arg)
 		if(in == 'd')
 			doEventD();
 	}
+	return NULL;
 }
