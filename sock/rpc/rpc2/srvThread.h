@@ -10,6 +10,9 @@
 #include <sys/un.h>
 #include <unistd.h>
 
+#include "rpcSrv.h"
+#include "rpcProto.h"
+
 #define BUFFSIZE 255
 
 void handleConnection(int sockFD);

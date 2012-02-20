@@ -1,4 +1,3 @@
-#include "rpcSrv.h"
 #include "srvThread.h"
 
 int event_list[] = { EVENT_A,

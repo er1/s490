@@ -16,14 +16,6 @@ using namespace std;
 
 #define SOCK_PATH "/tmp/rpc_sock"
 
-//opcodes -- requests from client
-#define OP_GET_EVENT_LIST 1
-#define OP_REG_EVENT      2
-
-//opcodes -- responces to client
-#define OP_SEND_EVENT_LIST 1
-#define OP_SEND_CALLBACK 2
-
 //events
 #define EVENT_A 1
 #define EVENT_B 2
