@@ -9,13 +9,15 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <unistd.h>
+#include <stdint.h>
+#include <pthread.h>
 
 #include "rpcSrv.h"
 #include "rpcProto.h"
 
 #define BUFFSIZE 255
 
-void handleConnection(int sockFD);
-void * runServer(void *);
+void * handleConnection(void * socket);
+void runServer();
 
 #endif

@@ -1,19 +1,25 @@
 #include "srvThread.h"
 
-int event_list[] = { EVENT_A,
+/*int event_list[] = { EVENT_A,
 					 EVENT_B,
 					 EVENT_C,
 					 EVENT_D };
 
 int num_events = sizeof(event_list)/sizeof(int);
+*/
 
-void * runServer(void * arg)
+vector<pthread_t> threadList;
+vector<int> socketList;
+
+void runServer()
 {
 	int s, s2, t, len;
     struct sockaddr_un local, remote;
-    //char str[100];
 
-    if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+	//ask the OS for a socket
+	s = socket(AF_UNIX, SOCK_STREAM, 0);
+    if(s == -1)
+	{
         perror("socket");
         exit(1);
     }
@@ -22,37 +28,55 @@ void * runServer(void * arg)
     strcpy(local.sun_path, SOCK_PATH);
     unlink(local.sun_path);
     len = strlen(local.sun_path) + sizeof(local.sun_family);
-    if (bind(s, (struct sockaddr *)&local, len) == -1) {
+    
+	//bind it to our domain socket
+	if (bind(s, (struct sockaddr *)&local, len) == -1) 
+	{
         perror("bind");
         exit(1);
     }
 
-    if (listen(s, 1) == -1) {
+	//start accepting connections
+    if (listen(s, 4) == -1) 
+	{
         perror("listen");
         exit(1);
     }
 
-    for(;;) {
-        //int done, n;
+	t = sizeof(remote);
+    while(1)
+	{
         printf("Waiting for a connection...\n");
-        t = sizeof(remote);
-        if ((s2 = accept(s, (struct sockaddr *)&remote, (socklen_t*)&t)) == -1) {
+        if ((s2 = accept(s, (struct sockaddr *)&remote, (socklen_t*)&t)) == -1) 
+		{
             perror("accept");
             exit(1);
         }
+        printf("Got connection [%#X].\n", s2);
 
-        printf("Connected.\n");
+		pthread_t pt;
+		threadList.push_back(pt);
+		socketList.push_back(s2);
 
-		handleConnection(s2);
-        close(s2);
+		pthread_create(
+			&threadList[threadList.size()-1],
+			NULL,
+			handleConnection,
+			(void *)&socketList[socketList.size()-1]
+			);
+
+		//handleConnection(s2);
+        //close(s2);
 	}
 }
 
 
-void handleConnection(int sockFD)
+void * handleConnection(void * socket)
 {
+	int sockFD;
+	sockFD = *(int *)socket;
 
-	unsigned char buffer[BUFFSIZE]; // buffer for received data
+	uint8_t buffer[BUFFSIZE]; // buffer for received data
 	
 	memset(&buffer, 0, BUFFSIZE - 1);
 	
@@ -78,7 +102,7 @@ void handleConnection(int sockFD)
 			printf("recieved %d bytes from [%#X]\n", rcv, sockFD);
 
 			//actually handle commands
-			unsigned char opcode = *buffer;
+			uint8_t opcode = *buffer;
 
 			if(opcode == OP_GET_EVENT_LIST)
 			{
@@ -86,20 +110,14 @@ void handleConnection(int sockFD)
 				printf("[%#X] requested event list\n", sockFD);
 				//do this with the common buffer for now
 				buffer[0] = OP_SEND_EVENT_LIST;
-				buffer[1] = (unsigned char)num_events;
-				/*int i;
-				for(i=0; i<num_events; ++i)
-				{
-					buffer[2+i] = (unsigned char)event_list[i];
-				}
-				*/
+				buffer[1] = (uint8_t)events->size();
 
-				for(unsigned int i=0; i< events->size(); ++i)
+				for(unsigned int i=0; i<events->size(); ++i)
 				{
 					printf("%d\n", (*events)[i]->id);
-					buffer[2+i] = (unsigned char)(*events)[i]->id;
+					buffer[2+i] = (uint8_t)(*events)[i]->id;
 				}
-				send(sockFD, buffer, num_events+2, 0);
+				send(sockFD, buffer, events->size()+2, 0);
 			}
 			else if(opcode == OP_REG_EVENT)
 			{
@@ -107,13 +125,13 @@ void handleConnection(int sockFD)
 				//8bits event id
 				//32bits addr
 				read(sockFD, buffer+1, 5);
-				unsigned char eId = buffer[1];
-				unsigned long cbAddr = *(unsigned long *)(buffer + 2);
+				uint8_t eId = buffer[1];
+				uint32_t cbAddr = *(uint32_t *)(buffer + 2);
 				printf("[%#X] requested event registration\n", sockFD);
-				printf("\t event %d, addr[%#lX]\n", eId, cbAddr);
+				printf("\t event %d, addr[%#X]\n", eId, cbAddr);
 
 				
-				for(unsigned int i=0; i< events->size(); ++i)
+				for(unsigned int i=0; i<events->size(); ++i)
 				{
 					//check if the event is valid
 					if((*events)[i]->id == eId)
@@ -140,4 +158,6 @@ void handleConnection(int sockFD)
 	
 	printf("closing socket %#X\n", sockFD);
 	close(sockFD);
+
+	return NULL;
 }

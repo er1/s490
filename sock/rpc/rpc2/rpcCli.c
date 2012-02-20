@@ -48,6 +48,7 @@ int main(void)
 	buf[0] = OP_GET_EVENT_LIST;
 	send(s, buf, 1, 0);
 	//sent request for event list
+	////////////////////////////////////
 
 	//try to recieve that
 	read(s, buf, 2);
@@ -90,33 +91,6 @@ int main(void)
 			}
 		}
 	}
-
-
-/*	buf[0] = 1;
-	send(s, buf, 1, 0);
-
-	buf[0] = 2;
-	send(s, buf, 1, 0);
-
-	buf[0] = 3;
-	send(s, buf, 1, 0);
-	
-*/
-/*    while(printf("> "), fgets(str, 100, stdin), !feof(stdin)) {
-        if (send(s, str, strlen(str), 0) == -1) {
-            perror("send");
-            exit(1);
-        }
-
-        if ((t=recv(s, str, 100, 0)) > 0) {
-            str[t] = '\0';
-            printf("echo> %s", str);
-        } else {
-            if (t < 0) perror("recv");
-            else printf("Server closed connection\n");
-            exit(1);
-        }
-		}*/
 
     close(s);
 

@@ -37,6 +37,7 @@ typedef struct {
 
 //global
 
-//vector<event *> * events;
+extern vector<pthread_t> threadList;
+extern vector<int> socketList;
 
 #endif
