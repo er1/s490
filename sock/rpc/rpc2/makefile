@@ -1,4 +1,4 @@
-all: rpcSrv
+all: rpcSrv cli
 
 rpcSrv: rpcSrv.o
 	g++ -Wall -lpthread rpcSrv.o srvThread.o uiThread.o event.o -o rpcSrv
@@ -15,6 +15,9 @@ srvThread.o:
 event.o:
 	g++ -g -Wall -c event.cpp
 
+cli:
+	gcc -g -Wall rpcCli.c -o cli
+
 clean:
-	rm *o rpcSrv
+	rm *o rpcSrv cli
 

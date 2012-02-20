@@ -14,8 +14,6 @@
 
 using namespace std;
 
-#define SOCK_PATH "/tmp/rpc_sock"
-
 //events
 #define EVENT_A 1
 #define EVENT_B 2
