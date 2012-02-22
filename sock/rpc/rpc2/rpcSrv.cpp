@@ -2,6 +2,8 @@
 
 vector<event *> * events = new vector<event *>;
 
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+
 int main()
 {
 	//initialize some things
@@ -26,6 +28,7 @@ int main()
 	e->id = EVENT_D;
 	events->push_back(e);
 
+	printf("☢CAUTION!!☢\n");
 	
 	//start the server thread
 /*	printf("starting server thread...");

@@ -13,7 +13,7 @@ srvThread.o:
 	g++ -g -Wall -lpthread -c srvThread.cpp
 
 event.o:
-	g++ -g -Wall -c event.cpp
+	g++ -g -Wall -lpthread -c event.cpp
 
 cli:
 	gcc -g -Wall rpcCli.c -o cli

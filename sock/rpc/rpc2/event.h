@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <cstdio>
+#include <pthread.h>
 #include "rpcSrv.h"
 
 using namespace std;
@@ -23,7 +24,10 @@ public:
 
 	event();
 	void updateListeners();
+	void removeListenersOnSock(int sock);
 };
+
+extern pthread_mutex_t mutex;
 
 extern vector<event *> * events;
 

@@ -20,24 +20,8 @@ using namespace std;
 #define EVENT_C 4
 #define EVENT_D 8
 
-/*
-typedef struct {
-	unsigned char opcode;
-	unsigned char len;
-	unsigned char * event_ids;
-} EVENT_LIST;
-
-typedef struct {
-	int socket;
-	int addr;
-} remote_callback;
-*/
-
-
-
 //global
-
 extern vector<pthread_t> threadList;
-extern vector<int> socketList;
+//extern vector<int> socketList;
 
 #endif

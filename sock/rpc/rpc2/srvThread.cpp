@@ -1,13 +1,5 @@
 #include "srvThread.h"
 
-/*int event_list[] = { EVENT_A,
-					 EVENT_B,
-					 EVENT_C,
-					 EVENT_D };
-
-int num_events = sizeof(event_list)/sizeof(int);
-*/
-
 vector<pthread_t> threadList;
 vector<int> socketList;
 
@@ -56,17 +48,15 @@ void runServer()
 
 		pthread_t pt;
 		threadList.push_back(pt);
-		socketList.push_back(s2);
+		//socketList.push_back(s2);
 
 		pthread_create(
 			&threadList[threadList.size()-1],
 			NULL,
 			handleConnection,
-			(void *)&socketList[socketList.size()-1]
+			//(void *)&socketList[socketList.size()-1]
+			(void *)&s2
 			);
-
-		//handleConnection(s2);
-        //close(s2);
 	}
 }
 
@@ -154,6 +144,13 @@ void * handleConnection(void * socket)
 			}
 			
 		}
+	}
+
+	//we lost the connection...
+	//need to remove all listeners on the socket
+	for(unsigned int i=0; i<events->size(); ++i)
+	{
+		(*events)[i]->removeListenersOnSock(sockFD);
 	}
 	
 	printf("closing socket %#X\n", sockFD);
