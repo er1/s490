@@ -5,16 +5,18 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <unistd.h>
+#include <stdint.h>
 
-#include "rpc.h"
+#include "rpcProto.h"
 
 #define BUFFSIZE 255
 
 int main(void)
 {
-    int s, t, len;
+    int s, len;
     struct sockaddr_un remote;
-    unsigned char buf[BUFFSIZE];
+    uint8_t buf[BUFFSIZE];
 
 	memset(&buf, 0, BUFFSIZE - 1);
 
@@ -43,9 +45,10 @@ int main(void)
 	////////////////////////////////////
 
 	////////////////////////////////////
-	buf[0] = 1;
+	buf[0] = OP_GET_EVENT_LIST;
 	send(s, buf, 1, 0);
 	//sent request for event list
+	////////////////////////////////////
 
 	//try to recieve that
 	read(s, buf, 2);
@@ -56,9 +59,9 @@ int main(void)
 		buf[2], buf[3], buf[4], buf[5]);
 
 	//now try to register for something
-	buf[0] = 2;
+	buf[0] = OP_REG_EVENT;
 	buf[1] = 1;
-	*(unsigned long*)(buf+2) = 0x12345678;
+	*(uint32_t *)(buf+2) = 0x12345678;
 	send(s, buf, 6, 0);
 
 	while(1)
@@ -77,10 +80,10 @@ int main(void)
 		}
 		else
 		{
-			if(buf[0] == 2)//callback
+			if(buf[0] == OP_SEND_CALLBACK)//callback
 			{
 				recv(s, buf+1, 4, 0);
-				printf("CALLBACK: %#X\n", *(unsigned long  *)(buf+1));
+				printf("CALLBACK: %#X\n", *(uint32_t  *)(buf+1));
 			}
 			else
 			{
@@ -88,33 +91,6 @@ int main(void)
 			}
 		}
 	}
-
-
-/*	buf[0] = 1;
-	send(s, buf, 1, 0);
-
-	buf[0] = 2;
-	send(s, buf, 1, 0);
-
-	buf[0] = 3;
-	send(s, buf, 1, 0);
-	
-
-/*    while(printf("> "), fgets(str, 100, stdin), !feof(stdin)) {
-        if (send(s, str, strlen(str), 0) == -1) {
-            perror("send");
-            exit(1);
-        }
-
-        if ((t=recv(s, str, 100, 0)) > 0) {
-            str[t] = '\0';
-            printf("echo> %s", str);
-        } else {
-            if (t < 0) perror("recv");
-            else printf("Server closed connection\n");
-            exit(1);
-        }
-		}*/
 
     close(s);
 
