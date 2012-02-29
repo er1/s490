@@ -5,7 +5,7 @@
 void doEventA()
 {
 	printf("A >>\n");
-	(*events)[0]->updateListeners();
+	(*knowledgeItems)[0]->updateListeners();
 }
 void doEventB()
 {

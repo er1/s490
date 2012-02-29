@@ -1,7 +1,6 @@
 #include "srvThread.h"
 
 vector<pthread_t> threadList;
-//vector<int> socketList;
 
 void runServer()
 {
@@ -17,7 +16,7 @@ void runServer()
     }
 
     local.sun_family = AF_UNIX;
-    strcpy(local.sun_path, SOCK_PATH);
+    strcpy(local.sun_path, CS_SOCK_PATH);
     unlink(local.sun_path);
     len = strlen(local.sun_path) + sizeof(local.sun_family);
     
@@ -97,18 +96,17 @@ void * handleConnection(void * socket)
 
 			if(opcode == OP_GET_EVENT_LIST)
 			{
-				
 				printf("[%#X] requested event list\n", sockFD);
 				//do this with the common buffer for now
 				buffer[0] = OP_SEND_EVENT_LIST;
-				buffer[1] = (uint8_t)events->size();
+				buffer[1] = (uint8_t)knowledgeItems->size();
 
-				for(unsigned int i=0; i<events->size(); ++i)
+				for(unsigned int i=0; i<knowledgeItems->size(); ++i)
 				{
-					printf("%d\n", (*events)[i]->id);
-					buffer[2+i] = (uint8_t)(*events)[i]->id;
+					printf("%d\n", (*knowledgeItems)[i]->id);
+					buffer[2+i] = (uint8_t)(*knowledgeItems)[i]->id;
 				}
-				send(sockFD, buffer, events->size()+2, 0);
+				send(sockFD, buffer, knowledgeItems->size()+2, 0);
 			}
 			else if(opcode == OP_REG_EVENT)
 			{
@@ -120,39 +118,32 @@ void * handleConnection(void * socket)
 				uint32_t cbAddr = *(uint32_t *)(buffer + 2);
 				printf("[%#X] requested event registration\n", sockFD);
 				printf("\t event %d, addr[%#X]\n", eId, cbAddr);
-
 				
-				for(unsigned int i=0; i<events->size(); ++i)
+				for(unsigned int i=0; i<knowledgeItems->size(); ++i)
 				{
 					//check if the event is valid
-					if((*events)[i]->id == eId)
+					if((*knowledgeItems)[i]->id == eId)
 					{
 						//add a listener
 						printf("event found...\n");
-						//remote_callback * rcb = new remote_callback;
-						//rcb->socket = sockFD;
-						//rcb->addr = cbAddr;
-						//(*events)[i]->listeners.push_back(rcb);
-						(*events)[i]->addListenerOnSock(cbAddr, sockFD);
+						(*knowledgeItems)[i]->addListenerOnSock(cbAddr, sockFD);
 						printf("callback added!\n");
 					}
 
-				}
-				
+				}	
 			}
 			else
 			{
 				printf("invalid opcode!!!!! [%#X]\n", opcode);
 			}
-			
 		}
 	}
 
 	//we lost the connection...
 	//need to remove all listeners on the socket
-	for(unsigned int i=0; i<events->size(); ++i)
+	for(unsigned int i=0; i<knowledgeItems->size(); ++i)
 	{
-		(*events)[i]->removeListenersOnSock(sockFD);
+		(*knowledgeItems)[i]->removeListenersOnSock(sockFD);
 	}
 	
 	printf("closing socket %#X\n", sockFD);

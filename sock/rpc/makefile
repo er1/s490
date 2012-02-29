@@ -2,12 +2,12 @@ CC=g++
 CFLAGS = -Wall
 bin = bin
 
-all: rpcSrv cli
+all: rpcSrv testCS
 
 rpcSrv: rpcSrv.o
-	$(CC) $(CFLAGS) -lpthread $(bin)/rpcSrv.o $(bin)/srvThread.o $(bin)/uiThread.o $(bin)/event.o -o $(bin)/rpcSrv
+	$(CC) $(CFLAGS) -lpthread $(bin)/rpcSrv.o $(bin)/srvThread.o $(bin)/uiThread.o $(bin)/knowledgeItem.o -o $(bin)/rpcSrv
 
-rpcSrv.o: srvThread.o uiThread.o event.o rpcSrv.cpp
+rpcSrv.o: srvThread.o uiThread.o knowledgeItem.o rpcSrv.cpp
 	$(CC) $(CFLAGS) -c rpcSrv.cpp -o $(bin)/rpcSrv.o
 
 uiThread.o: uiThread.cpp
@@ -16,14 +16,14 @@ uiThread.o: uiThread.cpp
 srvThread.o: srvThread.cpp
 	$(CC) $(CFLAGS) -lpthread -c srvThread.cpp -o $(bin)/srvThread.o
 
-event.o: event.cpp
-	$(CC) $(CFLAGS) -lpthread -c event.cpp -o $(bin)/event.o
+knowledgeItem.o: knowledgeItem.cpp
+	$(CC) $(CFLAGS) -lpthread -c knowledgeItem.cpp -o $(bin)/knowledgeItem.o
 
-cli: rpcCli.c
-	gcc $(CFLAGS) rpcCli.c -o $(bin)/cli
+testCS: testCS.c
+	gcc $(CFLAGS) testCS.c -o $(bin)/testCS
 
 clean:
-	rm $(bin)/*.o $(bin)/rpcSrv $(bin)/cli
+	rm $(bin)/*.o $(bin)/rpcSrv $(bin)/testCS
 
 debug: CFLAGS += -g
 debug: all

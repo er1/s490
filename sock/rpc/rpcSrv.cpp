@@ -1,6 +1,6 @@
 #include "rpcSrv.h"
 
-vector<event *> * events = new vector<event *>;
+vector<knowledgeItem *> * knowledgeItems = new vector<knowledgeItem *>;
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -13,29 +13,23 @@ int main()
 	//todo: move this?
 	
 	
-	event * e;
+	knowledgeItem * e;
 
-	e = new event();
-	e->id = EVENT_A;
-	events->push_back(e);
-	e = new event();
-	e->id = EVENT_B;
-	events->push_back(e);
-	e = new event();
-	e->id = EVENT_C;
-	events->push_back(e);
-	e = new event();
-	e->id = EVENT_D;
-	events->push_back(e);
+	e = new knowledgeItem();
+	e->id = KI_A;
+	knowledgeItems->push_back(e);
+	e = new knowledgeItem();
+	e->id = KI_B;
+	knowledgeItems->push_back(e);
+	e = new knowledgeItem();
+	e->id = KI_C;
+	knowledgeItems->push_back(e);
+	e = new knowledgeItem();
+	e->id = KI_D;
+	knowledgeItems->push_back(e);
 
 	printf("☢CAUTION!!☢\n");
 	
-	//start the server thread
-/*	printf("starting server thread...");
-	pthread_create(&ptSrv, NULL, runServer, (void *)NULL);
-	printf("\tdone!\n");
-*/
-
 	//start the interface thread
 	printf("starting UI thread...");
 	pthread_create(&ptUI, NULL, runUI, (void *)NULL);
@@ -43,7 +37,6 @@ int main()
 
 	runServer();
 
-	//pthread_join(ptSrv, NULL);
 	pthread_join(ptUI, NULL);
 }
 

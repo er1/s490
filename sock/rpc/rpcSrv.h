@@ -10,18 +10,17 @@
 #include "srvThread.h"
 #include "uiThread.h"
 
-#include "event.h"
+#include "knowledgeItem.h"
 
 using namespace std;
 
-//events
-#define EVENT_A 1
-#define EVENT_B 2
-#define EVENT_C 4
-#define EVENT_D 8
+//Sample knowlegeItems
+#define KI_A 1
+#define KI_B 2
+#define KI_C 4
+#define KI_D 8
 
 //global
 extern vector<pthread_t> threadList;
-//extern vector<int> socketList;
 
 #endif
