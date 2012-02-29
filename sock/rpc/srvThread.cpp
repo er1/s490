@@ -1,7 +1,7 @@
 #include "srvThread.h"
 
 vector<pthread_t> threadList;
-vector<int> socketList;
+//vector<int> socketList;
 
 void runServer()
 {
@@ -57,6 +57,7 @@ void runServer()
 			//(void *)&socketList[socketList.size()-1]
 			(void *)&s2
 			);
+		pthread_detach(threadList[threadList.size()-1]);
 	}
 }
 

@@ -37,7 +37,7 @@ int main()
 */
 
 	//start the interface thread
-	printf("starting client thread...");
+	printf("starting UI thread...");
 	pthread_create(&ptUI, NULL, runUI, (void *)NULL);
 	printf("\tdone!\n");
 
