@@ -7,16 +7,16 @@ rpcSrv.o: srvThread.o uiThread.o event.o
 	g++ -Wall -c rpcSrv.cpp
 
 uiThread.o:
-	g++ -g -Wall -c uiThread.cpp
+	g++ ${debug} -Wall -c uiThread.cpp
 
 srvThread.o:
-	g++ -g -Wall -lpthread -c srvThread.cpp
+	g++ ${debug} -Wall -lpthread -c srvThread.cpp
 
 event.o:
-	g++ -g -Wall -lpthread -c event.cpp
+	g++ ${debug} -Wall -lpthread -c event.cpp
 
 cli:
-	gcc -g -Wall rpcCli.c -o cli
+	gcc ${debug} -Wall rpcCli.c -o cli
 
 clean:
 	rm *o rpcSrv cli
