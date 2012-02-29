@@ -23,6 +23,7 @@ public:
 	vector<remote_callback *> listeners;
 
 	event();
+	void addListenerOnSock(uint32_t cbA, int sock);
 	void updateListeners();
 	void removeListenersOnSock(int sock);
 };

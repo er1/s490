@@ -128,10 +128,11 @@ void * handleConnection(void * socket)
 					{
 						//add a listener
 						printf("event found...\n");
-						remote_callback * rcb = new remote_callback;
-						rcb->socket = sockFD;
-						rcb->addr = cbAddr;
-						(*events)[i]->listeners.push_back(rcb);
+						//remote_callback * rcb = new remote_callback;
+						//rcb->socket = sockFD;
+						//rcb->addr = cbAddr;
+						//(*events)[i]->listeners.push_back(rcb);
+						(*events)[i]->addListenerOnSock(cbAddr, sockFD);
 						printf("callback added!\n");
 					}
 
@@ -155,6 +156,15 @@ void * handleConnection(void * socket)
 	
 	printf("closing socket %#X\n", sockFD);
 	close(sockFD);
+
+	for(vector<pthread_t>::iterator i=threadList.begin(); i<threadList.end(); ++i)
+	{
+		if(*i == pthread_self())
+		{
+			threadList.erase(i);
+			break;
+		}
+	}
 
 	return NULL;
 }

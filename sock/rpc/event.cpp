@@ -7,6 +7,15 @@ event::event()
 	//derp
 }
 
+void event::addListenerOnSock(uint32_t cbA, int sock)
+{
+	remote_callback * rcb = new remote_callback;
+	rcb->socket = sock;
+	rcb->addr = cbA;
+
+	listeners.push_back(rcb);
+}
+
 void event::updateListeners()
 {
 	unsigned char buf[16];
@@ -32,8 +41,11 @@ void event::removeListenersOnSock(int sock)
 		if((*i)->socket == sock)
 		{
 			printf("Removing listener on socket %#X from event %d\n", sock, id);
+			remote_callback * rcb = *i;
+			delete rcb;
 			listeners.erase(i);
 		}
 	}
 	pthread_mutex_unlock(&mutex);
 }
+// FIXME Cruft from assignment 1
