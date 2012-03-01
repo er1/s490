@@ -35,13 +35,6 @@ void runServer()
         exit(1);
     }
 
-	int flags;
-	if (-1 == (flags = fcntl(s, F_GETFL, 0)))
-        flags = 0;
-    
-	fcntl(s, F_SETFL, flags | O_NONBLOCK);
-
-	printf("Waiting for a connection...\n");
 	t = sizeof(remote);
     while(1)
 	{
