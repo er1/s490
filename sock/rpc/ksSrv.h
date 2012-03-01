@@ -1,5 +1,5 @@
-#ifndef _SRVT_H_
-#define _SRVT_H_
+#ifndef _KS_SRVT_H_
+#define _KS_SRVT_H_
 
 #include <stdio.h>
 #include <stdlib.h>

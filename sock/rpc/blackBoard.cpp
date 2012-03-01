@@ -39,10 +39,9 @@ int main()
 	printf("\tdone!\n");
 
 	
-
-	runServer();
-
 	pthread_join(ptUI, NULL);
+	pthread_join(ptCS, NULL);
+	pthread_join(ptKS, NULL);
 }
 
 

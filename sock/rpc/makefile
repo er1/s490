@@ -7,7 +7,7 @@ all: blackBoard testCS
 blackBoard: blackBoard.o
 	$(CC) $(CFLAGS) -lpthread $(bin)/blackBoard.o $(bin)/csSrv.o $(bin)/ksSrv.o $(bin)/uiThread.o $(bin)/knowledgeItem.o -o $(bin)/blackBoard
 
-blackBoard.o: csSrv.o uiThread.o knowledgeItem.o blackBoard.cpp
+blackBoard.o: csSrv.o ksSrv.o uiThread.o knowledgeItem.o blackBoard.cpp
 	$(CC) $(CFLAGS) -c blackBoard.cpp -o $(bin)/blackBoard.o
 
 uiThread.o: uiThread.cpp

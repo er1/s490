@@ -1,4 +1,4 @@
-#include "csSrv.h"
+#include "ksSrv.h"
 #include "fcntl.h"
 
 vector<pthread_t> threadList;
@@ -52,7 +52,7 @@ void * runKSServer(void * arg)
 		pthread_create(
 			&threadList[threadList.size()-1],
 			NULL,
-			handleConnection,
+			handleKSConnection,
 
 			(void *)&s2
 			);
