@@ -1,7 +1,7 @@
 #ifndef _UI_H_
 #define _UI_H_
 
-#include "rpcSrv.h"
+#include "blackBoard.h"
 
 void doEventA();
 
