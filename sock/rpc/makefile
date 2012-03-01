@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS = -Wall
+CFLAGS = 
 bin = bin
 
 all: blackBoard testCS
@@ -25,5 +25,5 @@ testCS: testCS.c
 clean:
 	rm $(bin)/*.o $(bin)/blackBoard $(bin)/testCS
 
-debug: CFLAGS += -g
+debug: CFLAGS += -g -Wall
 debug: all
