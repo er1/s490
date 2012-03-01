@@ -34,7 +34,11 @@ int main()
 	//start the interface thread
 	printf("starting UI thread...");
 	pthread_create(&ptUI, NULL, runUI, (void *)NULL);
+	pthread_create(&ptCS, NULL, runCSServer, (void *)NULL);
+	pthread_create(&ptKS, NULL, runKSServer, (void *)NULL);
 	printf("\tdone!\n");
+
+	
 
 	runServer();
 

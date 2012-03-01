@@ -9,6 +9,7 @@
 #include <pthread.h>
 
 #include "csSrv.h"
+#include "ksSrv.h"
 #include "uiThread.h"
 #include "tags.h"
 #include "knowledgeItem.h"

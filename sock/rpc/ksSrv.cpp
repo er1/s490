@@ -3,7 +3,7 @@
 
 vector<pthread_t> threadList;
 
-void * runCSServer(void * arg)
+void * runKSServer(void * arg)
 {
 	int s, s2, t, len;
     struct sockaddr_un local, remote;
@@ -52,7 +52,7 @@ void * runCSServer(void * arg)
 		pthread_create(
 			&threadList[threadList.size()-1],
 			NULL,
-			handleCSConnection,
+			handleConnection,
 
 			(void *)&s2
 			);
@@ -61,7 +61,7 @@ void * runCSServer(void * arg)
 }
 
 
-void * handleCSConnection(void * socket)
+void * handleKSConnection(void * socket)
 {
 	int sockFD;
 	sockFD = *(int *)socket;

@@ -17,7 +17,7 @@
 
 #define BUFFSIZE 255
 
-void * handleCSConnection(void * socket);
-void * runCSServer(void * arg);
+void * handleKSConnection(void * socket);
+void * runKSServer(void * arg);
 
 #endif

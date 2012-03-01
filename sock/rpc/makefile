@@ -5,7 +5,7 @@ bin = bin
 all: blackBoard testCS
 
 blackBoard: blackBoard.o
-	$(CC) $(CFLAGS) -lpthread $(bin)/blackBoard.o $(bin)/csSrv.o $(bin)/uiThread.o $(bin)/knowledgeItem.o -o $(bin)/blackBoard
+	$(CC) $(CFLAGS) -lpthread $(bin)/blackBoard.o $(bin)/csSrv.o $(bin)/ksSrv.o $(bin)/uiThread.o $(bin)/knowledgeItem.o -o $(bin)/blackBoard
 
 blackBoard.o: csSrv.o uiThread.o knowledgeItem.o blackBoard.cpp
 	$(CC) $(CFLAGS) -c blackBoard.cpp -o $(bin)/blackBoard.o
@@ -15,6 +15,9 @@ uiThread.o: uiThread.cpp
 
 csSrv.o: csSrv.cpp
 	$(CC) $(CFLAGS) -lpthread -c csSrv.cpp -o $(bin)/csSrv.o
+
+ksSrv.o: ksSrv.cpp
+	$(CC) $(CFLAGS) -lpthread -c ksSrv.cpp -o $(bin)/ksSrv.o
 
 knowledgeItem.o: knowledgeItem.cpp
 	$(CC) $(CFLAGS) -lpthread -c knowledgeItem.cpp -o $(bin)/knowledgeItem.o
