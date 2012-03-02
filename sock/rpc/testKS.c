@@ -8,7 +8,7 @@
 #include <unistd.h>
 #include <stdint.h>
 
-#include "rpcProto.h"
+#include "bbProto.h"
 
 #define BUFFSIZE 255
 
@@ -28,7 +28,7 @@ int main(void)
     printf("Trying to connect...\n");
 
     remote.sun_family = AF_UNIX;
-    strcpy(remote.sun_path, SOCK_PATH);
+    strcpy(remote.sun_path, KS_SOCK_PATH);
     len = strlen(remote.sun_path) + sizeof(remote.sun_family);
     if (connect(s, (struct sockaddr *)&remote, len) == -1) {
         perror("connect");
@@ -44,53 +44,36 @@ int main(void)
 	//server gets invalid opcode
 	////////////////////////////////////
 
+	//now test registering KS
 	////////////////////////////////////
-	buf[0] = OP_GET_EVENT_LIST;
-	send(s, buf, 1, 0);
-	//sent request for event list
+	buf[0] = OP_REG_KS;
+	uint32_t tag = 42;
+	char ksName[] = "Test Data";
+	
+	*(uint32_t *)(buf+1) = tag;
+	strncpy((char *)buf+5, ksName, 200);
+	send(s, buf, strlen(ksName)+6, 0);
 	////////////////////////////////////
 
-	//try to recieve that
-	read(s, buf, 2);
-	printf("[%#X][%#X]...\n", buf[0], buf[1]);
-	read(s, buf+2, buf[1]);
-	printf("[%#X][%#X][%#X][%#X][%#X][%#X]...\n",
-		   buf[0], buf[1],
-		buf[2], buf[3], buf[4], buf[5]);
-
-	//now try to register for something
-	buf[0] = OP_REG_EVENT;
-	buf[1] = 1;
-	*(uint32_t *)(buf+2) = 0x12345678;
-	send(s, buf, 6, 0);
-
+	//now try sending data
+	////////////////////////////////////
 	while(1)
 	{
-		int rcv = recv(s, buf, 1, 0);
-
-		if(rcv < 0)
-		{
-			printf("read error");
+		uint32_t size = 1; //size of data in bytes
+		buf[0] = OP_KS_UPDATE;
+		*(uint32_t *)(buf+1) = tag;
+		*(uint32_t *)(buf+5) = size;
+		printf("input a character:\n-->");
+		scanf("%c", buf+9); //the data
+		printf("\n");
+		send(s, buf, 10, 0);
+		
+		if(*(char *)(buf+9) == 'q')
 			break;
-		}
-		else if(rcv == 0)
-		{
-			printf("Remote Host Closed Connection\n");
-			break;
-		}
-		else
-		{
-			if(buf[0] == OP_SEND_CALLBACK)//callback
-			{
-				recv(s, buf+1, 4, 0);
-				printf("CALLBACK: %#X\n", *(uint32_t  *)(buf+1));
-			}
-			else
-			{
-				printf("invalid opcode!!!!! [%#X]\n", buf[0]);
-			}
-		}
 	}
+
+	
+	////////////////////////////////////
 
     close(s);
 

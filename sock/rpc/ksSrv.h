@@ -1,5 +1,5 @@
-#ifndef _SRVT_H_
-#define _SRVT_H_
+#ifndef _KS_SRVT_H_
+#define _KS_SRVT_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,12 +12,12 @@
 #include <stdint.h>
 #include <pthread.h>
 
-#include "rpcSrv.h"
-#include "rpcProto.h"
+#include "blackBoard.h"
+#include "bbProto.h"
 
-#define BUFFSIZE 255
+#define BUFFSIZE 256
 
-void * handleConnection(void * socket);
-void runServer();
+void * handleKSConnection(void * socket);
+void * runKSServer(void * arg);
 
 #endif

@@ -1,9 +1,11 @@
-#include "srvThread.h"
+#include "csSrv.h"
+#include "fcntl.h"
 
-vector<pthread_t> threadList;
-vector<int> socketList;
+//vector<pthread_t> threadList;
 
-void runServer()
+extern bbThread * threadManager;
+
+void * runCSServer(void * arg)
 {
 	int s, s2, t, len;
     struct sockaddr_un local, remote;
@@ -17,7 +19,7 @@ void runServer()
     }
 
     local.sun_family = AF_UNIX;
-    strcpy(local.sun_path, SOCK_PATH);
+    strcpy(local.sun_path, CS_SOCK_PATH);
     unlink(local.sun_path);
     len = strlen(local.sun_path) + sizeof(local.sun_family);
     
@@ -38,7 +40,7 @@ void runServer()
 	t = sizeof(remote);
     while(1)
 	{
-        printf("Waiting for a connection...\n");
+		printf("Waiting for a (CS) connection...\n");
         if ((s2 = accept(s, (struct sockaddr *)&remote, (socklen_t*)&t)) == -1) 
 		{
             perror("accept");
@@ -46,22 +48,25 @@ void runServer()
         }
         printf("Got connection [%#X].\n", s2);
 
+		threadManager->createDetached(handleCSConnection, (void *)&s2);
+/*
 		pthread_t pt;
 		threadList.push_back(pt);
-		//socketList.push_back(s2);
 
 		pthread_create(
 			&threadList[threadList.size()-1],
 			NULL,
-			handleConnection,
-			//(void *)&socketList[socketList.size()-1]
+			handleCSConnection,
+
 			(void *)&s2
 			);
+		pthread_detach(threadList[threadList.size()-1]);
+*/
 	}
 }
 
 
-void * handleConnection(void * socket)
+void * handleCSConnection(void * socket)
 {
 	int sockFD;
 	sockFD = *(int *)socket;
@@ -96,18 +101,17 @@ void * handleConnection(void * socket)
 
 			if(opcode == OP_GET_EVENT_LIST)
 			{
-				
 				printf("[%#X] requested event list\n", sockFD);
 				//do this with the common buffer for now
 				buffer[0] = OP_SEND_EVENT_LIST;
-				buffer[1] = (uint8_t)events->size();
+				buffer[1] = (uint8_t)knowledgeItems->size();
 
-				for(unsigned int i=0; i<events->size(); ++i)
+				for(unsigned int i=0; i<knowledgeItems->size(); ++i)
 				{
-					printf("%d\n", (*events)[i]->id);
-					buffer[2+i] = (uint8_t)(*events)[i]->id;
+					printf("%d\n", (*knowledgeItems)[i]->id);
+					buffer[2+i] = (uint8_t)(*knowledgeItems)[i]->id;
 				}
-				send(sockFD, buffer, events->size()+2, 0);
+				send(sockFD, buffer, knowledgeItems->size()+2, 0);
 			}
 			else if(opcode == OP_REG_EVENT)
 			{
@@ -119,42 +123,48 @@ void * handleConnection(void * socket)
 				uint32_t cbAddr = *(uint32_t *)(buffer + 2);
 				printf("[%#X] requested event registration\n", sockFD);
 				printf("\t event %d, addr[%#X]\n", eId, cbAddr);
-
 				
-				for(unsigned int i=0; i<events->size(); ++i)
+				for(unsigned int i=0; i<knowledgeItems->size(); ++i)
 				{
 					//check if the event is valid
-					if((*events)[i]->id == eId)
+					if((*knowledgeItems)[i]->id == eId)
 					{
 						//add a listener
 						printf("event found...\n");
-						remote_callback * rcb = new remote_callback;
-						rcb->socket = sockFD;
-						rcb->addr = cbAddr;
-						(*events)[i]->listeners.push_back(rcb);
+						(*knowledgeItems)[i]->addListenerOnSock(cbAddr, sockFD);
 						printf("callback added!\n");
 					}
 
-				}
-				
+				}	
 			}
 			else
 			{
 				printf("invalid opcode!!!!! [%#X]\n", opcode);
 			}
-			
 		}
 	}
 
 	//we lost the connection...
 	//need to remove all listeners on the socket
-	for(unsigned int i=0; i<events->size(); ++i)
+	for(unsigned int i=0; i<knowledgeItems->size(); ++i)
 	{
-		(*events)[i]->removeListenersOnSock(sockFD);
+		(*knowledgeItems)[i]->removeListenersOnSock(sockFD);
 	}
 	
 	printf("closing socket %#X\n", sockFD);
 	close(sockFD);
+
+	threadManager->removeSelf();
+/*
+	for(vector<pthread_t>::iterator i=threadList.begin(); i<threadList.end(); ++i)
+	{
+		if(*i == pthread_self())
+		{
+			threadList.erase(i);
+			break;
+		}
+	}
+*/
 
 	return NULL;
 }
