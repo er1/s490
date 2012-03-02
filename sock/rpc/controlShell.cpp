@@ -45,7 +45,7 @@ void controlShell::init()
 
     printf("Connected.\n");
 
-	pthread_create(&monitor, NULL, &controlShell::threadMaker, (void *)NULL);
+	pthread_create(&monitor, NULL, &controlShell::threadMaker, (void *)this);
 
 	initialized = true;
 }
@@ -108,6 +108,7 @@ vector<dataPoint> * controlShell::getLast(uint32_t t, uint32_t n)
 
 	//got our data from monitor thread
 	gotLast = false;
+	printf("returning lastVect %p\n", lastVect);
 	return lastVect;
 }
 
@@ -161,19 +162,31 @@ void controlShell::handleConnection()
 				uint32_t num;
 				recv(s, buf+1, 4, 0);
 				num = *(uint32_t *)(buf+1);
-				
+
+				printf("OP_RET_LAST %d\n", num);
+
+				//TODO: refactor this in to a single case (lastDP always set, LastVect always set)
 				//simple case
 				if(num == 1)
 				{
+					if(lastVect!=NULL)
+						delete lastVect;
+					lastVect = new vector<dataPoint>();
+
 					recv(s, buf+5, 4, 0);
 					lastDP.size = *(uint32_t*)(buf+5);
 					lastDP.data =  new uint8_t[lastDP.size];
 					recv(s, lastDP.data, lastDP.size, 0);
+
+					lastVect->push_back(lastDP);
 				}
 				else
 				{
 					//slightly less simple case
+					if(lastVect!=NULL)
+						delete lastVect;
 					lastVect = new vector<dataPoint>();
+					printf("created lastVect %p\n", lastVect);
 					for(uint32_t i=0; i<num; ++i)
 					{
 						recv(s, buf+5, 4, 0);

@@ -49,6 +49,8 @@ public:
 	void addListenerOnSock(uint32_t cbA, int sock);
 	void updateListeners();
 	void removeListenersOnSock(int sock);
+	
+	void sendLastNdataPoints(int sock, uint32_t n);//there is probably a better way to do this
 };
 
 

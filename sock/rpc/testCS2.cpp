@@ -22,6 +22,7 @@ int main()
 	//get the last 10 data points
 	vector<dataPoint> * v;
 	v = cs->getLast(tag, 10);
+	printf("getLast returned %p\n", v);
 
 	printf("asked for 10 dataPoints and got --> [");
 	for(uint32_t i=0; i<v->size(); ++i)
