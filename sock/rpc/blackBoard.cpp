@@ -1,4 +1,7 @@
 #include "blackBoard.h"
+
+#include <signal.h>
+
 //FIXME -- move globals to header?
 vector<knowledgeItem *> * knowledgeItems = new vector<knowledgeItem *>;
 
@@ -8,8 +11,15 @@ map<uint32_t, knowledgeItem *> tagMap;
 
 bbThread * threadManager;
 
+void pipeBurst(int) {
+	fprintf(stderr, "PIPE BURST!!!\n");
+}
+
 int main()
 {
+
+	signal(SIGPIPE, pipeBurst);
+
 	threadManager = new bbThread();
 
 	//initialize some things
@@ -33,10 +43,10 @@ int main()
 	e->id = KI_D;
 	knowledgeItems->push_back(e);
 	
-	printf("☢CAUTION!!☢\n");
+	fprintf(stderr, "CAUTION!!\n");
 	
 	//start the interface thread as a normal pthread
-	printf("starting UI thread\n");
+	fprintf(stderr, "starting UI thread\n");
 	pthread_create(&ptUI, NULL, runUI, (void *)NULL);
 	
 	//start managed threads
@@ -48,7 +58,7 @@ int main()
 
 	
 	pthread_join(ptUI, NULL);
-	printf("Quitting....\n");
+	fprintf(stderr, "Quitting....\n");
 	
 	return 0;
 
@@ -67,9 +77,9 @@ void hexDump(void * data, size_t byteLen)
 	if(byteLen == 0) 
 		return;
 	
-	printf("0x  00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F \n");
+	fprintf(stderr, "0x  00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f \n");
 	for(line=0; line<(byteLen/16)+1; line++)
-    {
+	{
 		for(col=0; col<16; col++)
 		{
 			unsigned int pos = 16*line + col;
@@ -79,17 +89,17 @@ void hexDump(void * data, size_t byteLen)
 				break;
 			
 			curByte = *(((unsigned char *)(data)+pos));
-			sprintf(hex, "%s%02X ", hex, curByte);
+			sprintf(hex, "%s%02x ", hex, curByte);
 			
 			if( curByte>=32 && curByte<127 )
 				sprintf(ascii, "%s%c", ascii, curByte);
 			else
 				sprintf(ascii, "%s%s", ascii, ".");
 		}
-		printf("%02X  %-48s %-16s\n", line, hex, ascii);
+		fprintf(stderr, "%02x  %-48s %-16s\n", line, hex, ascii);
 		memset(hex, 0, 48);
 		memset(ascii, 0, 16);
-    }
+	}
 }
 
 

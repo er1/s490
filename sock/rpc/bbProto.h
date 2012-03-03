@@ -9,13 +9,13 @@
 
 //opcodes -- requests from client (CS to BB)
 #define OP_GET_EVENT_LIST 1
-#define OP_REG_EVENT      2
-#define OP_GET_LAST       4
+#define OP_REG_EVENT	  2
+#define OP_GET_LAST	   4
 
 //opcodes -- responces to client (BB to CS)
 #define OP_SEND_EVENT_LIST 1
 #define OP_SEND_CALLBACK   2
-#define OP_RET_LAST        4
+#define OP_RET_LAST		4
 
 ////////////////////////////////
 // Knowledge Source Interface //

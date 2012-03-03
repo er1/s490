@@ -14,28 +14,28 @@
 
 int main(void)
 {
-    int s;
-    struct sockaddr_un remote;
-    uint8_t buf[BUFFSIZE];
+	int s;
+	struct sockaddr_un remote;
+	uint8_t buf[BUFFSIZE];
 
 	memset(&remote, 0, sizeof(struct sockaddr_un));
-	memset(&buf, 0, BUFFSIZE - 1);
+	memset(&buf, 0, BUFFSIZE);
 
-    if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
-        perror("socket");
-        exit(1);
-    }
+	if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+		perror("socket");
+		exit(1);
+	}
 
-    printf("Trying to connect...\n");
+	fprintf(stderr, "Trying to connect...\n");
 
-    remote.sun_family = AF_UNIX;
-    strncpy(remote.sun_path, KS_SOCK_PATH, sizeof(remote.sun_path));
-    if (connect(s, (struct sockaddr *)&remote, sizeof(struct sockaddr_un)) == -1) {
-        perror("connect");
-        exit(1);
-    }
+	remote.sun_family = AF_UNIX;
+	strncpy(remote.sun_path, KS_SOCK_PATH, sizeof(remote.sun_path));
+	if (connect(s, (struct sockaddr *)&remote, sizeof(struct sockaddr_un)) == -1) {
+		perror("connect");
+		exit(1);
+	}
 
-    printf("Connected.\n");
+	fprintf(stderr, "Connected.\n");
 
 	//this is like a test case
 	////////////////////////////////////
@@ -63,9 +63,9 @@ int main(void)
 		buf[0] = OP_KS_UPDATE;
 		*(uint32_t *)(buf+1) = tag;
 		*(uint32_t *)(buf+5) = size;
-		printf("input a character:\n-->");
+		fprintf(stderr, "input a character:\n-->");
 		scanf("%c", buf+9); //the data
-		printf("\n");
+		fprintf(stderr, "\n");
 		send(s, buf, 10, 0);
 		
 		if(*(char *)(buf+9) == 'q')
@@ -75,7 +75,7 @@ int main(void)
 	
 	////////////////////////////////////
 
-    close(s);
+	close(s);
 
-    return 0;
+	return 0;
 }
