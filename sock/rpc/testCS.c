@@ -14,10 +14,11 @@
 
 int main(void)
 {
-    int s, len;
+    int s;
     struct sockaddr_un remote;
     uint8_t buf[BUFFSIZE];
 
+	memset(&remote, 0, sizeof(struct sockaddr_un));
 	memset(&buf, 0, BUFFSIZE - 1);
 
     if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
@@ -28,9 +29,8 @@ int main(void)
     printf("Trying to connect...\n");
 
     remote.sun_family = AF_UNIX;
-    strcpy(remote.sun_path, CS_SOCK_PATH);
-    len = strlen(remote.sun_path) + sizeof(remote.sun_family);
-    if (connect(s, (struct sockaddr *)&remote, len) == -1) {
+    strncpy(remote.sun_path, CS_SOCK_PATH, sizeof(remote.sun_path));
+    if (connect(s, (struct sockaddr *)&remote, sizeof(struct sockaddr_un)) == -1) {
         perror("connect");
         exit(1);
     }

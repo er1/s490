@@ -7,8 +7,11 @@ extern bbThread * threadManager;
 
 void * runCSServer(void * arg)
 {
-	int s, s2, t, len;
+	int s, s2, t;
     struct sockaddr_un local, remote;
+
+	memset(&local, 0, sizeof(sockaddr_un));
+	memset(&remote, 0, sizeof(sockaddr_un));
 
 	//ask the OS for a socket
 	s = socket(AF_UNIX, SOCK_STREAM, 0);
@@ -19,12 +22,11 @@ void * runCSServer(void * arg)
     }
 
     local.sun_family = AF_UNIX;
-    strcpy(local.sun_path, CS_SOCK_PATH);
+    strncpy(local.sun_path, CS_SOCK_PATH, sizeof(local.sun_path));
     unlink(local.sun_path);
-    len = strlen(local.sun_path) + sizeof(local.sun_family);
     
 	//bind it to our domain socket
-	if (bind(s, (struct sockaddr *)&local, len) == -1) 
+	if (bind(s, (struct sockaddr *)&local, sizeof(sockaddr_un)) == -1) 
 	{
         perror("bind");
         exit(1);
@@ -115,25 +117,28 @@ void * handleCSConnection(void * socket)
 			}
 			else if(opcode == OP_REG_EVENT)
 			{
-				//8bits opcode
+				//8bits opcode <-- already in buffer
 				//32bits event tag
 				//32bits addr
-				read(sockFD, buffer+1, 5);
-				uint8_t eId = buffer[1];
-				uint32_t cbAddr = *(uint32_t *)(buffer + 2);
-				printf("[%#X] requested event registration\n", sockFD);
-				printf("\t event %d, addr[%#X]\n", eId, cbAddr);
+				read(sockFD, buffer+1, 8);
+				uint32_t tag = *(uint32_t *)(buffer+1);
+				uint32_t token = *(uint32_t *)(buffer + 5);
+				printf("[%#X] requested update registration\n", sockFD);
+				printf("\t tag %d, token %#X\n", tag, token);
 				
 				for(unsigned int i=0; i<knowledgeItems->size(); ++i)
 				{
 					//check if the event is valid
-					if((*knowledgeItems)[i]->id == eId)
+					//if((*knowledgeItems)[i]->id == eId)
+					if(tagMap.count(tag) > 0)
 					{
 						//add a listener
-						printf("event found...\n");
-						(*knowledgeItems)[i]->addListenerOnSock(cbAddr, sockFD);
+						printf("KI found...\n");
+						//(*knowledgeItems)[i]->addListenerOnSock(cbAddr, sockFD);
+						tagMap[tag]->addListenerOnSock(token, sockFD);
 						printf("callback added!\n");
 					}
+					//TODO: FIXME: Register for something new?
 				}	
 			}
 			else if(opcode == OP_GET_LAST)

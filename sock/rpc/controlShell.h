@@ -43,7 +43,7 @@ public:
 	controlShell(uint32_t t);//does this make sense
 	~controlShell();
 	void init();
-	void reg(uint32_t t, void (*callback)(dataPoint));
+	void reg(uint32_t t, void (*callback)(dataPoint *));
 	void getLast(uint32_t t, dataPoint * dp);
 	vector<dataPoint> * getLast(uint32_t t, uint32_t n);
 

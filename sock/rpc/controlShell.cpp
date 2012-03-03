@@ -26,6 +26,7 @@ void controlShell::init()
 
     struct sockaddr_un remote;
 
+	memset(&remote, 0, sizeof(sockaddr_un));
 	memset(&buf, 0, BUFFSIZE - 1);
 
     if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
@@ -36,9 +37,8 @@ void controlShell::init()
     printf("Trying to connect...\n");
 
     remote.sun_family = AF_UNIX;
-    strcpy(remote.sun_path, CS_SOCK_PATH);
-    int len = strlen(remote.sun_path) + sizeof(remote.sun_family);
-    if (connect(s, (struct sockaddr *)&remote, len) == -1) {
+    strncpy(remote.sun_path, CS_SOCK_PATH, sizeof(remote.sun_path));
+    if (connect(s, (struct sockaddr *)&remote, sizeof(sockaddr_un)) == -1) {
         perror("connect");
         exit(1);
     }
@@ -50,7 +50,7 @@ void controlShell::init()
 	initialized = true;
 }
 
-void controlShell::reg(uint32_t t, void (*callback)(dataPoint))
+void controlShell::reg(uint32_t t, void (*callback)(dataPoint *))
 {
 	//check if we have already have this callback registered
 	for(map<uint32_t, void *>::iterator i=functorMap.begin(); i!=functorMap.end(); ++i)
@@ -138,23 +138,28 @@ void controlShell::handleConnection()
 		else
 		{
 			if(buf[0] == OP_SEND_CALLBACK)//callback
-			{
+			{				
 				uint32_t cbid;
-				dataPoint cbData;
+				dataPoint * cbData =  new dataPoint();
 				//get the callback id
 				recv(s, buf+1, 4, 0);
 				cbid = *(uint32_t *)(buf+1);
+
+				printf("OP_SEND_CALLBACK %#X\n", cbid);
 				
 				//get the length of callback data
 				recv(s, buf+5, 4, 0);
-				cbData.size = *(uint32_t *)(buf+9);
+				cbData->size = *(uint32_t *)(buf+9);
 
-				cbData.data = new uint8_t[cbData.size];
-				recv(s, cbData.data, cbData.size, 0);
+				cbData->data = new uint8_t[cbData->size];
+				recv(s, cbData->data, cbData->size, 0);
 
-				//do the callback
-				void (*f)(dataPoint) = (void(*)(dataPoint))functorMap[cbid];
+				//do the callbxack
+				void (*f)(dataPoint *) = (void(*)(dataPoint *))functorMap[cbid];
 				f(cbData);
+				printf("returned from cb\n");
+				
+				delete cbData;
 				
 			}
 			else if(buf[0] == OP_RET_LAST)

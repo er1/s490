@@ -10,7 +10,8 @@ dataPoint::dataPoint()
 
 dataPoint::~dataPoint()
 {
-	if(data)
+	printf("destroy datapoint: size=%d data at addr=%p\n", size, data);
+	if(data!=NULL)
 		delete[] data;
 }
 
@@ -43,8 +44,9 @@ void knowledgeItem::update(uint32_t len, uint8_t * newData)
 	}
 	dataList.push_back(d);
 	pthread_mutex_unlock(&mutex);
+	updateListeners();
 	printf("Update KI [%s] with %d bytes\n", name.c_str(), len);
-	printf("[%s] has %d/%d dataPoints", name.c_str(), dataList.size(), storageSize);
+	printf("[%s] has %d/%d dataPoints", name.c_str(), (int)dataList.size(), storageSize);
 }
 
 void knowledgeItem::setStorageSize(uint32_t size)
@@ -60,7 +62,7 @@ void knowledgeItem::setStorageSize(uint32_t size)
 	}
 	storageSize = size;
 	pthread_mutex_unlock(&mutex);
-	printf("[%s] has %d/%d dataPoints", name.c_str(), dataList.size(), storageSize);
+	printf("[%s] has %d/%d dataPoints", name.c_str(), (int)dataList.size(), storageSize);
 }
 
 void knowledgeItem::addListenerOnSock(uint32_t cbA, int sock)
@@ -76,17 +78,22 @@ void knowledgeItem::addListenerOnSock(uint32_t cbA, int sock)
 
 void knowledgeItem::updateListeners()
 {
-	unsigned char buf[16];
+	uint8_t buf[16];
 	remote_callback * rc;
+	dataPoint * d;
+
 	printf("update listeners...\n");
 	pthread_mutex_lock(&mutex);
+	d = dataList.back();
 	for(unsigned int i = 0; i < listeners.size(); ++i)
 	{
 		rc = listeners[i];
-		printf("callback: <knowledgeItem %d> %#X, %#lX\n", id, rc->socket, rc->addr);
+		printf("callback: <knowledgeItem %d> %#X, %#X\n", id, rc->socket, rc->addr);
 		buf[0] = OP_SEND_CALLBACK; 
-		memcpy(buf+1, &(rc->addr), 4);
-		send(rc->socket, buf, 5, 0);
+		memcpy(buf+1, &(rc->addr), 4);//TODO: endian
+		memcpy(buf+5, &(d->size), 4);//not sure why i used memcpy here...
+		send(rc->socket, buf, 9, 0);
+		send(rc->socket, d->data, d->size, 0);
 	}
 	pthread_mutex_unlock(&mutex);
 }

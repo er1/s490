@@ -14,7 +14,7 @@ class remote_callback
 {
 public:
 	int socket;
-	unsigned long addr;
+	uint32_t addr;
 };
 
 class dataPoint
