@@ -1,5 +1,3 @@
-#include "csSrv.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -10,8 +8,10 @@
 #include <unistd.h>
 #include <stdint.h>
 #include <pthread.h>
+#include <fcntl.h>
 
-#include "fcntl.h"
+#include "common.h"
+#include "csSrv.h"
 
 extern bbThread * threadManager;
 
@@ -52,13 +52,13 @@ void * runCSServer(void * arg)
 	t = sizeof(remote);
 	while(1)
 	{
-		fprintf(stderr, "Waiting for a (CS) connection...\n");
+		log("Waiting for a (CS) connection...\n");
 		if ((s2 = accept(s, (struct sockaddr *)&remote, (socklen_t*)&t)) == -1) 
 		{
 			perror("accept");
 			exit(1);
 		}
-		fprintf(stderr, "Got connection [%#x].\n", s2);
+		log("Got connection [%#x].\n", s2);
 
 		threadManager->createDetached(handleCSConnection, (void *)&s2);
 /*
@@ -91,7 +91,7 @@ void * handleCSConnection(void * socket)
 	while(1)
 	{
 		//lets try reading the op code
-		fprintf(stderr, "read opcode...\n");
+		log("read opcode...\n");
 		int rcv = read(sockFD, buffer, 1);
 
 		if(rcv < 0)
@@ -101,26 +101,26 @@ void * handleCSConnection(void * socket)
 		}
 		else if(rcv == 0)
 		{
-			fprintf(stderr, "Remote Host Closed Connection\n");
+			log("Remote Host Closed Connection\n");
 			break;
 		}
 		else
 		{
-			fprintf(stderr, "recieved %d bytes from [%#x]\n", rcv, sockFD);
+			log("recieved %d bytes from [%#x]\n", rcv, sockFD);
 
 			//actually handle commands
 			uint8_t opcode = *buffer;
 
 			if(opcode == OP_GET_EVENT_LIST)//to be removed
 			{
-				fprintf(stderr, "[%#x] requested event list\n", sockFD);
+				log("[%#x] requested event list\n", sockFD);
 				//do this with the common buffer for now
 				buffer[0] = OP_SEND_EVENT_LIST;
 				buffer[1] = (uint8_t)knowledgeItems->size();
 
 				for(unsigned int i=0; i<knowledgeItems->size(); ++i)
 				{
-					fprintf(stderr, "%d\n", (*knowledgeItems)[i]->id);
+					log("%d\n", (*knowledgeItems)[i]->id);
 					buffer[2+i] = (uint8_t)(*knowledgeItems)[i]->id;
 				}
 				send(sockFD, buffer, knowledgeItems->size()+2, 0);
@@ -134,8 +134,8 @@ void * handleCSConnection(void * socket)
 				read(sockFD, buffer+1, 8);
 				uint32_t tag = *(uint32_t *)(buffer+1);
 				uint32_t token = *(uint32_t *)(buffer + 5);
-				fprintf(stderr, "[%#x] requested event registration\n", sockFD);
-				fprintf(stderr, "\t tag %d, token[%#x]\n", tag, token);
+				log("[%#x] requested event registration\n", sockFD);
+				log("\t tag %d, token[%#x]\n", tag, token);
 				
 				for(unsigned int i=0; i<knowledgeItems->size(); ++i)
 				{
@@ -144,9 +144,9 @@ void * handleCSConnection(void * socket)
 					if(tagMap.count(tag) > 0)
 					{
 						//add a listener
-						fprintf(stderr, "KI found...\n");
+						log("KI found...\n");
 						tagMap[tag]->addListenerOnSock(token, sockFD);
-						fprintf(stderr, "callback added!\n");
+						log("callback added!\n");
 					}
 					//TODO: FIXME: Register for something new?
 				}	
@@ -158,7 +158,7 @@ void * handleCSConnection(void * socket)
 				read(sockFD, buffer+1, 8);
 				tag = *(uint32_t *)(buffer+1);
 				num = *(uint32_t *)(buffer+5);
-				fprintf(stderr, "[%#x] requested last %d dataPoints for tag %#x.\n", sockFD, num, tag);
+				log("[%#x] requested last %d dataPoints for tag %#x.\n", sockFD, num, tag);
 
 				//is the tag valid?
 				if(tagMap.count(tag) > 0)
@@ -170,12 +170,12 @@ void * handleCSConnection(void * socket)
 				}
 				else
 				{
-					fprintf(stderr, "tag %#x does not exist in database!\n", tag);
+					log("tag %#x does not exist in database!\n", tag);
 				}
 			}
 			else
 			{
-				fprintf(stderr, "invalid opcode!!!!! [%#x]\n", opcode);
+				log("invalid opcode!!!!! [%#x]\n", opcode);
 			}
 		}
 	}
@@ -187,7 +187,7 @@ void * handleCSConnection(void * socket)
 		(*knowledgeItems)[i]->removeListenersOnSock(sockFD);
 	}
 	
-	fprintf(stderr, "closing socket %#x\n", sockFD);
+	log("closing socket %#x\n", sockFD);
 	close(sockFD);
 
 	threadManager->removeSelf();

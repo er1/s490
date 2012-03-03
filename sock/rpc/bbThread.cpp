@@ -6,13 +6,14 @@
 bbThread::bbThread()
 {
 	//mutex = PTHREAD_MUTEX_INITIALIZER;
-	pthread_mutex_init(&mutex, NULL);
+	pthread_mutex_init(&threadListMutex, NULL);
 }
 
 void  bbThread::createDetached(void *(*start_routine)(void*), void * arg)
 {
 	pthread_t thread;
 
+	// create a new thread and let it start running
 	if (pthread_create(&thread, NULL, start_routine, arg) != 0)
 	{
 		perror("bbThread: pthread_create");
@@ -26,25 +27,24 @@ void  bbThread::createDetached(void *(*start_routine)(void*), void * arg)
 	}
 
 	// add this thread id to the list of active threads
-	pthread_mutex_lock(&mutex);
+	pthread_mutex_lock(&threadListMutex);
 	threadList.insert(thread);
-	pthread_mutex_unlock(&mutex);
+	pthread_mutex_unlock(&threadListMutex);
 }
 
 void bbThread::removeSelf()
 {
 	// get this thread id
-	pthread_t thisThread;
-	thisThread = pthread_self();
+	pthread_t thisThread = pthread_self();
 
 	// remove this thread id from the list of active threads
-	pthread_mutex_lock(&mutex);
+	pthread_mutex_lock(&threadListMutex);
 	set<pthread_t>::iterator it = threadList.find(thisThread);
 	if (it != threadList.end())
 	{
 		threadList.erase(it);
 	}
-	pthread_mutex_unlock(&mutex);
+	pthread_mutex_unlock(&threadListMutex);
 
 	// kill off this thread
 	pthread_exit(0);

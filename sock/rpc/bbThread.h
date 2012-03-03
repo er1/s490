@@ -8,7 +8,7 @@ using namespace std;
 
 class bbThread
 {
-	pthread_mutex_t mutex;
+	pthread_mutex_t threadListMutex;
 	set<pthread_t> threadList;
 
 public:

@@ -7,7 +7,9 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <unistd.h>
-#include "fcntl.h"
+#include <fcntl.h>
+
+#include "common.h"
 
 //deque<pthread_t> threadList;
 
@@ -48,17 +50,17 @@ void * runKSServer(void * arg)
 	t = sizeof(remote);
 	while(1)
 	{
-		fprintf(stderr, "Waiting for a (KS) connection...\n");
+		log("Waiting for a (KS) connection...\n");
 		if ((s2 = accept(s, (struct sockaddr *)&remote, (socklen_t*)&t)) == -1) 
 		{
 			perror("accept");
 			exit(1);
 		}
-		fprintf(stderr, "Got connection [%#x].\n", s2);
+		log("Got connection [%#x].\n", s2);
 
-		fprintf(stderr, "Spawning...\n");
+		log("Spawning...\n");
 		threadManager->createDetached(handleKSConnection, (void *)&s2);
-		fprintf(stderr, "DONE!\n");
+		log("DONE!\n");
 /*
 		pthread_t pt;
 		threadList.push_back(pt);
@@ -89,7 +91,7 @@ void * handleKSConnection(void * socket)
 	while(1)
 	{
 		//lets try reading the op code
-		fprintf(stderr, "read opcode...\n");
+		log("read opcode...\n");
 		int rcv = read(sockFD, buffer, 1);
 
 		if(rcv < 0)
@@ -99,12 +101,12 @@ void * handleKSConnection(void * socket)
 		}
 		else if(rcv == 0)
 		{
-			fprintf(stderr, "Remote Host Closed Connection\n");
+			log("Remote Host Closed Connection\n");
 			break;
 		}
 		else
 		{
-			fprintf(stderr, "recieved %d bytes from [%#x]\n", rcv, sockFD);
+			log("recieved %d bytes from [%#x]\n", rcv, sockFD);
 
 			//actually handle commands
 			uint8_t opcode = *buffer;
@@ -113,7 +115,7 @@ void * handleKSConnection(void * socket)
 			{
 				uint32_t rTag;
 
-				fprintf(stderr, "[%#x] Registering Knowledge Source\n", sockFD);				
+				log("[%#x] Registering Knowledge Source\n", sockFD);				
 				//read the tag
 				read(sockFD, buffer, 4);
 				rTag = *(uint32_t *)buffer;
@@ -126,7 +128,7 @@ void * handleKSConnection(void * socket)
 						break;
 					pos++;
 				}
-				fprintf(stderr, "Register: %d:%s\n", rTag, buffer+4);
+				log("Register: %d:%s\n", rTag, buffer+4);
 
 				//actually register
 				//FIXME encapsulate this
@@ -151,14 +153,14 @@ void * handleKSConnection(void * socket)
 				uint8_t * ksData = buffer;
 				uint32_t dataSize, rTag;
 
-				fprintf(stderr, "[%#x] KS Update\n", sockFD);
+				log("[%#x] KS Update\n", sockFD);
 				//read the tag
 				read(sockFD, buffer, 4);
 				rTag =  *(uint32_t *)buffer;
 				//read the size
 				read(sockFD, buffer+4, 4);
 				dataSize = *(uint32_t *)(buffer+4);
-				fprintf(stderr, "data size = %d\n", dataSize);
+				log("data size = %d\n", dataSize);
 				//read the data
 				if(dataSize < BUFFSIZE - 4)
 				{
@@ -177,7 +179,7 @@ void * handleKSConnection(void * socket)
 			}
 			else
 			{
-				fprintf(stderr, "invalid opcode!!!!! [%#x]\n", opcode);
+				log("invalid opcode!!!!! [%#x]\n", opcode);
 			}
 		}
 	}
@@ -189,7 +191,7 @@ void * handleKSConnection(void * socket)
 		(*knowledgeItems)[i]->removeListenersOnSock(sockFD);
 	}
 	
-	fprintf(stderr, "closing socket %#x\n", sockFD);
+	log("closing socket %#x\n", sockFD);
 	close(sockFD);
 
 	threadManager->removeSelf();

@@ -3,8 +3,10 @@
 
 #include <stdint.h>
 
-#define POWER_VOLTAGE_BATTERIES_TAG 1
-#define POWER_CURRENT_TAG 2
-#define POWER_VOLTAGE_PANELS_TAG 3
+typedef uint32_t bbtag;
+
+#define POWER_VOLTAGE_BATTERIES_TAG ((bbtag)1)
+#define POWER_CURRENT_TAG ((bbtag)2)
+#define POWER_VOLTAGE_PANELS_TAG ((bbtag)3)
 
 #endif

@@ -8,6 +8,8 @@
 #include <pthread.h>
 #include <signal.h>
 
+#include "common.h"
+#include "tags.h"
 #include "csSrv.h"
 #include "ksSrv.h"
 #include "uiThread.h"
@@ -24,31 +26,20 @@ using namespace std;
 //extern deque<pthread_t> threadList;
 
 //FIXME -- move globals to header?
-deque<knowledgeItem *> * knowledgeItems = new deque<knowledgeItem *>;
+//FIXME: globals need to be in the .cpp, no tangible code goes into the .h
+deque<knowledgeItem *> * knowledgeItems;
 
 //pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
-map<uint32_t, knowledgeItem *> tagMap;
+map<bbtag, knowledgeItem *> tagMap;
 
 bbThread * threadManager;
 
 void pipeBurst(int) {
-	fprintf(stderr, "PIPE BURST!!!\n");
+	log("PIPE BURST!!!\n");
 }
 
-int main()
-{
-
-	signal(SIGPIPE, pipeBurst);
-
-	threadManager = new bbThread();
-
-	//initialize some things
-	pthread_t ptUI;
-
-	//todo: move this?
-	
-	
+void addTestKI() {
 	knowledgeItem * e;
 
 	e = new knowledgeItem();
@@ -63,12 +54,29 @@ int main()
 	e = new knowledgeItem();
 	e->id = KI_D;
 	knowledgeItems->push_back(e);
+}
+
+int main()
+{
+	// if a socket fails, we will get SIGPIPE. handle it
+	signal(SIGPIPE, pipeBurst);
+
+	threadManager = new bbThread();
+	knowledgeItems = new deque<knowledgeItem *>;
+	knowledgeItems->clear();
+
+	//initialize some things
+	pthread_t ptUI;
+
+#ifdef DEBUG
+	addTestKI();
 	
-	fprintf(stderr, "CAUTION!!\n");
+	log("CAUTION!!\n");
 	
 	//start the interface thread as a normal pthread
-	fprintf(stderr, "starting UI thread\n");
+	log("starting UI thread\n");
 	pthread_create(&ptUI, NULL, runUI, (void *)NULL);
+#endif	
 	
 	//start managed threads
 	threadManager->createDetached(runCSServer);
@@ -77,11 +85,16 @@ int main()
 	//pthread_create(&ptKS, NULL, runKSServer, (void *)NULL);
 	
 
-	
+	// whatif no UI thread?
+#ifdef DEBUG
 	pthread_join(ptUI, NULL);
-	fprintf(stderr, "Quitting....\n");
+	log("Quitting....\n");
 	
 	return 0;
+#else
+	pthread_exit();
+	return -1;
+#endif
 
 }
 
@@ -98,7 +111,7 @@ void hexDump(void * data, size_t byteLen)
 	if(byteLen == 0) 
 		return;
 	
-	fprintf(stderr, "0x  00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f \n");
+	log("0x  00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f \n");
 	for(line=0; line<(byteLen/16)+1; line++)
 	{
 		for(col=0; col<16; col++)
@@ -117,7 +130,7 @@ void hexDump(void * data, size_t byteLen)
 			else
 				sprintf(ascii, "%s%s", ascii, ".");
 		}
-		fprintf(stderr, "%02x  %-48s %-16s\n", line, hex, ascii);
+		log("%02x  %-48s %-16s\n", line, hex, ascii);
 		memset(hex, 0, 48);
 		memset(ascii, 0, 16);
 	}

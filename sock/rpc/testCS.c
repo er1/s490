@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <stdint.h>
 
+#include "common.h"
 #include "bbdef.h"
 
 #define BUFFSIZE 255
@@ -26,7 +27,7 @@ int main(void)
 		exit(1);
 	}
 
-	fprintf(stderr, "Trying to connect...\n");
+	log("Trying to connect...\n");
 
 	remote.sun_family = AF_UNIX;
 	strncpy(remote.sun_path, CS_SOCK_PATH, sizeof(remote.sun_path));
@@ -35,7 +36,7 @@ int main(void)
 		exit(1);
 	}
 
-	fprintf(stderr, "Connected.\n");
+	log("Connected.\n");
 
 	//this is like a test case
 	////////////////////////////////////
@@ -54,9 +55,9 @@ int main(void)
 
 	//try to recieve that
 	read(s, buf, 2);
-	fprintf(stderr, "[%#x][%#x]...\n", buf[0], buf[1]);
+	log("[%#x][%#x]...\n", buf[0], buf[1]);
 	read(s, buf+2, buf[1]);
-	fprintf(stderr, "[%#x][%#x][%#x][%#x][%#x][%#x]...\n",
+	log("[%#x][%#x][%#x][%#x][%#x][%#x]...\n",
 		   buf[0], buf[1],
 		buf[2], buf[3], buf[4], buf[5]);
 	////////////////////////////////////
@@ -74,12 +75,12 @@ int main(void)
 
 		if(rcv < 0)
 		{
-			fprintf(stderr, "read error\n");
+			log("read error\n");
 			break;
 		}
 		else if(rcv == 0)
 		{
-			fprintf(stderr, "Remote Host Closed Connection\n");
+			log("Remote Host Closed Connection\n");
 			break;
 		}
 		else
@@ -87,11 +88,11 @@ int main(void)
 			if(buf[0] == OP_SEND_CALLBACK)//callback
 			{
 				recv(s, buf+1, 4, 0);
-				fprintf(stderr, "CALLBACK: %#x\n", *(uint32_t  *)(buf+1));
+				log("CALLBACK: %#x\n", *(uint32_t  *)(buf+1));
 			}
 			else
 			{
-				fprintf(stderr, "invalid opcode!!!!! [%#x]\n", buf[0]);
+				log("invalid opcode!!!!! [%#x]\n", buf[0]);
 			}
 		}
 	}

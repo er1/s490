@@ -1,4 +1,3 @@
-#include "controlShell.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -7,6 +6,9 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <unistd.h>
+
+#include "common.h"
+#include "controlShell.h"
 
 controlShell::controlShell()
 {
@@ -42,7 +44,7 @@ void controlShell::init()
 		exit(1);
 	}
 
-	fprintf(stderr, "Trying to connect...\n");
+	log("Trying to connect...\n");
 
 	remote.sun_family = AF_UNIX;
 	strncpy(remote.sun_path, CS_SOCK_PATH, sizeof(remote.sun_path));
@@ -51,7 +53,7 @@ void controlShell::init()
 		exit(1);
 	}
 
-	fprintf(stderr, "Connected.\n");
+	log("Connected.\n");
 
 	pthread_create(&monitor, NULL, &controlShell::threadMaker, (void *)this);
 
@@ -116,7 +118,7 @@ deque<dataPoint> * controlShell::getLast(uint32_t t, uint32_t n)
 
 	//got our data from monitor thread
 	gotLast = false;
-	fprintf(stderr, "returning lastVect %p\n", lastVect);
+	log("returning lastVect %p\n", lastVect);
 	return lastVect;
 }
 
@@ -135,12 +137,12 @@ void controlShell::handleConnection()
 
 		if(rcv < 0)
 		{
-			fprintf(stderr, "read error\n");
+			log("read error\n");
 			break;
 		}
 		else if(rcv == 0)
 		{
-			fprintf(stderr, "Remote Host Closed Connection\n");
+			log("Remote Host Closed Connection\n");
 			break;
 		}
 		else
@@ -153,7 +155,7 @@ void controlShell::handleConnection()
 				recv(s, buf+1, 4, 0);
 				cbid = *(uint32_t *)(buf+1);
 
-				fprintf(stderr, "OP_SEND_CALLBACK %#x\n", cbid);
+				log("OP_SEND_CALLBACK %#x\n", cbid);
 				
 				//get the length of callback data
 				recv(s, buf+5, 4, 0);
@@ -165,7 +167,7 @@ void controlShell::handleConnection()
 				//do the callbxack
 				void (*f)(dataPoint *) = (void(*)(dataPoint *))functorMap[cbid];
 				f(cbData);
-				fprintf(stderr, "returned from cb\n");
+				log("returned from cb\n");
 				
 				delete cbData;
 				
@@ -176,7 +178,7 @@ void controlShell::handleConnection()
 				recv(s, buf+1, 4, 0);
 				num = *(uint32_t *)(buf+1);
 
-				fprintf(stderr, "OP_RET_LAST %d\n", num);
+				log("OP_RET_LAST %d\n", num);
 
 				//TODO: refactor this in to a single case (lastDP always set, LastVect always set)
 				//simple case
@@ -199,7 +201,7 @@ void controlShell::handleConnection()
 					if(lastVect!=NULL)
 						delete lastVect;
 					lastVect = new deque<dataPoint>();
-					fprintf(stderr, "created lastVect %p\n", lastVect);
+					log("created lastVect %p\n", lastVect);
 					for(uint32_t i=0; i<num; ++i)
 					{
 						recv(s, buf+5, 4, 0);
@@ -215,7 +217,7 @@ void controlShell::handleConnection()
 			}
 			else
 			{
-				fprintf(stderr, "Control Shell recv invalid opcode!!!!! [%#x]\n", buf[0]);
+				log("Control Shell recv invalid opcode!!!!! [%#x]\n", buf[0]);
 			}
 		}
 	}

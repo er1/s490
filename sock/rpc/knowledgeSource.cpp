@@ -1,5 +1,3 @@
-#include "knowledgeSource.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -9,7 +7,9 @@
 #include <sys/un.h>
 #include <unistd.h>
 
+#include "common.h"
 #include "bbdef.h"
+#include "knowledgeSource.h"
 
 knowledgeSource::knowledgeSource()
 {
@@ -42,7 +42,7 @@ void knowledgeSource::init()
 		exit(1);
 	}
 
-	fprintf(stderr, "Trying to connect...\n");
+	log("Trying to connect...\n");
 
 	remote.sun_family = AF_UNIX;
 	strncpy(remote.sun_path, KS_SOCK_PATH, sizeof(remote.sun_path));
@@ -51,7 +51,7 @@ void knowledgeSource::init()
 		exit(1);
 	}
 
-	fprintf(stderr, "Connected.\n");
+	log("Connected.\n");
 	
 	initialized = true;
 }

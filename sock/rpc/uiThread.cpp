@@ -1,23 +1,23 @@
 #include "uiThread.h"
-
+#include "common.h"
 
 
 void doEventA()
 {
-	fprintf(stderr, "A >>\n");
+	log("A >>\n");
 	(*knowledgeItems)[0]->updateListeners();
 }
 void doEventB()
 {
-	fprintf(stderr, "B >>\n");
+	log("B >>\n");
 }
 void doEventC()
 {
-	fprintf(stderr, "C >>\n");
+	log("C >>\n");
 }
 void doEventD()
 {
-	fprintf(stderr, "D >>\n");
+	log("D >>\n");
 }
 
 void * runUI(void * arg)
@@ -25,9 +25,9 @@ void * runUI(void * arg)
 	while(1)
 	{
 		char in;
-		fprintf(stderr, "-->");
+		log("-->");
 		scanf("%c", &in);
-		fprintf(stderr, "\n");
+		log("\n");
 
 		if(in == 'a')
 			doEventA();

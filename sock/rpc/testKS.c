@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <stdint.h>
 
+#include "common.h"
 #include "bbdef.h"
 
 #define BUFFSIZE 255
@@ -26,7 +27,7 @@ int main(void)
 		exit(1);
 	}
 
-	fprintf(stderr, "Trying to connect...\n");
+	log("Trying to connect...\n");
 
 	remote.sun_family = AF_UNIX;
 	strncpy(remote.sun_path, KS_SOCK_PATH, sizeof(remote.sun_path));
@@ -35,7 +36,7 @@ int main(void)
 		exit(1);
 	}
 
-	fprintf(stderr, "Connected.\n");
+	log("Connected.\n");
 
 	//this is like a test case
 	////////////////////////////////////
@@ -63,9 +64,9 @@ int main(void)
 		buf[0] = OP_KS_UPDATE;
 		*(uint32_t *)(buf+1) = tag;
 		*(uint32_t *)(buf+5) = size;
-		fprintf(stderr, "input a character:\n-->");
+		log("input a character:\n-->");
 		scanf("%c", buf+9); //the data
-		fprintf(stderr, "\n");
+		log("\n");
 		send(s, buf, 10, 0);
 		
 		if(*(char *)(buf+9) == 'q')
