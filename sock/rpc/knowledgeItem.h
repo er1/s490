@@ -52,6 +52,8 @@ public:
 	void removeListenersOnSock(int sock);
 	
 	void sendLastNdataPoints(int sock, uint32_t n);//there is probably a better way to do this
+
+	void print();
 };
 
 

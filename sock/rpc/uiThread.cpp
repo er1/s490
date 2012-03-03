@@ -1,24 +1,14 @@
 #include "uiThread.h"
 #include "common.h"
 
+void printAllKI()
+{
+	for(map<uint32_t, knowledgeItem *>::iterator i=tagMap.begin(); i!=tagMap.end(); ++i)
+	{
+		(*i).second->print();
+	}
+}
 
-void doEventA()
-{
-	log("A >>\n");
-	(*knowledgeItems)[0]->updateListeners();
-}
-void doEventB()
-{
-	log("B >>\n");
-}
-void doEventC()
-{
-	log("C >>\n");
-}
-void doEventD()
-{
-	log("D >>\n");
-}
 
 void * runUI(void * arg)
 {
@@ -26,17 +16,11 @@ void * runUI(void * arg)
 	{
 		char in;
 		log("-->");
-		scanf("%c", &in);
+		in = getchar();
 		log("\n");
 
-		if(in == 'a')
-			doEventA();
-		if(in == 'b')
-			doEventB();
-		if(in == 'c')
-			doEventC();
-		if(in == 'd')
-			doEventD();
+		if(in == 'p')
+			printAllKI();
 		if(in == 'q')
 			break;
 	}

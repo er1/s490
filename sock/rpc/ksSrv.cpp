@@ -61,19 +61,6 @@ void * runKSServer(void * arg)
 		log("Spawning...\n");
 		threadManager->createDetached(handleKSConnection, (void *)&s2);
 		log("DONE!\n");
-/*
-		pthread_t pt;
-		threadList.push_back(pt);
-
-		pthread_create(
-			&threadList[threadList.size()-1],
-			NULL,
-			handleKSConnection,
-
-			(void *)&s2
-			);
-		pthread_detach(threadList[threadList.size()-1]);
-*/
 	}
 }
 
@@ -185,11 +172,6 @@ void * handleKSConnection(void * socket)
 	}
 
 	//we lost the connection...
-	//need to remove all listeners on the socket
-	for(unsigned int i=0; i<knowledgeItems->size(); ++i)
-	{
-		(*knowledgeItems)[i]->removeListenersOnSock(sockFD);
-	}
 	
 	log("closing socket %#x\n", sockFD);
 	close(sockFD);

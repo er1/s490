@@ -16,44 +16,12 @@
 
 using namespace std;
 
-//Sample knowlegeItems
-#define KI_A 1
-#define KI_B 2
-#define KI_C 4
-#define KI_D 8
-
-//global
-//extern deque<pthread_t> threadList;
-
-//FIXME -- move globals to header?
-//FIXME: globals need to be in the .cpp, no tangible code goes into the .h
 deque<knowledgeItem *> * knowledgeItems;
-
-//pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-
 map<bbtag, knowledgeItem *> tagMap;
-
 bbThread * threadManager;
 
 void pipeBurst(int) {
 	log("PIPE BURST!!!\n");
-}
-
-void addTestKI() {
-	knowledgeItem * e;
-
-	e = new knowledgeItem();
-	e->id = KI_A;
-	knowledgeItems->push_back(e);
-	e = new knowledgeItem();
-	e->id = KI_B;
-	knowledgeItems->push_back(e);
-	e = new knowledgeItem();
-	e->id = KI_C;
-	knowledgeItems->push_back(e);
-	e = new knowledgeItem();
-	e->id = KI_D;
-	knowledgeItems->push_back(e);
 }
 
 int main()
@@ -68,15 +36,11 @@ int main()
 	//initialize some things
 	pthread_t ptUI;
 
-#ifdef DEBUG
-	addTestKI();
-	
 	log("CAUTION!!\n");
 	
 	//start the interface thread as a normal pthread
 	log("starting UI thread\n");
 	pthread_create(&ptUI, NULL, runUI, (void *)NULL);
-#endif	
 	
 	//start managed threads
 	threadManager->createDetached(runCSServer);
@@ -84,18 +48,11 @@ int main()
 	//pthread_create(&ptCS, NULL, runCSServer, (void *)NULL);
 	//pthread_create(&ptKS, NULL, runKSServer, (void *)NULL);
 	
-
 	// whatif no UI thread?
-#ifdef DEBUG
 	pthread_join(ptUI, NULL);
 	log("Quitting....\n");
 	
 	return 0;
-#else
-	pthread_exit();
-	return -1;
-#endif
-
 }
 
 //Corey's fancy function for visualizing binary data
