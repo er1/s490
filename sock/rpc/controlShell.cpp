@@ -154,12 +154,13 @@ void controlShell::handleConnection()
 				//get the callback id
 				recv(s, buf+1, 4, 0);
 				cbid = *(uint32_t *)(buf+1);
-
-				log("OP_SEND_CALLBACK %#x\n", cbid);
 				
 				//get the length of callback data
 				recv(s, buf+5, 4, 0);
-				cbData->size = *(uint32_t *)(buf+9);
+				cbData->size = *(uint32_t *)(buf+5);
+
+				fprintf(stderr, "OP_SEND_CALLBACK token:%#X size:%d\n", cbid, cbData->size);
+				hexDump(buf, 9);
 
 				cbData->data = new uint8_t[cbData->size];
 				recv(s, cbData->data, cbData->size, 0);
@@ -167,7 +168,6 @@ void controlShell::handleConnection()
 				//do the callbxack
 				void (*f)(dataPoint *) = (void(*)(dataPoint *))functorMap[cbid];
 				f(cbData);
-				log("returned from cb\n");
 				
 				delete cbData;
 				

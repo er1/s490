@@ -56,6 +56,7 @@ public:
 	void print();
 };
 
+void hexDump(void * data, size_t byteLen);
 
 //extern pthread_mutex_t mutex; //FIXME
 
