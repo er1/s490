@@ -8,7 +8,7 @@
 #include <unistd.h>
 #include <stdint.h>
 
-#include "bbProto.h"
+#include "bbdef.h"
 
 #define BUFFSIZE 255
 

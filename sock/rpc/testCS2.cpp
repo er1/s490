@@ -20,7 +20,7 @@ int main()
 	fprintf(stderr, "last data point -> %c\n", *d.data); //im cheating by knowing its a char ahead of time
 	
 	//get the last 10 data points
-	vector<dataPoint> * v;
+	deque<dataPoint> * v;
 	v = cs->getLast(tag, 10);
 	fprintf(stderr, "getLast returned %p\n", v);
 

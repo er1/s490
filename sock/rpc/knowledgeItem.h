@@ -1,12 +1,13 @@
 #ifndef _KI_H_
 #define _KI_H_
 
-#include <vector>
+#include <deque>
 #include <cstdio>
 #include <pthread.h>
 #include <string>
 #include <list>
-#include "blackBoard.h"
+#include <map>
+#include "blackboard.h"
 
 using namespace std;
 
@@ -32,7 +33,7 @@ class knowledgeItem
 private:
 	string name;
 	uint32_t storageSize;
-	vector<remote_callback *> listeners;
+	deque<remote_callback *> listeners;
 	list<dataPoint *> dataList;
 
 	pthread_mutex_t mutex;
@@ -56,7 +57,7 @@ public:
 
 //extern pthread_mutex_t mutex; //FIXME
 
-extern vector<knowledgeItem *> * knowledgeItems;
+extern deque<knowledgeItem *> * knowledgeItems;
 
 extern map<uint32_t, knowledgeItem *> tagMap;
 

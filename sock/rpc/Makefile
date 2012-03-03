@@ -8,10 +8,10 @@
 #
 
 CSRC = testCS.c testKS.c
-CXXSRC = bbThread.cpp blackBoard.cpp controlShell.cpp csSrv.cpp knowledgeItem.cpp knowledgeSource.cpp ksSrv.cpp testCS2.cpp testKS2.cpp uiThread.cpp
+CXXSRC = bbThread.cpp blackboard.cpp controlShell.cpp csSrv.cpp knowledgeItem.cpp knowledgeSource.cpp ksSrv.cpp testCS2.cpp testKS2.cpp uiThread.cpp
 SRC = $(CSRC) $(CXXSRC)
 OBJ = $(CSRC:.c=.o) $(CXXSRC:.cpp=.o)
-BINARIES = blackBoard testCS testCS2 testKS testKS2
+BINARIES = blackboard testCS testCS2 testKS testKS2
 
 PREFIX = 
 DEBUG = -g -DDEBUG
@@ -21,7 +21,7 @@ CXX = $(PREFIX)g++
 LD = $(PREFIX)g++
 CFLAGS = -Wall -c -fPIC $(DEBUG)
 CXXFLAGS = $(CFLAGS)
-LFLAGS = -Wall -lm -pthread $(DEBUG)
+LFLAGS = -Wall -lm -pthread $(DEBUG) -static
 
 all: $(BINARIES)
 
@@ -29,8 +29,8 @@ all: $(BINARIES)
 # <exe>: <.o files>
 #	$(LD) $(LFLAGS) -o $@ <.o files>
 
-blackBoard: blackBoard.o csSrv.o ksSrv.o uiThread.o knowledgeItem.o bbThread.o
-	$(LD) $(LFLAGS) -o $@ blackBoard.o csSrv.o ksSrv.o uiThread.o knowledgeItem.o bbThread.o
+blackboard: blackboard.o csSrv.o ksSrv.o uiThread.o knowledgeItem.o bbThread.o
+	$(LD) $(LFLAGS) -o $@ blackboard.o csSrv.o ksSrv.o uiThread.o knowledgeItem.o bbThread.o
 
 testCS: testCS.o
 	$(LD) $(LFLAGS) -o $@ testCS.o
@@ -54,3 +54,6 @@ testKS2: testKS2.o knowledgeSource.o
 
 clean:
 	rm -f $(OBJ) $(BINARIES)
+
+bundle: $(BINARIES)
+	tar zvcf deploy.tgz $(BINARIES)

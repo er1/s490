@@ -1,5 +1,8 @@
 #include "bbThread.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+
 bbThread::bbThread()
 {
 	//mutex = PTHREAD_MUTEX_INITIALIZER;

@@ -1,4 +1,5 @@
 #include "knowledgeItem.h"
+#include "bbdef.h"
 #include <sys/socket.h>
 #include <cstring>
 
@@ -102,7 +103,7 @@ void knowledgeItem::updateListeners()
 void knowledgeItem::removeListenersOnSock(int sock)
 {
 	pthread_mutex_lock(&mutex);
-	for(vector<remote_callback *>::iterator i=listeners.begin(); i<listeners.end(); ++i)
+	for(deque<remote_callback *>::iterator i=listeners.begin(); i<listeners.end(); ++i)
 	{
 		if((*i)->socket == sock)
 		{

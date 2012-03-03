@@ -1,21 +1,13 @@
 #ifndef _CS_H_
 #define _CS_H_
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/un.h>
-#include <unistd.h>
 #include <stdint.h>
 #include <pthread.h>
 
-#include <vector>
+#include <deque>
 #include <map>
 
-#include "bbProto.h"
+#include "bbdef.h"
 #include "knowledgeItem.h"
 
 #define BUFFSIZE 256
@@ -30,7 +22,7 @@ private:
 
 	bool gotLast;
 	dataPoint lastDP;
-	vector<dataPoint> * lastVect;
+	deque<dataPoint> * lastVect;
 
 	pthread_t monitor;
 	pthread_mutex_t mutex; //TODO: examine if we need this
@@ -45,7 +37,7 @@ public:
 	void init();
 	void reg(uint32_t t, void (*callback)(dataPoint *));
 	void getLast(uint32_t t, dataPoint * dp);
-	vector<dataPoint> * getLast(uint32_t t, uint32_t n);
+	deque<dataPoint> * getLast(uint32_t t, uint32_t n);
 
 	static void * threadMaker(void * arg);
 
