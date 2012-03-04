@@ -13,7 +13,7 @@ int main()
 	threadManager = new bbThread();
 
 	//initialize some things
-	pthread_t ptUI, ptCS, ptKS;
+	pthread_t ptUI;
 
 	//todo: move this?
 	
@@ -35,17 +35,20 @@ int main()
 	
 	printf("☢CAUTION!!☢\n");
 	
-	//start the interface thread
-	printf("starting UI thread...");
+	//start the interface thread as a normal pthread
+	printf("starting UI thread\n");
 	pthread_create(&ptUI, NULL, runUI, (void *)NULL);
-	pthread_create(&ptCS, NULL, runCSServer, (void *)NULL);
-	pthread_create(&ptKS, NULL, runKSServer, (void *)NULL);
-	printf("\tdone!\n");
+	
+	//start managed threads
+	threadManager->createDetached(runCSServer);
+	threadManager->createDetached(runKSServer);
+	//pthread_create(&ptCS, NULL, runCSServer, (void *)NULL);
+	//pthread_create(&ptKS, NULL, runKSServer, (void *)NULL);
+	
 
 	
 	pthread_join(ptUI, NULL);
-	pthread_join(ptCS, NULL);
-	pthread_join(ptKS, NULL);
+
 }
 
 

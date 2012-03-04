@@ -14,6 +14,7 @@ class bbThread
 public:
 	bbThread();
 	void createDetached(void *(*start_routine)(void*));
+	void createDetached(void *(*start_routine)(void*), void *);
 	void removeSelf();
 };
 

@@ -48,7 +48,7 @@ void * runCSServer(void * arg)
         }
         printf("Got connection [%#X].\n", s2);
 
-		threadManager->createDetached(handleCSConnection);
+		threadManager->createDetached(handleCSConnection, (void *)&s2);
 /*
 		pthread_t pt;
 		threadList.push_back(pt);

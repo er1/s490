@@ -17,7 +17,7 @@ void * runKSServer(void * arg)
     }
 
     local.sun_family = AF_UNIX;
-    strcpy(local.sun_path, CS_SOCK_PATH);
+    strcpy(local.sun_path, KS_SOCK_PATH);
     unlink(local.sun_path);
     len = strlen(local.sun_path) + sizeof(local.sun_family);
     
@@ -38,7 +38,7 @@ void * runKSServer(void * arg)
 	t = sizeof(remote);
     while(1)
 	{
-		printf("Waiting for a (CS) connection...\n");
+		printf("Waiting for a (KS) connection...\n");
         if ((s2 = accept(s, (struct sockaddr *)&remote, (socklen_t*)&t)) == -1) 
 		{
             perror("accept");
@@ -46,7 +46,7 @@ void * runKSServer(void * arg)
         }
         printf("Got connection [%#X].\n", s2);
 
-		threadManager->createDetached(handleKSConnection);
+		threadManager->createDetached(handleKSConnection, (void *)&s2);
 /*
 		pthread_t pt;
 		threadList.push_back(pt);

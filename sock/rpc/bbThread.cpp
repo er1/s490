@@ -8,8 +8,13 @@ bbThread::bbThread()
 
 void  bbThread::createDetached(void *(*start_routine)(void*))
 {
+	createDetached(start_routine, (void *)NULL);
+}
+
+void  bbThread::createDetached(void *(*start_routine)(void*), void * arg)
+{
 	pthread_t thread;
-	pthread_create(&thread, NULL, start_routine, (void *)NULL);
+	pthread_create(&thread, NULL, start_routine, arg);
 	pthread_detach(thread);
 	
 	pthread_mutex_lock(&mutex);
