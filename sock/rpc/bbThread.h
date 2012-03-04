@@ -4,16 +4,17 @@
 #include <pthread.h>
 #include <vector>
 
+using namespace std;
+
 class bbThread
 {
 	pthread_mutex_t mutex;
 	vector<pthread_t> threadList;
 
-	bbThread();
-
 public:
-	createDetached(void *(*start_routine)(void*));
-	removeSelf();
+	bbThread();
+	void createDetached(void *(*start_routine)(void*));
+	void removeSelf();
 };
 
 #endif

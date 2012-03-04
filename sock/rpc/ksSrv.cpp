@@ -1,7 +1,7 @@
 #include "ksSrv.h"
 #include "fcntl.h"
 
-vector<pthread_t> threadList;
+//vector<pthread_t> threadList;
 
 void * runKSServer(void * arg)
 {
@@ -46,6 +46,8 @@ void * runKSServer(void * arg)
         }
         printf("Got connection [%#X].\n", s2);
 
+		threadManager->createDetached(handleKSConnection);
+/*
 		pthread_t pt;
 		threadList.push_back(pt);
 
@@ -57,6 +59,7 @@ void * runKSServer(void * arg)
 			(void *)&s2
 			);
 		pthread_detach(threadList[threadList.size()-1]);
+*/
 	}
 }
 
@@ -149,6 +152,8 @@ void * handleKSConnection(void * socket)
 	printf("closing socket %#X\n", sockFD);
 	close(sockFD);
 
+	threadManager->removeSelf();
+/*
 	for(vector<pthread_t>::iterator i=threadList.begin(); i<threadList.end(); ++i)
 	{
 		if(*i == pthread_self())
@@ -157,6 +162,7 @@ void * handleKSConnection(void * socket)
 			break;
 		}
 	}
+*/
 
 	return NULL;
 }

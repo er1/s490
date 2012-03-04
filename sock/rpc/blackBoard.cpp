@@ -1,13 +1,17 @@
 #include "blackBoard.h"
-
+//FIXME -- move globals to header?
 vector<knowledgeItem *> * knowledgeItems = new vector<knowledgeItem *>;
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 map<uint32_t, knowledgeItem *> tagMap;
 
+bbThread * threadManager;
+
 int main()
 {
+	threadManager = new bbThread();
+
 	//initialize some things
 	pthread_t ptUI, ptCS, ptKS;
 

@@ -1,22 +1,23 @@
-#include "bbthread.h"
+#include "bbThread.h"
 
 bbThread::bbThread()
 {
-	mutex = PTHREAD_MUTEX_INITIALIZER;
+	//mutex = PTHREAD_MUTEX_INITIALIZER;
+	pthread_mutex_init(&mutex, NULL);
 }
 
-bbThread::createDetached(void *(*start_routine)(void*))
+void  bbThread::createDetached(void *(*start_routine)(void*))
 {
 	pthread_t thread;
 	pthread_create(&thread, NULL, start_routine, (void *)NULL);
-	pthread_detach(&thread);
+	pthread_detach(thread);
 	
 	pthread_mutex_lock(&mutex);
 	threadList.push_back(thread);
 	pthread_mutex_unlock(&mutex);
 }
 
-bbthread::removeSelf()
+void bbThread::removeSelf()
 {
 	pthread_t thisThread;
 	thisThread = pthread_self();
@@ -24,7 +25,7 @@ bbthread::removeSelf()
 	pthread_mutex_lock(&mutex);
 	for(vector<pthread_t>::iterator i=threadList.begin(); i<threadList.end(); ++i)
 	{
-		if(*i == pthread_self())
+		if(*i == thisThread)
 		{
 			threadList.erase(i);
 			break;

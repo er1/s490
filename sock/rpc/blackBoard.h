@@ -13,6 +13,7 @@
 #include "uiThread.h"
 #include "tags.h"
 #include "knowledgeItem.h"
+#include "bbThread.h"
 
 using namespace std;
 
@@ -23,6 +24,6 @@ using namespace std;
 #define KI_D 8
 
 //global
-extern vector<pthread_t> threadList;
-
+//extern vector<pthread_t> threadList;
+extern bbThread * threadManager;
 #endif
