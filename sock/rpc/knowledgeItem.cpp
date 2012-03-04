@@ -48,4 +48,4 @@ void knowledgeItem::removeListenersOnSock(int sock)
 	}
 	pthread_mutex_unlock(&mutex);
 }
-// FIXME Cruft from assignment 1
+

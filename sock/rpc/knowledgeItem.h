@@ -28,7 +28,7 @@ public:
 	void removeListenersOnSock(int sock);
 };
 
-extern pthread_mutex_t mutex;
+extern pthread_mutex_t mutex; //FIXME
 
 extern vector<knowledgeItem *> * knowledgeItems;
 
