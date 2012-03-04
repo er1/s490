@@ -48,6 +48,9 @@ int main()
 
 	
 	pthread_join(ptUI, NULL);
+	printf("Quitting....\n");
+	
+	return 0;
 
 }
 
