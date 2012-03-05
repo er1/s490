@@ -97,43 +97,52 @@ void * handleKSConnection(void * socket)
 			//actually handle commands
 			uint8_t opcode = *buffer;
 
-			if(opcode == OP_GET_EVENT_LIST)
+			if(opcode == OP_REG_KS)
 			{
-				printf("[%#X] requested event list\n", sockFD);
-				//do this with the common buffer for now
-				buffer[0] = OP_SEND_EVENT_LIST;
-				buffer[1] = (uint8_t)knowledgeItems->size();
+				uint32_t rTag;
 
-				for(unsigned int i=0; i<knowledgeItems->size(); ++i)
+				printf("[%#X] Registering Knowledge Source\n", sockFD);				
+				//read the tag
+				read(sockFD, buffer, 4);
+				rTag = *(uint32_t *)buffer;
+				//read the string
+				int pos = 4;
+				while(1)
 				{
-					printf("%d\n", (*knowledgeItems)[i]->id);
-					buffer[2+i] = (uint8_t)(*knowledgeItems)[i]->id;
+					read(sockFD, buffer+pos, 1);
+					if(*(uint8_t* )(buffer+pos) == 0)
+						break;
+					pos++;
 				}
-				send(sockFD, buffer, knowledgeItems->size()+2, 0);
+				printf("Register: %d:%s\n", rTag, buffer+4);
+				//actually register
+				//send reply
+				buffer[0] = OP_ACK_REG;
+				send(sockFD, buffer, 1, 0);
 			}
-			else if(opcode == OP_REG_EVENT)
+			else if(opcode == OP_KS_UPDATE)
 			{
-				//8bits opcode
-				//8bits event id
-				//32bits addr
-				read(sockFD, buffer+1, 5);
-				uint8_t eId = buffer[1];
-				uint32_t cbAddr = *(uint32_t *)(buffer + 2);
-				printf("[%#X] requested event registration\n", sockFD);
-				printf("\t event %d, addr[%#X]\n", eId, cbAddr);
-				
-				for(unsigned int i=0; i<knowledgeItems->size(); ++i)
-				{
-					//check if the event is valid
-					if((*knowledgeItems)[i]->id == eId)
-					{
-						//add a listener
-						printf("event found...\n");
-						(*knowledgeItems)[i]->addListenerOnSock(cbAddr, sockFD);
-						printf("callback added!\n");
-					}
+				uint8_t * ksData = buffer;
+				uint32_t dataSize;
 
-				}	
+				printf("[%#X] KS Update\n", sockFD);				
+				//read the size
+				read(sockFD, buffer, 4);
+				dataSize = *(uint32_t *)buffer;
+				printf("data size = %d\n", dataSize);
+				//read the data
+				if(dataSize < BUFFSIZE - 4)
+				{
+					//if we need more space
+					ksData = new uint8_t[dataSize];
+				}
+				read(sockFD, ksData, dataSize);
+				hexDump(ksData, dataSize);
+				//store data
+
+				//send reply
+				buffer[0] = OP_ACK_UPDATE;
+				send(sockFD, buffer, 1, 0);
 			}
 			else
 			{

@@ -15,7 +15,7 @@
 #include "blackBoard.h"
 #include "bbProto.h"
 
-#define BUFFSIZE 255
+#define BUFFSIZE 256
 
 void * handleKSConnection(void * socket);
 void * runKSServer(void * arg);

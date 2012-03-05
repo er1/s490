@@ -15,7 +15,7 @@
 #include "blackBoard.h"
 #include "bbProto.h"
 
-#define BUFFSIZE 255
+#define BUFFSIZE 256
 
 void * handleCSConnection(void * socket);
 void * runCSServer(void * arg);

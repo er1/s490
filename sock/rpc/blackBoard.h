@@ -26,4 +26,7 @@ using namespace std;
 //global
 //extern vector<pthread_t> threadList;
 extern bbThread * threadManager;
+
+void hexDump(void * data, size_t byteLen);
+
 #endif

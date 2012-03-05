@@ -2,7 +2,7 @@ CC=g++
 CFLAGS = 
 bin = bin
 
-all: blackBoard testCS
+all: blackBoard testCS testKS
 
 blackBoard: blackBoard.o
 	$(CC) $(CFLAGS) -lpthread $(bin)/blackBoard.o $(bin)/csSrv.o $(bin)/ksSrv.o $(bin)/uiThread.o $(bin)/knowledgeItem.o $(bin)/bbThread.o -o $(bin)/blackBoard
@@ -27,6 +27,9 @@ bbThread.o: bbThread.cpp
 
 testCS: testCS.c
 	gcc $(CFLAGS) testCS.c -o $(bin)/testCS
+
+testKS: testKS.c
+	gcc $(CFLAGS) testKS.c -o $(bin)/testKS
 
 clean:
 	rm $(bin)/*.o $(bin)/blackBoard $(bin)/testCS
