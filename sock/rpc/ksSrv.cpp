@@ -115,7 +115,21 @@ void * handleKSConnection(void * socket)
 					pos++;
 				}
 				printf("Register: %d:%s\n", rTag, buffer+4);
+
 				//actually register
+				//FIXME encapsulate this
+				map<uint32_t, knowledgeItem *>::iterator ti;
+				ti = tagMap.find(rTag);
+				if(ti == tagMap.end())
+				{
+					//not in database
+					//add it
+					knowledgeItem * ki = new knowledgeItem();
+					ki->setName((char *)(buffer+4));
+					tagMap[rTag] = ki;
+				}
+				//otherwise do nothing special
+
 				//send reply
 				buffer[0] = OP_ACK_REG;
 				send(sockFD, buffer, 1, 0);
@@ -123,12 +137,15 @@ void * handleKSConnection(void * socket)
 			else if(opcode == OP_KS_UPDATE)
 			{
 				uint8_t * ksData = buffer;
-				uint32_t dataSize;
+				uint32_t dataSize, rTag;
 
-				printf("[%#X] KS Update\n", sockFD);				
-				//read the size
+				printf("[%#X] KS Update\n", sockFD);
+				//read the tag
 				read(sockFD, buffer, 4);
-				dataSize = *(uint32_t *)buffer;
+				rTag =  *(uint32_t *)buffer;
+				//read the size
+				read(sockFD, buffer+4, 4);
+				dataSize = *(uint32_t *)(buffer+4);
 				printf("data size = %d\n", dataSize);
 				//read the data
 				if(dataSize < BUFFSIZE - 4)
@@ -139,6 +156,8 @@ void * handleKSConnection(void * socket)
 				read(sockFD, ksData, dataSize);
 				hexDump(ksData, dataSize);
 				//store data
+				//TODO: what if it is not in the DB?
+				tagMap[rTag]->update(dataSize, ksData);
 
 				//send reply
 				buffer[0] = OP_ACK_UPDATE;

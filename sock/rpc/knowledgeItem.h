@@ -1,9 +1,11 @@
-#ifndef _EVENT_H_
-#define _EVENT_H_
+#ifndef _KI_H_
+#define _KI_H_
 
 #include <vector>
 #include <cstdio>
 #include <pthread.h>
+#include <string>
+#include <list>
 #include "blackBoard.h"
 
 using namespace std;
@@ -17,12 +19,21 @@ public:
 
 class knowledgeItem
 {
+private:
+	string name;
+	int storageSize;
+	vector<remote_callback *> listeners;
+	list<uint8_t *> dataList;
+
 public:
 	int id;
-	vector<remote_callback *> listeners;
-	int data;
+	
+	//int data;
 
 	knowledgeItem();
+	void setName(char * str);
+	void update(uint32_t len, uint8_t * newData);
+	void setStorageSize(uint32_t size);
 	void addListenerOnSock(uint32_t cbA, int sock);
 	void updateListeners();
 	void removeListenersOnSock(int sock);
@@ -31,5 +42,7 @@ public:
 extern pthread_mutex_t mutex; //FIXME
 
 extern vector<knowledgeItem *> * knowledgeItems;
+
+extern map<uint32_t, knowledgeItem *> tagMap;
 
 #endif

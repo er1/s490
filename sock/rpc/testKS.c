@@ -61,13 +61,14 @@ int main(void)
 	{
 		uint32_t size = 1; //size of data in bytes
 		buf[0] = OP_KS_UPDATE;
-		*(uint32_t *)(buf+1) = size;
+		*(uint32_t *)(buf+1) = tag;
+		*(uint32_t *)(buf+5) = size;
 		printf("input a character:\n-->");
-		scanf("%c", buf+5); //the data
+		scanf("%c", buf+9); //the data
 		printf("\n");
-		send(s, buf, 6, 0);
+		send(s, buf, 10, 0);
 		
-		if(*(char *)(buf+5) == 'q')
+		if(*(char *)(buf+9) == 'q')
 			break;
 	}
 

@@ -4,7 +4,38 @@
 
 knowledgeItem::knowledgeItem()
 {
-	//derp
+	pthread_mutex_lock(&mutex);
+	//by default we keep one data point
+	storageSize = 1;
+	pthread_mutex_unlock(&mutex);
+}
+
+void knowledgeItem::setName(char * str)
+{
+	pthread_mutex_lock(&mutex);
+	name = str;
+	pthread_mutex_unlock(&mutex);
+}
+
+void knowledgeItem::update(uint32_t len, uint8_t * newData)
+{
+	pthread_mutex_lock(&mutex);
+	//TODO: need a data structure for datapoints
+	dataList.push_back(newData);
+	pthread_mutex_unlock(&mutex);
+}
+
+void knowledgeItem::setStorageSize(uint32_t size)
+{
+	pthread_mutex_lock(&mutex);
+	//if the new size is smaller than current size
+	//need to shrink the list
+	while(size < dataList.size())
+	{
+		dataList.pop_front();
+	}
+	storageSize = size;
+	pthread_mutex_unlock(&mutex);
 }
 
 void knowledgeItem::addListenerOnSock(uint32_t cbA, int sock)
@@ -13,7 +44,9 @@ void knowledgeItem::addListenerOnSock(uint32_t cbA, int sock)
 	rcb->socket = sock;
 	rcb->addr = cbA;
 
+	pthread_mutex_lock(&mutex);
 	listeners.push_back(rcb);
+	pthread_mutex_unlock(&mutex);
 }
 
 void knowledgeItem::updateListeners()
