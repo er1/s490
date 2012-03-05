@@ -19,9 +19,11 @@ void knowledgeItem::setName(char * str)
 
 void knowledgeItem::update(uint32_t len, uint8_t * newData)
 {
+	dataPoint * d = new dataPoint();
+	d->size = len;
+	d->data = newData;
 	pthread_mutex_lock(&mutex);
-	//TODO: need a data structure for datapoints
-	dataList.push_back(newData);
+	dataList.push_back(d);
 	pthread_mutex_unlock(&mutex);
 }
 
@@ -32,6 +34,7 @@ void knowledgeItem::setStorageSize(uint32_t size)
 	//need to shrink the list
 	while(size < dataList.size())
 	{
+		delete dataList.front();
 		dataList.pop_front();
 	}
 	storageSize = size;

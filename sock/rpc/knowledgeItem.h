@@ -17,13 +17,20 @@ public:
 	unsigned long addr;
 };
 
+class dataPoint
+{
+public:
+	uint32_t size;
+	uint8_t * data;
+};
+
 class knowledgeItem
 {
 private:
 	string name;
 	int storageSize;
 	vector<remote_callback *> listeners;
-	list<uint8_t *> dataList;
+	list<dataPoint *> dataList;
 
 public:
 	int id;
@@ -38,6 +45,7 @@ public:
 	void updateListeners();
 	void removeListenersOnSock(int sock);
 };
+
 
 extern pthread_mutex_t mutex; //FIXME
 
