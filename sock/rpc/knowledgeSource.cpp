@@ -41,10 +41,10 @@ void knowledgeSource::setTag(uint32_t t)
 	tag = t;
 }
 
-void knowledgeSource::reg(char * name)
+void knowledgeSource::reg(const char * name)
 {
 	buf[0] = OP_REG_KS;
-	uint32_t rTag = tag;
+	//uint32_t rTag = tag;
 	
 	*(uint32_t *)(buf+1) = tag;
 	strncpy((char *)buf+5, name, 200);

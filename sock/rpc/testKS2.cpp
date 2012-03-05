@@ -4,6 +4,8 @@ int main()
 {
 	knowledgeSource * ks = new knowledgeSource(42);
 
+	ks->init();
+
 	ks->reg("Test Data 2");
 
 	uint8_t * d =  new uint8_t[4];

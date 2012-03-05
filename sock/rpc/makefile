@@ -38,7 +38,7 @@ testKS2.o: testKS2.cpp knowledgeSource.o
 	g++ $(CFLAGS) -c testKS2.cpp -o $(bin)/testKS2.o
 
 testKS2: testKS2.o
-	g++ $(CFLAGS) testKS2.o knowledgeSource.o -o $(bin)/testKS2
+	g++ $(CFLAGS) $(bin)/testKS2.o $(bin)/knowledgeSource.o -o $(bin)/testKS2
 
 clean:
 	rm $(bin)/*.o $(bin)/blackBoard $(bin)/testCS $(bin)/testKS $(bin)/testKS2

@@ -28,7 +28,7 @@ public:
 	knowledgeSource(uint32_t t);
 	void init();
 	void setTag(uint32_t t);
-	void reg(char * name);
+	void reg(const char * name);
 	void update(uint32_t len, uint8_t * data);
 };
 
