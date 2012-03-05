@@ -11,6 +11,8 @@
 #include <unistd.h>
 #include <stdint.h>
 
+#include "bbProto.h"
+
 #define BUFFSIZE 256
 
 class knowledgeSource
@@ -26,7 +28,7 @@ public:
 	knowledgeSource(uint32_t t);
 	void init();
 	void setTag(uint32_t t);
-	void reg();
+	void reg(char * name);
 	void update(uint32_t len, uint8_t * data);
 };
 
