@@ -28,7 +28,7 @@ class knowledgeItem
 {
 private:
 	string name;
-	int storageSize;
+	uint32_t storageSize;
 	vector<remote_callback *> listeners;
 	list<dataPoint *> dataList;
 

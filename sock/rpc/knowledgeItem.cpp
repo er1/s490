@@ -23,12 +23,19 @@ void knowledgeItem::update(uint32_t len, uint8_t * newData)
 	d->size = len;
 	d->data = newData;
 	pthread_mutex_lock(&mutex);
+	if(dataList.size() == storageSize)
+	{
+		dataList.pop_front();
+	}
 	dataList.push_back(d);
 	pthread_mutex_unlock(&mutex);
+	printf("Update KI [%s] with %d bytes\n", name.c_str(), len);
+	printf("[%s] has %d/%d dataPoints", name.c_str(), dataList.size(), storageSize);
 }
 
 void knowledgeItem::setStorageSize(uint32_t size)
 {
+	printf("[%s]changing storage size from %d to %d", name.c_str(), storageSize, size);
 	pthread_mutex_lock(&mutex);
 	//if the new size is smaller than current size
 	//need to shrink the list
@@ -39,6 +46,7 @@ void knowledgeItem::setStorageSize(uint32_t size)
 	}
 	storageSize = size;
 	pthread_mutex_unlock(&mutex);
+	printf("[%s] has %d/%d dataPoints", name.c_str(), dataList.size(), storageSize);
 }
 
 void knowledgeItem::addListenerOnSock(uint32_t cbA, int sock)
