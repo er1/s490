@@ -3,6 +3,7 @@
 controlShell::controlShell()
 {
 	initialized = false;
+	gotLast = false;
 	key = 0;
 }
 
@@ -14,6 +15,8 @@ controlShell::~controlShell()
 {
 	//kill thread if running
 	//close fd if in use
+	close(s);
+	pthread_join(monitor, NULL);
 }
 
 void controlShell::init()
@@ -42,7 +45,7 @@ void controlShell::init()
 
     printf("Connected.\n");
 
-	
+	pthread_create(&monitor, NULL, handleConnection, (void *)NULL);
 
 	initialized = true;
 }
@@ -67,12 +70,45 @@ void controlShell::reg(uint32_t t, void * callback)
 
 }
 
-void controlShell::getLast(dataPoint * dp)
+void controlShell::getLast(uint32_t t, dataPoint * dp)
 {
+	buf[0] = OP_GET_LAST;
+	*(uint32_t *)(buf+1) = t;
+	*(uint32_t *)(buf+5) = 1;
+	send(s, buf, 9, 0);
+
+	//need to block on something until the monitor thread gets our data
+	while(gotLast == false)
+	{
+		//FIXME: wasting cpu
+	}
+	
+	
+	dp.size = lastDP.size;
+	dp.data = lastDP.data;
+
+	lastDP.data = NULL;
+	lastDP.size = 0;
+	
+	gotLast = false;
 }
 
-void controlShell::getLast(uint32_t n, vector<dataPoint> * dpVect)
+vector<dataPoint> * controlShell::getLast(uint32_t t, uint32_t n)
 {
+	buf[0] = OP_GET_LAST;
+	*(uint32_t *)(buf+1) = t;
+	*(uint32_t *)(buf+5) = n;
+	send(s, buf, 9, 0);
+
+	//need to block on something until the monitor thread gets our data
+	while(gotLast == false)
+	{
+		//FIXME: wasting cpu
+	}
+
+	//got our data from monitor thread
+	gotLast = false;
+	return lastVect;
 }
 
 

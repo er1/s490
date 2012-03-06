@@ -27,6 +27,10 @@ private:
 	uint8_t buf[BUFFSIZE];
 	bool initialized;
 
+	bool gotLast;
+	dataPoint lastDP;
+	vector<dataPoin> * lastVect;
+
 	pthread_t monitor;
 	pthread_mutex_t mutex; //TODO: examine if we need this
 	map<uint32_t, void *> functorMap;
@@ -38,8 +42,8 @@ public:
 	controlShell(uint32_t t);
 	void init();
 	void reg(uint32_t t, void * callback);
-	void getLast(dataPoint * dp);
-	void getlast(uint32_t n, vector<dataPoint> * dpVect);
+	void getLast(uint32_t t, dataPoint * dp);
+	vector<dataPoint> * getlast(uint32_t t, uint32_t n);
 
 };
 
