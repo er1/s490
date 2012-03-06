@@ -26,6 +26,7 @@ private:
 public:
 	knowledgeSource();
 	knowledgeSource(uint32_t t);
+	~knowledgeSource();
 	void init();
 	void setTag(uint32_t t);
 	void reg(const char * name);

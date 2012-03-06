@@ -10,6 +10,12 @@ knowledgeSource::knowledgeSource(uint32_t t)
 	setTag(t);
 }
 
+knowledgeSource::~knowledgeSource()
+{
+	if(s > 0)
+		close(s);
+}
+
 void knowledgeSource::init()
 {
 	int len;
