@@ -2,7 +2,7 @@
 
 knowledgeSource::knowledgeSource()
 {
-	//derp
+	initialized = false;
 }
 
 knowledgeSource::knowledgeSource(uint32_t t)
@@ -18,6 +18,9 @@ knowledgeSource::~knowledgeSource()
 
 void knowledgeSource::init()
 {
+	if(initialized == true)
+		return;
+
 	int len;
 	struct sockaddr_un remote;
 
@@ -40,6 +43,7 @@ void knowledgeSource::init()
 
     printf("Connected.\n");
 	
+	initialized = true;
 }
 
 void knowledgeSource::setTag(uint32_t t)

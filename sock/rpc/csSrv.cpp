@@ -99,7 +99,7 @@ void * handleCSConnection(void * socket)
 			//actually handle commands
 			uint8_t opcode = *buffer;
 
-			if(opcode == OP_GET_EVENT_LIST)
+			if(opcode == OP_GET_EVENT_LIST)//to be removed
 			{
 				printf("[%#X] requested event list\n", sockFD);
 				//do this with the common buffer for now
@@ -116,7 +116,7 @@ void * handleCSConnection(void * socket)
 			else if(opcode == OP_REG_EVENT)
 			{
 				//8bits opcode
-				//8bits event id
+				//32bits event tag
 				//32bits addr
 				read(sockFD, buffer+1, 5);
 				uint8_t eId = buffer[1];

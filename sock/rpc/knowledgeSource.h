@@ -18,6 +18,7 @@
 class knowledgeSource
 {
 private:
+	bool initialized;
 	uint32_t tag;
 
 	int s;

@@ -63,9 +63,10 @@ int main(void)
 */
 	//now try to register for something
 	buf[0] = OP_REG_EVENT;
-	buf[1] = 1;
-	*(uint32_t *)(buf+2) = 0x12345678;
-	send(s, buf, 6, 0);
+//	buf[1] = 1;
+	*(uint32_t *)(buf+1) = (uint32_t)1;
+	*(uint32_t *)(buf+5) = 0x12345678;
+	send(s, buf, 9, 0);
 
 	while(1)
 	{
