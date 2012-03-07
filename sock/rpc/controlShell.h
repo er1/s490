@@ -13,9 +13,10 @@
 #include <pthread.h>
 
 #include <vector>
+#include <map>
 
 #include "bbProto.h"
-#include "knowledgeSource.h"
+#include "knowledgeItem.h"
 
 #define BUFFSIZE 256
 
@@ -29,21 +30,24 @@ private:
 
 	bool gotLast;
 	dataPoint lastDP;
-	vector<dataPoin> * lastVect;
+	vector<dataPoint> * lastVect;
 
 	pthread_t monitor;
 	pthread_mutex_t mutex; //TODO: examine if we need this
 	map<uint32_t, void *> functorMap;
 	
-	void * handleConnection(void * arg);
+	void handleConnection();
 
 public:
 	controlShell();
-	controlShell(uint32_t t);
+	controlShell(uint32_t t);//does this make sense
+	~controlShell();
 	void init();
-	void reg(uint32_t t, void * callback);
+	void reg(uint32_t t, void (*callback)(dataPoint));
 	void getLast(uint32_t t, dataPoint * dp);
-	vector<dataPoint> * getlast(uint32_t t, uint32_t n);
+	vector<dataPoint> * getLast(uint32_t t, uint32_t n);
+
+	static void * threadMaker(void * arg);
 
 };
 

@@ -22,6 +22,9 @@ class dataPoint
 public:
 	uint32_t size;
 	uint8_t * data;
+
+	dataPoint();
+	~dataPoint();
 };
 
 class knowledgeItem

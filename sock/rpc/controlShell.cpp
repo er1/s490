@@ -37,7 +37,7 @@ void controlShell::init()
 
     remote.sun_family = AF_UNIX;
     strcpy(remote.sun_path, CS_SOCK_PATH);
-    len = strlen(remote.sun_path) + sizeof(remote.sun_family);
+    int len = strlen(remote.sun_path) + sizeof(remote.sun_family);
     if (connect(s, (struct sockaddr *)&remote, len) == -1) {
         perror("connect");
         exit(1);
@@ -45,23 +45,23 @@ void controlShell::init()
 
     printf("Connected.\n");
 
-	pthread_create(&monitor, NULL, handleConnection, (void *)NULL);
+	pthread_create(&monitor, NULL, &controlShell::threadMaker, (void *)NULL);
 
 	initialized = true;
 }
 
-void controlShell::reg(uint32_t t, void * callback)
+void controlShell::reg(uint32_t t, void (*callback)(dataPoint))
 {
 	//check if we have already have this callback registered
-	for(map<uint32_t, void *>::iterator i=functorMap.begin(); i<functorMap.end(); ++i)
+	for(map<uint32_t, void *>::iterator i=functorMap.begin(); i!=functorMap.end(); ++i)
 	{
-		if(it->second == callback)
+		if(i->second == callback)
 			return;
 	}
 
 	//dangerous assumption: we will never run out of keyspace
 	++key;
-	functorMap[key] = callback;
+	functorMap[key] = (void *)callback;
 
 	buf[0] = OP_REG_EVENT;
 	*(uint32_t *)(buf+1) = t;
@@ -84,8 +84,8 @@ void controlShell::getLast(uint32_t t, dataPoint * dp)
 	}
 	
 	
-	dp.size = lastDP.size;
-	dp.data = lastDP.data;
+	dp->size = lastDP.size;
+	dp->data = lastDP.data;
 
 	lastDP.data = NULL;
 	lastDP.size = 0;
@@ -111,8 +111,13 @@ vector<dataPoint> * controlShell::getLast(uint32_t t, uint32_t n)
 	return lastVect;
 }
 
+void * controlShell::threadMaker(void * arg)
+{
+	controlShell * cs = (controlShell *)arg;
+	cs->handleConnection();
+}
 
-void * controlShell::handleConnection(void * arg)
+void controlShell::handleConnection()
 {
 	while(1)
 	{
@@ -132,7 +137,7 @@ void * controlShell::handleConnection(void * arg)
 		{
 			if(buf[0] == OP_SEND_CALLBACK)//callback
 			{
-				int cbid;
+				uint32_t cbid;
 				dataPoint cbData;
 				//get the callback id
 				recv(s, buf+1, 4, 0);
@@ -146,9 +151,40 @@ void * controlShell::handleConnection(void * arg)
 				recv(s, cbData.data, cbData.size, 0);
 				
 			}
+			else if(buf[0] == OP_RET_LAST)
+			{
+				uint32_t num;
+				recv(s, buf+1, 4, 0);
+				num = *(uint32_t *)(buf+1);
+				
+				//simple case
+				if(num == 1)
+				{
+					recv(s, buf+5, 4, 0);
+					lastDP.size = *(uint32_t*)(buf+5);
+					lastDP.data =  new uint8_t[lastDP.size];
+					recv(s, lastDP.data, lastDP.size, 0);
+				}
+				else
+				{
+					//slightly less simple case
+					lastVect = new vector<dataPoint>();
+					for(uint32_t i=0; i<num; ++i)
+					{
+						recv(s, buf+5, 4, 0);
+						lastDP.size = *(uint32_t*)(buf+5);
+						lastDP.data =  new uint8_t[lastDP.size];
+						recv(s, lastDP.data, lastDP.size, 0);
+
+						lastVect->push_back(lastDP);
+					}
+
+				}
+				gotLast = true;
+			}
 			else
 			{
-				printf("invalid opcode!!!!! [%#X]\n", buf[0]);
+				printf("Control Shell recv invalid opcode!!!!! [%#X]\n", buf[0]);
 			}
 		}
 	}

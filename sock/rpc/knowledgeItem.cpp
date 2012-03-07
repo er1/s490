@@ -2,6 +2,18 @@
 #include <sys/socket.h>
 #include <cstring>
 
+dataPoint::dataPoint()
+{
+	size = 0;
+	data = NULL;
+}
+
+dataPoint::~dataPoint()
+{
+	if(data)
+		delete[] data;
+}
+
 knowledgeItem::knowledgeItem()
 {
 	pthread_mutex_lock(&mutex);
