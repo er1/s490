@@ -4,7 +4,7 @@ uint32_t tag = 42; //tag for test data
 
 void somethingChanged(dataPoint d)
 {
-	printf("got update: [%c]\n", d.data);
+	printf("got update: [%c]\n", *d.data);
 }
 
 int main()
@@ -24,7 +24,7 @@ int main()
 	v = cs->getLast(tag, 10);
 
 	printf("asked for 10 dataPoints and got --> [");
-	for(int i=0; i<v->size(); ++i)
+	for(uint32_t i=0; i<v->size(); ++i)
 	{
 		printf("%c", *(v->at(i).data));
 	}

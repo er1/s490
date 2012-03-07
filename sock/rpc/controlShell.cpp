@@ -115,6 +115,7 @@ void * controlShell::threadMaker(void * arg)
 {
 	controlShell * cs = (controlShell *)arg;
 	cs->handleConnection();
+	return NULL;
 }
 
 void controlShell::handleConnection()
@@ -149,6 +150,10 @@ void controlShell::handleConnection()
 
 				cbData.data = new uint8_t[cbData.size];
 				recv(s, cbData.data, cbData.size, 0);
+
+				//do the callback
+				void (*f)(dataPoint) = (void(*)(dataPoint))functorMap[cbid];
+				f(cbData);
 				
 			}
 			else if(buf[0] == OP_RET_LAST)
