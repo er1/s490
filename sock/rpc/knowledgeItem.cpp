@@ -16,6 +16,8 @@ dataPoint::~dataPoint()
 
 knowledgeItem::knowledgeItem()
 {
+	pthread_mutex_init(&mutex, NULL);
+
 	pthread_mutex_lock(&mutex);
 	//by default we keep one data point
 	storageSize = 1;

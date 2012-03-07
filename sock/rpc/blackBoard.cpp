@@ -2,7 +2,7 @@
 //FIXME -- move globals to header?
 vector<knowledgeItem *> * knowledgeItems = new vector<knowledgeItem *>;
 
-pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 map<uint32_t, knowledgeItem *> tagMap;
 

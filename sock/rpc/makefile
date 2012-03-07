@@ -35,9 +35,9 @@ testCS: testCS.c
 	gcc $(CFLAGS) testCS.c -o $(bin)/testCS
 
 testCS2: testCS2.o
-	$(CC) $(CFLAGS) -lpthread $(bin)/testCS2.o $(bin)/controlShell.o -o $(bin)/testCS2
+	$(CC) $(CFLAGS) -lpthread $(bin)/testCS2.o $(bin)/controlShell.o $(bin)/knowledgeItem.o -o $(bin)/testCS2
 
-testCS2.o: testCS2.cpp controlShell.o
+testCS2.o: testCS2.cpp controlShell.o knowledgeItem.o
 	$(CC) $(CFLAGS) -c testCS2.cpp -o $(bin)/testCS2.o
 
 testKS: testKS.c

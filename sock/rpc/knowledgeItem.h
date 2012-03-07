@@ -35,6 +35,8 @@ private:
 	vector<remote_callback *> listeners;
 	list<dataPoint *> dataList;
 
+	pthread_mutex_t mutex;
+
 public:
 	int id;
 	
@@ -50,7 +52,7 @@ public:
 };
 
 
-extern pthread_mutex_t mutex; //FIXME
+//extern pthread_mutex_t mutex; //FIXME
 
 extern vector<knowledgeItem *> * knowledgeItems;
 
