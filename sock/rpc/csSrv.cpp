@@ -8,47 +8,47 @@ extern bbThread * threadManager;
 void * runCSServer(void * arg)
 {
 	int s, s2, t;
-    struct sockaddr_un local, remote;
+	struct sockaddr_un local, remote;
 
 	memset(&local, 0, sizeof(sockaddr_un));
 	memset(&remote, 0, sizeof(sockaddr_un));
 
 	//ask the OS for a socket
 	s = socket(AF_UNIX, SOCK_STREAM, 0);
-    if(s == -1)
+	if(s == -1)
 	{
-        perror("socket");
-        exit(1);
-    }
+		perror("socket");
+		exit(1);
+	}
 
-    local.sun_family = AF_UNIX;
-    strncpy(local.sun_path, CS_SOCK_PATH, sizeof(local.sun_path));
-    unlink(local.sun_path);
-    
+	local.sun_family = AF_UNIX;
+	strncpy(local.sun_path, CS_SOCK_PATH, sizeof(local.sun_path));
+	unlink(local.sun_path);
+	
 	//bind it to our domain socket
 	if (bind(s, (struct sockaddr *)&local, sizeof(sockaddr_un)) == -1) 
 	{
-        perror("bind");
-        exit(1);
-    }
+		perror("bind");
+		exit(1);
+	}
 
 	//start accepting connections
-    if (listen(s, 4) == -1) 
+	if (listen(s, 4) == -1) 
 	{
-        perror("listen");
-        exit(1);
-    }
+		perror("listen");
+		exit(1);
+	}
 
 	t = sizeof(remote);
-    while(1)
+	while(1)
 	{
-		printf("Waiting for a (CS) connection...\n");
-        if ((s2 = accept(s, (struct sockaddr *)&remote, (socklen_t*)&t)) == -1) 
+		fprintf(stderr, "Waiting for a (CS) connection...\n");
+		if ((s2 = accept(s, (struct sockaddr *)&remote, (socklen_t*)&t)) == -1) 
 		{
-            perror("accept");
-            exit(1);
-        }
-        printf("Got connection [%#X].\n", s2);
+			perror("accept");
+			exit(1);
+		}
+		fprintf(stderr, "Got connection [%#x].\n", s2);
 
 		threadManager->createDetached(handleCSConnection, (void *)&s2);
 /*
@@ -75,13 +75,13 @@ void * handleCSConnection(void * socket)
 
 	uint8_t buffer[BUFFSIZE]; // buffer for received data
 	
-	memset(&buffer, 0, BUFFSIZE - 1);
+	memset(&buffer, 0, BUFFSIZE);
 	
 	//opcode handling state machine
 	while(1)
 	{
 		//lets try reading the op code
-		printf("read opcode...\n");
+		fprintf(stderr, "read opcode...\n");
 		int rcv = read(sockFD, buffer, 1);
 
 		if(rcv < 0)
@@ -91,26 +91,26 @@ void * handleCSConnection(void * socket)
 		}
 		else if(rcv == 0)
 		{
-			printf("Remote Host Closed Connection\n");
+			fprintf(stderr, "Remote Host Closed Connection\n");
 			break;
 		}
 		else
 		{
-			printf("recieved %d bytes from [%#X]\n", rcv, sockFD);
+			fprintf(stderr, "recieved %d bytes from [%#x]\n", rcv, sockFD);
 
 			//actually handle commands
 			uint8_t opcode = *buffer;
 
 			if(opcode == OP_GET_EVENT_LIST)//to be removed
 			{
-				printf("[%#X] requested event list\n", sockFD);
+				fprintf(stderr, "[%#x] requested event list\n", sockFD);
 				//do this with the common buffer for now
 				buffer[0] = OP_SEND_EVENT_LIST;
 				buffer[1] = (uint8_t)knowledgeItems->size();
 
 				for(unsigned int i=0; i<knowledgeItems->size(); ++i)
 				{
-					printf("%d\n", (*knowledgeItems)[i]->id);
+					fprintf(stderr, "%d\n", (*knowledgeItems)[i]->id);
 					buffer[2+i] = (uint8_t)(*knowledgeItems)[i]->id;
 				}
 				send(sockFD, buffer, knowledgeItems->size()+2, 0);
@@ -123,8 +123,8 @@ void * handleCSConnection(void * socket)
 				read(sockFD, buffer+1, 5);
 				uint8_t eId = buffer[1];
 				uint32_t cbAddr = *(uint32_t *)(buffer + 2);
-				printf("[%#X] requested event registration\n", sockFD);
-				printf("\t event %d, addr[%#X]\n", eId, cbAddr);
+				fprintf(stderr, "[%#x] requested event registration\n", sockFD);
+				fprintf(stderr, "\t event %d, addr[%#x]\n", eId, cbAddr);
 				
 				for(unsigned int i=0; i<knowledgeItems->size(); ++i)
 				{
@@ -132,9 +132,9 @@ void * handleCSConnection(void * socket)
 					if((*knowledgeItems)[i]->id == eId)
 					{
 						//add a listener
-						printf("event found...\n");
+						fprintf(stderr, "event found...\n");
 						(*knowledgeItems)[i]->addListenerOnSock(cbAddr, sockFD);
-						printf("callback added!\n");
+						fprintf(stderr, "callback added!\n");
 					}
 				}	
 			}
@@ -145,7 +145,7 @@ void * handleCSConnection(void * socket)
 				read(sockFD, buffer+1, 8);
 				tag = *(uint32_t *)(buffer+1);
 				num = *(uint32_t *)(buffer+5);
-				printf("[%#X] requested last %d dataPoints for tag %#X.\n", sockFD, num, tag);
+				fprintf(stderr, "[%#x] requested last %d dataPoints for tag %#x.\n", sockFD, num, tag);
 
 				//is the tag valid?
 				if(tagMap.count(tag) > 0)
@@ -157,12 +157,12 @@ void * handleCSConnection(void * socket)
 				}
 				else
 				{
-					printf("tag %#X does not exist in database!\n", tag);
+					fprintf(stderr, "tag %#x does not exist in database!\n", tag);
 				}
 			}
 			else
 			{
-				printf("invalid opcode!!!!! [%#X]\n", opcode);
+				fprintf(stderr, "invalid opcode!!!!! [%#x]\n", opcode);
 			}
 		}
 	}
@@ -174,7 +174,7 @@ void * handleCSConnection(void * socket)
 		(*knowledgeItems)[i]->removeListenersOnSock(sockFD);
 	}
 	
-	printf("closing socket %#X\n", sockFD);
+	fprintf(stderr, "closing socket %#x\n", sockFD);
 	close(sockFD);
 
 	threadManager->removeSelf();

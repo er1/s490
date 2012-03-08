@@ -4,20 +4,20 @@
 
 void doEventA()
 {
-	printf("A >>\n");
+	fprintf(stderr, "A >>\n");
 	(*knowledgeItems)[0]->updateListeners();
 }
 void doEventB()
 {
-	printf("B >>\n");
+	fprintf(stderr, "B >>\n");
 }
 void doEventC()
 {
-	printf("C >>\n");
+	fprintf(stderr, "C >>\n");
 }
 void doEventD()
 {
-	printf("D >>\n");
+	fprintf(stderr, "D >>\n");
 }
 
 void * runUI(void * arg)
@@ -25,9 +25,9 @@ void * runUI(void * arg)
 	while(1)
 	{
 		char in;
-		printf("-->");
+		fprintf(stderr, "-->");
 		scanf("%c", &in);
-		printf("\n");
+		fprintf(stderr, "\n");
 
 		if(in == 'a')
 			doEventA();

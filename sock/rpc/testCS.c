@@ -14,28 +14,28 @@
 
 int main(void)
 {
-    int s;
-    struct sockaddr_un remote;
-    uint8_t buf[BUFFSIZE];
+	int s;
+	struct sockaddr_un remote;
+	uint8_t buf[BUFFSIZE];
 
 	memset(&remote, 0, sizeof(struct sockaddr_un));
-	memset(&buf, 0, BUFFSIZE - 1);
+	memset(&buf, 0, BUFFSIZE);
 
-    if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
-        perror("socket");
-        exit(1);
-    }
+	if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+		perror("socket");
+		exit(1);
+	}
 
-    printf("Trying to connect...\n");
+	fprintf(stderr, "Trying to connect...\n");
 
-    remote.sun_family = AF_UNIX;
-    strncpy(remote.sun_path, CS_SOCK_PATH, sizeof(remote.sun_path));
-    if (connect(s, (struct sockaddr *)&remote, sizeof(struct sockaddr_un)) == -1) {
-        perror("connect");
-        exit(1);
-    }
+	remote.sun_family = AF_UNIX;
+	strncpy(remote.sun_path, CS_SOCK_PATH, sizeof(remote.sun_path));
+	if (connect(s, (struct sockaddr *)&remote, sizeof(struct sockaddr_un)) == -1) {
+		perror("connect");
+		exit(1);
+	}
 
-    printf("Connected.\n");
+	fprintf(stderr, "Connected.\n");
 
 	//this is like a test case
 	////////////////////////////////////
@@ -54,9 +54,9 @@ int main(void)
 
 	//try to recieve that
 	read(s, buf, 2);
-	printf("[%#X][%#X]...\n", buf[0], buf[1]);
+	fprintf(stderr, "[%#x][%#x]...\n", buf[0], buf[1]);
 	read(s, buf+2, buf[1]);
-	printf("[%#X][%#X][%#X][%#X][%#X][%#X]...\n",
+	fprintf(stderr, "[%#x][%#x][%#x][%#x][%#x][%#x]...\n",
 		   buf[0], buf[1],
 		buf[2], buf[3], buf[4], buf[5]);
 	////////////////////////////////////
@@ -74,12 +74,12 @@ int main(void)
 
 		if(rcv < 0)
 		{
-			printf("read error");
+			fprintf(stderr, "read error\n");
 			break;
 		}
 		else if(rcv == 0)
 		{
-			printf("Remote Host Closed Connection\n");
+			fprintf(stderr, "Remote Host Closed Connection\n");
 			break;
 		}
 		else
@@ -87,16 +87,16 @@ int main(void)
 			if(buf[0] == OP_SEND_CALLBACK)//callback
 			{
 				recv(s, buf+1, 4, 0);
-				printf("CALLBACK: %#X\n", *(uint32_t  *)(buf+1));
+				fprintf(stderr, "CALLBACK: %#x\n", *(uint32_t  *)(buf+1));
 			}
 			else
 			{
-				printf("invalid opcode!!!!! [%#X]\n", buf[0]);
+				fprintf(stderr, "invalid opcode!!!!! [%#x]\n", buf[0]);
 			}
 		}
 	}
 
-    close(s);
+	close(s);
 
-    return 0;
+	return 0;
 }

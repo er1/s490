@@ -43,13 +43,13 @@ void knowledgeItem::update(uint32_t len, uint8_t * newData)
 	}
 	dataList.push_back(d);
 	pthread_mutex_unlock(&mutex);
-	printf("Update KI [%s] with %d bytes\n", name.c_str(), len);
-	printf("[%s] has %d/%d dataPoints", name.c_str(), (int)dataList.size(), storageSize);
+	fprintf(stderr, "Update KI [%s] with %d bytes\n", name.c_str(), len);
+	fprintf(stderr, "[%s] has %d/%d dataPoints\n", name.c_str(), (int)dataList.size(), storageSize);
 }
 
 void knowledgeItem::setStorageSize(uint32_t size)
 {
-	printf("[%s]changing storage size from %d to %d", name.c_str(), storageSize, size);
+	fprintf(stderr, "[%s]changing storage size from %d to %d\n", name.c_str(), storageSize, size);
 	pthread_mutex_lock(&mutex);
 	//if the new size is smaller than current size
 	//need to shrink the list
@@ -60,7 +60,7 @@ void knowledgeItem::setStorageSize(uint32_t size)
 	}
 	storageSize = size;
 	pthread_mutex_unlock(&mutex);
-	printf("[%s] has %d/%d dataPoints", name.c_str(), (int)dataList.size(), storageSize);
+	fprintf(stderr, "[%s] has %d/%d dataPoints\n", name.c_str(), (int)dataList.size(), storageSize);
 }
 
 void knowledgeItem::addListenerOnSock(uint32_t cbA, int sock)
@@ -78,12 +78,12 @@ void knowledgeItem::updateListeners()
 {
 	unsigned char buf[16];
 	remote_callback * rc;
-	printf("update listeners...\n");
+	fprintf(stderr, "update listeners...\n");
 	pthread_mutex_lock(&mutex);
 	for(unsigned int i = 0; i < listeners.size(); ++i)
 	{
 		rc = listeners[i];
-		printf("callback: <knowledgeItem %d> %#X, %#lX\n", id, rc->socket, rc->addr);
+		fprintf(stderr, "callback: <knowledgeItem %d> %#x, %#lX\n", id, rc->socket, rc->addr);
 		buf[0] = OP_SEND_CALLBACK; 
 		memcpy(buf+1, &(rc->addr), 4);
 		send(rc->socket, buf, 5, 0);
@@ -98,7 +98,7 @@ void knowledgeItem::removeListenersOnSock(int sock)
 	{
 		if((*i)->socket == sock)
 		{
-			printf("Removing listener on socket %#X from knowledgeItem %d\n", sock, id);
+			fprintf(stderr, "Removing listener on socket %#x from knowledgeItem %d\n", sock, id);
 			remote_callback * rcb = *i;
 			delete rcb;
 			listeners.erase(i);
@@ -110,7 +110,7 @@ void knowledgeItem::removeListenersOnSock(int sock)
 //this is pretty much custom made for the OP_RET_LAST messgage
 void knowledgeItem::sendLastNdataPoints(int sock, uint32_t n)
 {
-	printf("sendLastNdataPoints N=%d\n", n);
+	fprintf(stderr, "sendLastNdataPoints N=%d\n", n);
 	pthread_mutex_lock(&mutex);
 	if(dataList.size() < n)
 	{

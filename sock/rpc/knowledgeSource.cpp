@@ -24,23 +24,23 @@ void knowledgeSource::init()
 	struct sockaddr_un remote;
 
 	memset(&remote, 0, sizeof(sockaddr_un));
-	memset(&buf, 0, BUFFSIZE - 1);
+	memset(&buf, 0, BUFFSIZE);
 
-    if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
-        perror("socket");
-        exit(1);
-    }
+	if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+		perror("socket");
+		exit(1);
+	}
 
-    printf("Trying to connect...\n");
+	fprintf(stderr, "Trying to connect...\n");
 
-    remote.sun_family = AF_UNIX;
-    strncpy(remote.sun_path, KS_SOCK_PATH, sizeof(remote.sun_path));
-    if (connect(s, (struct sockaddr *)&remote, sizeof(sockaddr_un)) == -1) {
-        perror("connect");
-        exit(1);
-    }
+	remote.sun_family = AF_UNIX;
+	strncpy(remote.sun_path, KS_SOCK_PATH, sizeof(remote.sun_path));
+	if (connect(s, (struct sockaddr *)&remote, sizeof(sockaddr_un)) == -1) {
+		perror("connect");
+		exit(1);
+	}
 
-    printf("Connected.\n");
+	fprintf(stderr, "Connected.\n");
 	
 	initialized = true;
 }

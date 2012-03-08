@@ -22,7 +22,7 @@ private:
 	uint32_t tag;
 
 	int s;
-    uint8_t buf[BUFFSIZE];
+	uint8_t buf[BUFFSIZE];
 
 public:
 	knowledgeSource();

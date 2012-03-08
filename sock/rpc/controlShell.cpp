@@ -24,26 +24,26 @@ void controlShell::init()
 	if(initialized == true)
 		return;
 
-    struct sockaddr_un remote;
+	struct sockaddr_un remote;
 
 	memset(&remote, 0, sizeof(sockaddr_un));
-	memset(&buf, 0, BUFFSIZE - 1);
+	memset(&buf, 0, BUFFSIZE);
 
-    if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
-        perror("socket");
-        exit(1);
-    }
+	if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+		perror("socket");
+		exit(1);
+	}
 
-    printf("Trying to connect...\n");
+	fprintf(stderr, "Trying to connect...\n");
 
-    remote.sun_family = AF_UNIX;
-    strncpy(remote.sun_path, CS_SOCK_PATH, sizeof(remote.sun_path));
-    if (connect(s, (struct sockaddr *)&remote, sizeof(sockaddr_un)) == -1) {
-        perror("connect");
-        exit(1);
-    }
+	remote.sun_family = AF_UNIX;
+	strncpy(remote.sun_path, CS_SOCK_PATH, sizeof(remote.sun_path));
+	if (connect(s, (struct sockaddr *)&remote, sizeof(sockaddr_un)) == -1) {
+		perror("connect");
+		exit(1);
+	}
 
-    printf("Connected.\n");
+	fprintf(stderr, "Connected.\n");
 
 	pthread_create(&monitor, NULL, &controlShell::threadMaker, (void *)this);
 
@@ -108,7 +108,7 @@ vector<dataPoint> * controlShell::getLast(uint32_t t, uint32_t n)
 
 	//got our data from monitor thread
 	gotLast = false;
-	printf("returning lastVect %p\n", lastVect);
+	fprintf(stderr, "returning lastVect %p\n", lastVect);
 	return lastVect;
 }
 
@@ -127,12 +127,12 @@ void controlShell::handleConnection()
 
 		if(rcv < 0)
 		{
-			printf("read error");
+			fprintf(stderr, "read error\n");
 			break;
 		}
 		else if(rcv == 0)
 		{
-			printf("Remote Host Closed Connection\n");
+			fprintf(stderr, "Remote Host Closed Connection\n");
 			break;
 		}
 		else
@@ -163,7 +163,7 @@ void controlShell::handleConnection()
 				recv(s, buf+1, 4, 0);
 				num = *(uint32_t *)(buf+1);
 
-				printf("OP_RET_LAST %d\n", num);
+				fprintf(stderr, "OP_RET_LAST %d\n", num);
 
 				//TODO: refactor this in to a single case (lastDP always set, LastVect always set)
 				//simple case
@@ -186,7 +186,7 @@ void controlShell::handleConnection()
 					if(lastVect!=NULL)
 						delete lastVect;
 					lastVect = new vector<dataPoint>();
-					printf("created lastVect %p\n", lastVect);
+					fprintf(stderr, "created lastVect %p\n", lastVect);
 					for(uint32_t i=0; i<num; ++i)
 					{
 						recv(s, buf+5, 4, 0);
@@ -202,7 +202,7 @@ void controlShell::handleConnection()
 			}
 			else
 			{
-				printf("Control Shell recv invalid opcode!!!!! [%#X]\n", buf[0]);
+				fprintf(stderr, "Control Shell recv invalid opcode!!!!! [%#x]\n", buf[0]);
 			}
 		}
 	}
