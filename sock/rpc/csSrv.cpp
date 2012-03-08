@@ -134,8 +134,28 @@ void * handleCSConnection(void * socket)
 						(*knowledgeItems)[i]->addListenerOnSock(cbAddr, sockFD);
 						printf("callback added!\n");
 					}
-
 				}	
+			}
+			else if(opcode == OP_GET_LAST)
+			{
+				uint32_t tag;
+				uint32_t num;
+				read(sockFD, buffer+1, 8);
+				tag = *(uint32_t *)(buffer+1);
+				num = *(uint32_t *)(buffer+5);
+				printf("[%#X] requested last %d dataPoints for tag %#X.\n", sockFD, num, tag);
+
+				//is the tag valid?
+				if(tagMap.count(tag) > 0)
+				{
+					knowledgeItem * ki = tagMap[tag];
+					
+					ki->sendLastNdataPoints(sockFD, num);
+				}
+				else
+				{
+					printf("tag %#X does not exist in database!\n", tag);
+				}
 			}
 			else
 			{
