@@ -45,7 +45,7 @@ void controlShell::init()
 
     printf("Connected.\n");
 
-	pthread_create(&monitor, NULL, &controlShell::threadMaker, (void *)NULL);
+	pthread_create(&monitor, NULL, &controlShell::threadMaker, (void *)this);
 
 	initialized = true;
 }
