@@ -26,6 +26,7 @@ void controlShell::init()
 
     struct sockaddr_un remote;
 
+	memset(&remote, 0, sizeof(sockaddr_un));
 	memset(&buf, 0, BUFFSIZE - 1);
 
     if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
@@ -36,9 +37,8 @@ void controlShell::init()
     printf("Trying to connect...\n");
 
     remote.sun_family = AF_UNIX;
-    strcpy(remote.sun_path, CS_SOCK_PATH);
-    int len = strlen(remote.sun_path) + sizeof(remote.sun_family);
-    if (connect(s, (struct sockaddr *)&remote, len) == -1) {
+    strncpy(remote.sun_path, CS_SOCK_PATH, sizeof(remote.sun_path));
+    if (connect(s, (struct sockaddr *)&remote, sizeof(sockaddr_un)) == -1) {
         perror("connect");
         exit(1);
     }
