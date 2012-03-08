@@ -5,8 +5,11 @@
 
 void * runKSServer(void * arg)
 {
-	int s, s2, t, len;
+	int s, s2, t;
     struct sockaddr_un local, remote;
+
+	memset(&local, 0, sizeof(sockaddr_un));
+	memset(&local, 0, sizeof(sockaddr_un));
 
 	//ask the OS for a socket
 	s = socket(AF_UNIX, SOCK_STREAM, 0);
@@ -17,12 +20,11 @@ void * runKSServer(void * arg)
     }
 
     local.sun_family = AF_UNIX;
-    strcpy(local.sun_path, KS_SOCK_PATH);
+    strncpy(local.sun_path, KS_SOCK_PATH, sizeof(local.sun_path));
     unlink(local.sun_path);
-    len = strlen(local.sun_path) + sizeof(local.sun_family);
     
 	//bind it to our domain socket
-	if (bind(s, (struct sockaddr *)&local, len) == -1) 
+	if (bind(s, (struct sockaddr *)&local, sizeof(sockaddr_un)) == -1) 
 	{
         perror("bind");
         exit(1);
