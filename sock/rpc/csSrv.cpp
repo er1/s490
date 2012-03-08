@@ -149,7 +149,8 @@ void * handleCSConnection(void * socket)
 				if(tagMap.count(tag) > 0)
 				{
 					knowledgeItem * ki = tagMap[tag];
-					
+					buffer[0] = OP_RET_LAST;
+					send(sockFD, buffer, 1, 0);
 					ki->sendLastNdataPoints(sockFD, num);
 				}
 				else

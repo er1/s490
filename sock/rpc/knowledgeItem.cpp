@@ -110,13 +110,15 @@ void knowledgeItem::removeListenersOnSock(int sock)
 //this is pretty much custom made for the OP_RET_LAST messgage
 void knowledgeItem::sendLastNdataPoints(int sock, uint32_t n)
 {
+	printf("sendLastNdataPoints N=%d\n", n);
 	pthread_mutex_lock(&mutex);
 	if(dataList.size() < n)
 	{
 		uint8_t num[4];
-		*(uint8_t *)num = dataList.size();
+		*(uint32_t *)num = dataList.size();
 		//send all the points we have
 		send(sock, num, 4, 0);
+	
 		
 		list<dataPoint *>::reverse_iterator rit;
 		for(rit=dataList.rbegin(); rit!=dataList.rend(); ++rit)
@@ -126,13 +128,13 @@ void knowledgeItem::sendLastNdataPoints(int sock, uint32_t n)
 			send(sock, num, 4, 0);
 			send(sock, tmp->data, tmp->size, 0);
 		}
-		
+		pthread_mutex_unlock(&mutex);
 		return;
 	}
 
 	//otherwize we need only send n
 	uint8_t num[4];
-	*(uint8_t *)num = n;
+	*(uint32_t *)num = n;
 	send(sock, num, 4, 0);
 	
 	uint32_t count = 0;
