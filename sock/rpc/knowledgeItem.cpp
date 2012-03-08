@@ -10,7 +10,8 @@ dataPoint::dataPoint()
 
 dataPoint::~dataPoint()
 {
-	if(data)
+	printf("destroy datapoint: size=%d data at addr=%p\n", size, data);
+	if(data!=NULL)
 		delete[] data;
 }
 
