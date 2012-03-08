@@ -2,9 +2,9 @@
 
 uint32_t tag = 42; //tag for test data
 
-void somethingChanged(dataPoint d)
+void somethingChanged(dataPoint * d)
 {
-	fprintf(stderr, "got update: [%c]\n", *d.data);
+	fprintf(stderr, "got update: [%c]\n", *(d->data));
 }
 
 int main()

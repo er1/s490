@@ -117,25 +117,28 @@ void * handleCSConnection(void * socket)
 			}
 			else if(opcode == OP_REG_EVENT)
 			{
-				//8bits opcode
+				//8bits opcode <-- already in buffer
 				//32bits event tag
 				//32bits addr
-				read(sockFD, buffer+1, 5);
-				uint8_t eId = buffer[1];
-				uint32_t cbAddr = *(uint32_t *)(buffer + 2);
+
+				read(sockFD, buffer+1, 8);
+				uint32_t tag = *(uint32_t *)(buffer+1);
+				uint32_t token = *(uint32_t *)(buffer + 5);
 				fprintf(stderr, "[%#x] requested event registration\n", sockFD);
-				fprintf(stderr, "\t event %d, addr[%#x]\n", eId, cbAddr);
+				fprintf(stderr, "\t tag %d, token[%#x]\n", tag, token);
 				
 				for(unsigned int i=0; i<knowledgeItems->size(); ++i)
 				{
 					//check if the event is valid
-					if((*knowledgeItems)[i]->id == eId)
+					//if((*knowledgeItems)[i]->id == eId)
+					if(tagMap.count(tag) > 0)
 					{
 						//add a listener
-						fprintf(stderr, "event found...\n");
-						(*knowledgeItems)[i]->addListenerOnSock(cbAddr, sockFD);
+						fprintf(stderr, "KI found...\n");
+						tagMap[tag]->addListenerOnSock(token, sockFD);
 						fprintf(stderr, "callback added!\n");
 					}
+					//TODO: FIXME: Register for something new?
 				}	
 			}
 			else if(opcode == OP_GET_LAST)
