@@ -171,12 +171,6 @@ void * handleKSConnection(void * socket)
 	}
 
 	//we lost the connection...
-	//need to remove all listeners on the socket
-	for(unsigned int i=0; i<knowledgeItems->size(); ++i)
-	{
-		(*knowledgeItems)[i]->removeListenersOnSock(sockFD);
-	}
-	
 	fprintf(stderr, "closing socket %#x\n", sockFD);
 	close(sockFD);
 

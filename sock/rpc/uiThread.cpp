@@ -2,29 +2,12 @@
 
 void printAllKI()
 {
-	for(deque<knowledgeItem *>::iterator i=knowledgeItems->begin(); i!=knowledgeItems->end(); ++i)
+	for(map<uint32_t, knowledgeItem *>::iterator i=tagMap.begin(); i!=tagMap.end(); ++i)
 	{
-		(*i)->print();
+		(*i).second->print();
 	}
 }
 
-void doEventA()
-{
-	fprintf(stderr, "A >>\n");
-	(*knowledgeItems)[0]->updateListeners();
-}
-void doEventB()
-{
-	fprintf(stderr, "B >>\n");
-}
-void doEventC()
-{
-	fprintf(stderr, "C >>\n");
-}
-void doEventD()
-{
-	fprintf(stderr, "D >>\n");
-}
 
 void * runUI(void * arg)
 {
@@ -35,14 +18,6 @@ void * runUI(void * arg)
 		scanf("%c", &in);
 		fprintf(stderr, "\n");
 
-		if(in == 'a')
-			doEventA();
-		if(in == 'b')
-			doEventB();
-		if(in == 'c')
-			doEventC();
-		if(in == 'd')
-			doEventD();
 		if(in == 'p')
 			printAllKI();
 		if(in == 'q')

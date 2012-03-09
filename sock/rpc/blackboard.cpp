@@ -14,14 +14,6 @@
 
 using namespace std;
 
-//global
-//extern deque<pthread_t> threadList;
-
-//FIXME -- move globals to header?
-deque<knowledgeItem *> * knowledgeItems = new deque<knowledgeItem *>;
-
-//pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-
 map<uint32_t, knowledgeItem *> tagMap;
 
 bbThread * threadManager;

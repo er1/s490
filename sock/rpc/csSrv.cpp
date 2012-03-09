@@ -99,45 +99,28 @@ void * handleCSConnection(void * socket)
 			//actually handle commands
 			uint8_t opcode = *buffer;
 
-			if(opcode == OP_GET_EVENT_LIST)//to be removed
-			{
-				fprintf(stderr, "[%#x] requested event list\n", sockFD);
-				//do this with the common buffer for now
-				buffer[0] = OP_SEND_EVENT_LIST;
-				buffer[1] = (uint8_t)knowledgeItems->size();
-
-				for(unsigned int i=0; i<knowledgeItems->size(); ++i)
-				{
-					fprintf(stderr, "%d\n", (*knowledgeItems)[i]->id);
-					buffer[2+i] = (uint8_t)(*knowledgeItems)[i]->id;
-				}
-				send(sockFD, buffer, knowledgeItems->size()+2, 0);
-			}
-			else if(opcode == OP_REG_EVENT)
+			if(opcode == OP_REG_EVENT)
 			{
 				//8bits opcode <-- already in buffer
 				//32bits event tag
 				//32bits addr
-
+				
 				read(sockFD, buffer+1, 8);
 				uint32_t tag = *(uint32_t *)(buffer+1);
 				uint32_t token = *(uint32_t *)(buffer + 5);
 				fprintf(stderr, "[%#x] requested event registration\n", sockFD);
 				fprintf(stderr, "\t tag %d, token[%#x]\n", tag, token);
 				
-				for(unsigned int i=0; i<knowledgeItems->size(); ++i)
+				//check if the event is valid
+				if(tagMap.count(tag) > 0)
 				{
-					//check if the event is valid
-					//if((*knowledgeItems)[i]->id == eId)
-					if(tagMap.count(tag) > 0)
-					{
-						//add a listener
-						fprintf(stderr, "KI found...\n");
-						tagMap[tag]->addListenerOnSock(token, sockFD);
-						fprintf(stderr, "callback added!\n");
-					}
-					//TODO: FIXME: Register for something new?
-				}	
+					//add a listener
+					fprintf(stderr, "KI found...\n");
+					tagMap[tag]->addListenerOnSock(token, sockFD);
+					fprintf(stderr, "callback added!\n");
+				}
+				//TODO: FIXME: Register for something new?
+				
 			}
 			else if(opcode == OP_GET_LAST)
 			{
@@ -170,10 +153,11 @@ void * handleCSConnection(void * socket)
 
 	//we lost the connection...
 	//need to remove all listeners on the socket
-	for(unsigned int i=0; i<knowledgeItems->size(); ++i)
+	for(map<uint32_t, knowledgeItem *>::iterator i=tagMap.begin(); i!=tagMap.end(); ++i)
 	{
-		(*knowledgeItems)[i]->removeListenersOnSock(sockFD);
+		(*i).second->removeListenersOnSock(sockFD);
 	}
+
 	
 	fprintf(stderr, "closing socket %#x\n", sockFD);
 	close(sockFD);
