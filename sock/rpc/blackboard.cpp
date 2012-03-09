@@ -26,7 +26,8 @@ map<uint32_t, knowledgeItem *> tagMap;
 
 bbThread * threadManager;
 
-void pipeBurst(int) {
+void pipeBurst(int) 
+{
 	fprintf(stderr, "PIPE BURST!!!\n");
 }
 

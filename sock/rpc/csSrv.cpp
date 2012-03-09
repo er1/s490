@@ -61,19 +61,7 @@ void * runCSServer(void * arg)
 		fprintf(stderr, "Got connection [%#x].\n", s2);
 
 		threadManager->createDetached(handleCSConnection, (void *)&s2);
-/*
-		pthread_t pt;
-		threadList.push_back(pt);
 
-		pthread_create(
-			&threadList[threadList.size()-1],
-			NULL,
-			handleCSConnection,
-
-			(void *)&s2
-			);
-		pthread_detach(threadList[threadList.size()-1]);
-*/
 	}
 }
 

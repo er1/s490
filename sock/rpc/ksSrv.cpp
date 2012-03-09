@@ -59,19 +59,7 @@ void * runKSServer(void * arg)
 		fprintf(stderr, "Spawning...\n");
 		threadManager->createDetached(handleKSConnection, (void *)&s2);
 		fprintf(stderr, "DONE!\n");
-/*
-		pthread_t pt;
-		threadList.push_back(pt);
 
-		pthread_create(
-			&threadList[threadList.size()-1],
-			NULL,
-			handleKSConnection,
-
-			(void *)&s2
-			);
-		pthread_detach(threadList[threadList.size()-1]);
-*/
 	}
 }
 
