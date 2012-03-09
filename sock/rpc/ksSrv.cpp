@@ -164,6 +164,11 @@ void * handleKSConnection(void * socket)
 				buffer[0] = OP_ACK_UPDATE;
 				send(sockFD, buffer, 1, 0);
 			}
+			else if (opcode == OP_CLOSE_CONNECTION)
+			{
+				break;
+
+			}
 			else
 			{
 				log("invalid opcode!!!!! [%#x]\n", opcode);
@@ -171,12 +176,13 @@ void * handleKSConnection(void * socket)
 		}
 	}
 
-	//we lost the connection...
-	
+	//we lost the connection or the connection was closed
+	//TODO make sure that this KS is no longer associated with its KI
+
 	log("closing socket %#x\n", sockFD);
 	close(sockFD);
 
 	threadManager->removeSelf();
 
-	return NULL;
+	return 0;
 }

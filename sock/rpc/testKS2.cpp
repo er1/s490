@@ -17,5 +17,7 @@ int main()
 	
 	ks->update(4, d);
 
+	ks->close();
+
 	return 0;
 }

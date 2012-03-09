@@ -10,7 +10,7 @@ private:
 	bool initialized;
 	uint32_t tag;
 
-	int s;
+	int fdSocket;
 	uint8_t buf[BUFFSIZE];
 
 public:
@@ -21,6 +21,7 @@ public:
 	void setTag(uint32_t t);
 	void reg(const char * name);
 	void update(uint32_t len, uint8_t * data);
+	void close();
 };
 
 #endif 

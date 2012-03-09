@@ -23,6 +23,9 @@
 
 #define KS_SOCK_PATH           ("/tmp/bb_ks_sock")
 
+//opcodes -- KS|CS to BB
+#define OP_CLOSE_CONNECTION	   (3)
+
 //opcodes -- KS to BB
 #define OP_REG_KS              (1)
 #define OP_KS_UPDATE           (2)
