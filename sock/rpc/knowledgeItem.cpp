@@ -159,3 +159,17 @@ void knowledgeItem::sendLastNdataPoints(int sock, uint32_t n)
 	
 	pthread_mutex_unlock(&mutex);
 }
+
+void knowledgeItem::print()
+{
+	fprintf(stderr, "knowledgeItem:%p\n", this);
+	fprintf(stderr, "\tname:[%s]", name.c_str());
+	fprintf(stderr, "\tstorageSize:%d\n", storageSize);
+	fprintf(stderr, "\tid:%#X\n", id);
+	
+	for(list<dataPoint *>::iterator i=dataList.begin(); i!=dataList.end(); ++i)
+	{
+		fprintf(stderr, "\t\tdataPoint:%p size:%d data:%p\n", *i, (*i)->size, (*i)->data);
+		fprintf(stderr, "\t\t\n");
+	}
+}

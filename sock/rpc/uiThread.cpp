@@ -1,6 +1,12 @@
 #include "uiThread.h"
 
-
+void printAllKI()
+{
+	for(deque<knowledgeItem *>::iterator i=knowledgeItems->begin(); i!=knowledgeItems->end(); ++i)
+	{
+		(*i)->print();
+	}
+}
 
 void doEventA()
 {
@@ -37,6 +43,8 @@ void * runUI(void * arg)
 			doEventC();
 		if(in == 'd')
 			doEventD();
+		if(in == 'p')
+			printAllKI();
 		if(in == 'q')
 			break;
 	}
