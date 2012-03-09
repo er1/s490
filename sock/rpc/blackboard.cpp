@@ -14,12 +14,6 @@
 
 using namespace std;
 
-//Sample knowlegeItems
-#define KI_A 1
-#define KI_B 2
-#define KI_C 4
-#define KI_D 8
-
 //global
 //extern deque<pthread_t> threadList;
 
@@ -38,7 +32,7 @@ void pipeBurst(int) {
 
 int main()
 {
-
+	
 	signal(SIGPIPE, pipeBurst);
 
 	threadManager = new bbThread();
@@ -46,26 +40,6 @@ int main()
 	//initialize some things
 	pthread_t ptUI;
 
-	//todo: move this?
-	
-	
-	knowledgeItem * e;
-
-	e = new knowledgeItem();
-	e->id = KI_A;
-	knowledgeItems->push_back(e);
-	e = new knowledgeItem();
-	e->id = KI_B;
-	knowledgeItems->push_back(e);
-	e = new knowledgeItem();
-	e->id = KI_C;
-	knowledgeItems->push_back(e);
-	e = new knowledgeItem();
-	e->id = KI_D;
-	knowledgeItems->push_back(e);
-	
-	fprintf(stderr, "CAUTION!!\n");
-	
 	//start the interface thread as a normal pthread
 	fprintf(stderr, "starting UI thread\n");
 	pthread_create(&ptUI, NULL, runUI, (void *)NULL);
