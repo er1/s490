@@ -1,4 +1,12 @@
 #include "controlShell.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <unistd.h>
 
 controlShell::controlShell()
 {
@@ -93,7 +101,7 @@ void controlShell::getLast(uint32_t t, dataPoint * dp)
 	gotLast = false;
 }
 
-vector<dataPoint> * controlShell::getLast(uint32_t t, uint32_t n)
+deque<dataPoint> * controlShell::getLast(uint32_t t, uint32_t n)
 {
 	buf[0] = OP_GET_LAST;
 	*(uint32_t *)(buf+1) = t;
@@ -176,7 +184,7 @@ void controlShell::handleConnection()
 				{
 					if(lastVect!=NULL)
 						delete lastVect;
-					lastVect = new vector<dataPoint>();
+					lastVect = new deque<dataPoint>();
 
 					recv(s, buf+5, 4, 0);
 					lastDP.size = *(uint32_t*)(buf+5);
@@ -190,7 +198,7 @@ void controlShell::handleConnection()
 					//slightly less simple case
 					if(lastVect!=NULL)
 						delete lastVect;
-					lastVect = new vector<dataPoint>();
+					lastVect = new deque<dataPoint>();
 					fprintf(stderr, "created lastVect %p\n", lastVect);
 					for(uint32_t i=0; i<num; ++i)
 					{

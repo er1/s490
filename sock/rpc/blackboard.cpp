@@ -1,9 +1,30 @@
-#include "blackBoard.h"
+#include "blackboard.h"
 
+#include <cstdio>
+#include <cstring>
+#include <deque>
+#include <map>
+
+#include <pthread.h>
 #include <signal.h>
 
+#include "csSrv.h"
+#include "ksSrv.h"
+#include "uiThread.h"
+
+using namespace std;
+
+//Sample knowlegeItems
+#define KI_A 1
+#define KI_B 2
+#define KI_C 4
+#define KI_D 8
+
+//global
+//extern deque<pthread_t> threadList;
+
 //FIXME -- move globals to header?
-vector<knowledgeItem *> * knowledgeItems = new vector<knowledgeItem *>;
+deque<knowledgeItem *> * knowledgeItems = new deque<knowledgeItem *>;
 
 //pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 

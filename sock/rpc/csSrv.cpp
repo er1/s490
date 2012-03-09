@@ -1,7 +1,17 @@
 #include "csSrv.h"
-#include "fcntl.h"
 
-//vector<pthread_t> threadList;
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <unistd.h>
+#include <stdint.h>
+#include <pthread.h>
+
+#include "fcntl.h"
 
 extern bbThread * threadManager;
 
@@ -182,7 +192,7 @@ void * handleCSConnection(void * socket)
 
 	threadManager->removeSelf();
 /*
-	for(vector<pthread_t>::iterator i=threadList.begin(); i<threadList.end(); ++i)
+	for(deque<pthread_t>::iterator i=threadList.begin(); i<threadList.end(); ++i)
 	{
 		if(*i == pthread_self())
 		{

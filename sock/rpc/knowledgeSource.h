@@ -1,19 +1,8 @@
 #ifndef _KS_H_
 #define _KS_H_
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/un.h>
-#include <unistd.h>
 #include <stdint.h>
-
-#include "bbProto.h"
-
-#define BUFFSIZE 256
+#define BUFFSIZE (256)
 
 class knowledgeSource
 {
