@@ -15,14 +15,15 @@ private:
     int bbfd;
     std::deque<Packet> recvQueue;
     std::deque<Packet> sendQueue;
-    void processOutgoing();
-    void processIncoming();
 
 protected:
     bool connectBB();
     void disconnectBB();
     void sendPacket(const Packet&);
     bool recvPacket(Packet&);
+    void processOutgoing();
+    void processIncoming();
+
     
 public:
     void processMsgQueue();

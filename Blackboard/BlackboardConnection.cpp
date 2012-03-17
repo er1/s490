@@ -123,7 +123,7 @@ void BlackboardConnection::waitForEvents() {
         FD_SET(bbfd, &fds);
         int rv = select(bbfd + 1, &fds, NULL, NULL, NULL);
 
-        log("returned from rv with %d", rv);
+        log("returned from rv with %d\n", rv);
         
         if (rv == -1) {
                 log("An error occurred: %d\n", errno);

@@ -29,7 +29,8 @@ bool KnowledgeSource::registerForKI() {
     log("request sent\n");
     
     // TODO: handle the possibility where we get a packet and and the send queue is blocked (loop over this basically)
-    processMsgQueue();
+	processOutgoing();
+//    processMsgQueue();
     
     Packet response;
     
