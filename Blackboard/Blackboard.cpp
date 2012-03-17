@@ -83,6 +83,7 @@ void Blackboard::eventLoop(int _socketListener) {
                             break;
                         } else {
                             errorOnFail(FAIL, "send")
+                             
                         }
                     }
                 }
@@ -283,6 +284,7 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
                 ki.update(DataPoint(packet.begin() + 8, packet.end()));
             }
 
+            //Acknowledge to the KS that its update was successful
             fdSet[fd].sendQueue.push_back(ret);
 
             break;

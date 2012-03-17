@@ -2,28 +2,49 @@
 #include "BlackboardConnection.h"
 
 int main(int argc, char** argv) {
-    KnowledgeSource myKS(42);
+
+    int tag = 42;
+    if (argc > 1)
+        tag = atoi(argv[1]);
     
-    myKS.connectKS();
+    int delayBetweenUpdateInMs = 100;
+    if (argc > 2)
+        delayBetweenUpdateInMs = atoi(argv[2]);
     
-    log("connected maybe\n");
-    
+    KnowledgeSource myKS(tag);
+
+    if (myKS.connectKS()) {
+        log("connected\n");
+    } else {
+        log("Could not connect, BB did not allow me to register for tag %d", tag);
+        return 1;
+    }
+
+
     DataPoint p;
     p.resize(4);
-    
-    p[0] = 'd';
-    p[1] = 'e';
-    p[2] = 'r';
-    p[3] = 'p';
-        
-    myKS.update(p);
-    
-    log("updated maybe\n");
-    
-    myKS.processMsgQueue();
-    
+
+    while (true) {
+
+        p[0] = 'd';
+        p[1] = 'e';
+        p[2] = 'r';
+        p[3] = 'p';
+        if (myKS.update(p)) {
+            log("updated with ack\n");
+        } else {
+            log("update failed");
+        }
+
+        // 100 ms * 1000 ns per ms;
+        usleep(delayBetweenUpdateInMs * 1000);
+    }
+
+
+
+
     myKS.disconnectKS();
-    
+
     return 0;
 }
 

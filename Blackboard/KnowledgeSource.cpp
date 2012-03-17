@@ -45,7 +45,7 @@ bool KnowledgeSource::registerForKI() {
                 return true;
             } 
             if (response.getU32(0) == BO_KS_SUBSCRIPTION_FAILED) {
-                return true;
+                return false;
             } 
         }
         
@@ -66,5 +66,15 @@ bool KnowledgeSource::update(DataPoint point) {
     this->processMsgQueue();
 
     // actually confirm response 
-    return true;
+    while (true) {
+        waitForEvents();
+        
+        if (recvPacket(response)) {
+            if (response.getU32(0) == BO_KS_UPDATE_SUCCESS) {
+                return true;
+            } 
+        }
+    }
+    
+    return false;
 }
