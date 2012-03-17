@@ -103,12 +103,22 @@ void BlackboardConnection::processMsgQueue() {
     }
 }
 
+/*
+  This function will block until we have some message waiting to
+  be recieved.
+*/
 void BlackboardConnection::waitForEvents() {
     fd_set fds;
-    while (recvQueue.size() == 0) {
+    while (recvQueue.size() == 0) { //this seems like it will loop forever
         // wait to unblock
         FD_ZERO(&fds);
         FD_SET(bbfd, &fds);
         select(bbfd + 1, &fds, NULL, NULL, NULL);
+
+		//probably need to ckeck the result of select:
+		// check if we can read anything (or the connection has closed (gracefully or otherwise)
+		/*if (FD_ISSET(bbfd, &fds)) {
+			//derp
+		}*/
     }
 }

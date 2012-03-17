@@ -29,6 +29,10 @@ void ControlShell::disconnectCS() {
     disconnectBB();
 }
 
+/*
+  This function is for getting a set of data points from the 
+  corresponding knowledgeItem in the Blackboard. 
+ */
 std::deque<DataPoint> ControlShell::getRecent(int numRequested) {
     // assume that this is connection is only used for this tag
     // and that all GET_RECENT requests have completed (i.e. no data left in the recf queue)
@@ -55,8 +59,8 @@ std::deque<DataPoint> ControlShell::getRecent(int numRequested) {
         if (recvPacket(response)) {
             if (response.getU32(0) == BO_CS_RECENT) {
                 assert(response.getU32(4) == tag);
-                int numDataPoints = response.getU32(8);
-                int PacketPos = 12;
+                //int numDataPoints = response.getU32(8);
+                //int PacketPos = 12;
 
                 //while (PacketPos < )
 
