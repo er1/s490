@@ -26,7 +26,7 @@ public:
     }
 
     inline const uint32_t getU32(const int index) const {
-        return ntohs(*(long*) &at(index));
+        return ntohl(*(long*) &at(index));
     }
 
     inline void setU8(const int index, const uint8_t val) {
@@ -34,11 +34,13 @@ public:
     }
 
     inline void setU16(const int index, const uint16_t val) {
-        *(short*) &at(index) = htons(val);
+        uint8_t* ptr = &front();
+        *(short*)(ptr+index) = htons(val);
     }
 
     inline void setU32(const int index, const uint32_t val) {
-        *(long*) &at(index) = htonl(val);
+        uint8_t* ptr = &front();
+        *(long*)(ptr+index) = htonl(val);
     }
 
 };

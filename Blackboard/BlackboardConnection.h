@@ -5,8 +5,10 @@
 #include <deque>
 #include <vector>
 
+#include "common.h"
 #include "bbdef.h"
 #include "bbtags.h"
+#include "Packet.h"
 
 class BlackboardConnection {
 private:
@@ -15,12 +17,12 @@ private:
     std::deque<Packet> sendQueue;
 
 protected:
+    bool connectBB();
+    void disconnectBB();
     void sendPacket(const Packet&);
     bool recvPacket(Packet&);
     
 public:
-    bool connectBB(const char*);
-    void disconnectBB();
     void updateEvents();
     void waitForEvents();
 };

@@ -8,6 +8,9 @@
       <in>BlackboardConnection.h</in>
       <in>ControlShell.cpp</in>
       <in>ControlShell.h</in>
+      <in>KIdebug.cpp</in>
+      <in>KnowledgeSource.cpp</in>
+      <in>KnowledgeSource.h</in>
       <in>Packet.cpp</in>
       <in>Packet.h</in>
       <in>Thread.cpp</in>
@@ -17,6 +20,8 @@
       <in>common.h</in>
       <in>main.cpp</in>
       <in>monitorKSCS.cpp</in>
+      <in>testCS.cpp</in>
+      <in>testKS.cpp</in>
       <in>testSock.cpp</in>
     </df>
     <logicalFolder name="ExternalFiles"

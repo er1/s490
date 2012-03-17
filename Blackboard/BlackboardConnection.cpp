@@ -7,7 +7,9 @@
 #include "Packet.h"
 #include "BlackboardConnection.h"
 
-bool BlackboardConnection::connectBB(const char* address) {
+bool BlackboardConnection::connectBB() {
+    const char* address = BB_SOCK_PATH;
+    
     sockaddr_un local;
 
     memset(&local, 0, sizeof (sockaddr_un));
@@ -32,6 +34,8 @@ bool BlackboardConnection::connectBB(const char* address) {
 void BlackboardConnection::disconnectBB() {
     // TODO: clear buffers, we assume at this point, they are empty
 
+    log("disconnect\n");
+    
     if (bbfd >= 0)
         close(bbfd);
     bbfd = -1;
@@ -51,13 +55,16 @@ bool BlackboardConnection::recvPacket(Packet& buffer) {
 }
 
 void BlackboardConnection::updateEvents() {
+    log("updateEvents (send)\n");
+    
     int ret;
     // send any queued outgoing packets
     while (sendQueue.size() > 0) {
-        ret = send(bbfd, &(sendQueue.front()), sendQueue.front().size(), MSG_DONTWAIT);
+        ret = send(bbfd, &(sendQueue.front().front()), sendQueue.front().size(), MSG_DONTWAIT);
 
         if (ret >= 0) {
             sendQueue.pop_front();
+            log("send\n");
         } else {
             if ((errno == EAGAIN) || (errno == EWOULDBLOCK)) {
                 break;
@@ -67,11 +74,12 @@ void BlackboardConnection::updateEvents() {
         }
     }
 
+    log("updateEvents (recv)\n");
     // attempt to get any new packets and queue them to be handled
     Packet buffer;
     while (true) {
         buffer.resize(MAX_BUFFER_SIZE);
-        ret = recv(bbfd, &(sendQueue.front()), sendQueue.front().size(), MSG_DONTWAIT);
+        ret = recv(bbfd, &(buffer.front()), buffer.size(), MSG_DONTWAIT);
 
         if (ret == -1) {
             if ((errno == EAGAIN) || (errno == EWOULDBLOCK)) {

@@ -12,8 +12,9 @@
 using namespace std;
 
 int main(int argc, char** argv) {
-    BlackboardConnection& blackboard = *(new BlackboardConnection);
-    blackboard.connectBB(BB_SOCK_PATH);
+    //BlackboardConnection is needless right now
+    //BlackboardConnection& blackboard = *(new BlackboardConnection);
+    //blackboard.connectBB(BB_SOCK_PATH);
 
 
 	/*
@@ -74,7 +75,7 @@ int main(int argc, char** argv) {
     }
     */
 
-    blackboard.disconnectBB();
+    //blackboard.disconnectBB();
     return 0;
 }
 

@@ -21,6 +21,10 @@ const DataPoint KnowledgeItem::getMostRecent() const {
 }
 
 std::deque<DataPoint> KnowledgeItem::getRecent(size_t numPoints) const {
+    if (numPoints > dataChain.size()) {
+        numPoints = dataChain.size();
+    }
+
     std::deque<DataPoint> ret(dataChain.begin(), dataChain.begin() + numPoints);
     return ret;
 }
@@ -188,7 +192,7 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
 
         case BO_CS_SUBSCRIBE_TO:
         {
-			// pos     size     data
+            // pos     size     data
             //  0       4       COMMAND 
             //  4       4       KITAG
 
@@ -205,7 +209,7 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
 
         case BO_CS_GET_RECENT:
         {
-			// pos     size     data
+            // pos     size     data
             //  0       4       COMMAND 
             //  4       4       KITAG
             //  8       4       NUMBER OF ELEMENTS
@@ -246,7 +250,7 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
 
         case BO_KS_SUBSCRIBE_AS:
         {
-			// pos     size     data
+            // pos     size     data
             //  0       4       COMMAND 
             //  4       4       KITAG
 
@@ -276,7 +280,7 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
 
         case BO_KS_UPDATE:
         {
-			// pos     size     data
+            // pos     size     data
             //  0       4       COMMAND 
             //  4       4       KITAG
             //  8       END     DATA      
@@ -293,7 +297,8 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
             // check if we are the owner of this KI
             if (ki.ksDatasource == fd) {
                 ret.setU32(0, BO_KS_UPDATE_SUCCESS);
-                ki.update(DataPoint(packet[8], packet.back()));
+                
+                ki.update(DataPoint(packet.begin() + 8, packet.end()));
             }
 
             fdSet[fd].sendQueue.push_back(ret);
@@ -305,14 +310,15 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
         case BO_DEBUG_DUMP_KISET:
         {
             log("%#010x BO_DEBUG_DUMP_KISET requested\n", fd);
-            for (std::map<bbtag, KnowledgeItem>::const_iterator KI = kiSet.begin(); KI != kiSet.end(); ++KI) {
-                log("%d: \n", KI->first);
-                std::deque<DataPoint> dp = KI->second.getRecent(5);
-                for (std::deque<DataPoint>::const_iterator DP = dp.begin(); DP != dp.end(); ++DP) {
-                    for (DataPoint::const_iterator CH = DP->begin(); CH != DP->end(); ++CH) {
-                        log("%02x ", *CH);
+            for (std::map<bbtag, KnowledgeItem>::const_iterator knowledgeItemIterator = kiSet.begin(); knowledgeItemIterator != kiSet.end(); ++knowledgeItemIterator) {
+                log("%d: \n", knowledgeItemIterator->first);
+                std::deque<DataPoint> dp = knowledgeItemIterator->second.getRecent(5);
+                for (std::deque<DataPoint>::const_iterator dataChainIterator = dp.begin(); dataChainIterator != dp.end(); ++dataChainIterator) {
+                    log("[ ");
+                    for (DataPoint::const_iterator dataPointIterator = dataChainIterator->begin(); dataPointIterator != dataChainIterator->end(); ++dataPointIterator) {
+                        log("%02x ", *dataPointIterator);
                     }
-                    log("\n");
+                    log("]\n");
                 }
             }
             break;

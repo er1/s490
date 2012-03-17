@@ -1,9 +1,11 @@
 #ifndef CONTROLSHELL_H
 #define	CONTROLSHELL_H
 
-#inclued "BlackboardConnection.h"
+#include "Blackboard.h"
+#include "BlackboardConnection.h"
 #include "bbtags.h"
 #include "bbdef.h"
+#include <set>
 
 class ControlShell : public BlackboardConnection {
 public:
@@ -21,7 +23,7 @@ public:
 
 private:
     bbtag tag;
-    std::deque<void (*)(bbtag, DataPoint) > callbacks;
+    std::set<void (*)(bbtag, DataPoint) > callbacks;
 
 };
 

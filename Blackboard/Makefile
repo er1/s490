@@ -8,10 +8,10 @@
 #
 
 CSRC = 
-CXXSRC = main.cpp Blackboard.cpp BlackboardConnection.cpp Thread.cpp testSock.cpp monitorKSCS.cpp Packet.cpp
+CXXSRC = Blackboard.cpp BlackboardConnection.cpp ControlShell.cpp KIdebug.cpp KnowledgeSource.cpp Packet.cpp Thread.cpp main.cpp monitorKSCS.cpp testKS.cpp testCS.cpp testSock.cpp
 SRC = $(CSRC) $(CXXSRC)
 OBJ = $(CSRC:.c=.o) $(CXXSRC:.cpp=.o)
-BINARIES = blackboard testSock monitorKSCS
+BINARIES = blackboard testSock monitorKSCS testKS testCS KIdebug
 
 PREFIX = 
 DEBUG = -g -DDEBUG
@@ -37,6 +37,15 @@ testSock: testSock.o
 	
 monitorKSCS: monitorKSCS.o BlackboardConnection.o
 	$(LD) $(LFLAGS) -o $@ monitorKSCS.o BlackboardConnection.o
+
+testCS: testCS.o BlackboardConnection.o ControlShell.o
+	$(LD) $(LFLAGS) -o $@ testCS.o BlackboardConnection.o ControlShell.o
+	
+testKS: testKS.o BlackboardConnection.o KnowledgeSource.o
+	$(LD) $(LFLAGS) -o $@ testKS.o BlackboardConnection.o KnowledgeSource.o
+
+KIdebug: KIdebug.o
+	$(LD) $(LFLAGS) -o $@ KIdebug.o
 
 # def'n end here
 
