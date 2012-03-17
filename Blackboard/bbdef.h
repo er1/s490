@@ -38,5 +38,7 @@
 
 // gen
 
+#define BO_DEBUG_DUMP_KISET     (65537)
+
 #endif	/* BBDEF_H */
 

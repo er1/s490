@@ -14,13 +14,13 @@ void KnowledgeItem::update(DataPoint point) {
     dataChain.push_front(point);
 }
 
-const DataPoint KnowledgeItem::getMostRecent() {
+const DataPoint KnowledgeItem::getMostRecent() const {
     DataPoint ret;
     ret = dataChain.front();
     return ret;
 }
 
-std::deque<DataPoint> KnowledgeItem::getRecent(size_t numPoints) {
+std::deque<DataPoint> KnowledgeItem::getRecent(size_t numPoints) const {
     std::deque<DataPoint> ret(dataChain.begin(), dataChain.begin() + numPoints);
     return ret;
 }
@@ -188,6 +188,7 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
 
         case BO_CS_SUBSCRIBE_TO:
         {
+            log("%#010x BO_CS_SUBSCRIBE_TO requested\n", fd);
             //  0       4       COMMAND 
             //  4       4       KITAG
 
@@ -202,6 +203,7 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
 
         case BO_CS_GET_RECENT:
         {
+            log("%#010x BO_CS_GET_RECENT requested\n", fd);
             //  0       4       COMMAND 
             //  4       4       KITAG
             //  8       4       NUMBER OF ELEMENTS
@@ -242,6 +244,7 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
 
         case BO_KS_SUBSCRIBE_AS:
         {
+            log("%#010x BO_KS_SUBSCRIBE_AS requested\n", fd);
             //  0       4       COMMAND 
             //  4       4       KITAG
             uint32_t kiTag = packet.getU32(4);
@@ -269,6 +272,8 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
 
         case BO_KS_UPDATE:
         {
+            log("%#010x BO_KS_UPDATE requested\n", fd);
+
             //  0       4       COMMAND 
             //  4       4       KITAG
             //  8       END     DATA      
@@ -291,6 +296,23 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
             break;
         }
 
+#ifdef DEBUG
+        case BO_DEBUG_DUMP_KISET:
+        {
+            log("%#010x BO_DEBUG_DUMP_KISET requested\n", fd);
+            for (std::map<bbtag, KnowledgeItem>::const_iterator KI = kiSet.begin(); KI != kiSet.end(); ++KI) {
+                log("%d: \n", KI->first);
+                std::deque<DataPoint> dp = KI->second.getRecent(5);
+                for (std::deque<DataPoint>::const_iterator DP = dp.begin(); DP != dp.end(); ++DP) {
+                    for (DataPoint::const_iterator CH = DP->begin(); CH != DP->end(); ++CH) {
+                        log("%02x ", *CH);
+                    }
+                    log("\n");
+                }
+            }
+            break;
+        }
+#endif
         default:
             // invalid code
             log("invalid command: %d\n", packet.getU32(0));

@@ -6,6 +6,8 @@
       <in>Blackboard.h</in>
       <in>BlackboardConnection.cpp</in>
       <in>BlackboardConnection.h</in>
+      <in>ControlShell.cpp</in>
+      <in>ControlShell.h</in>
       <in>Packet.cpp</in>
       <in>Packet.h</in>
       <in>Thread.cpp</in>

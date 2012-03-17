@@ -42,12 +42,15 @@ void BlackboardConnection::sendpacket(const Packet& buffer) {
 }
 
 bool BlackboardConnection::recvpacket(Packet& buffer) {
+    if (recvQueue.size == 0) {
+        return false;
+    }
     buffer = recvQueue.front();
     recvQueue.pop_front();
     return true;
 }
 
-void BlackboardConnection::performEvents() {
+void BlackboardConnection::updateEvents() {
     int ret;
     // send any queued outgoing packets
     while (sendQueue.size() > 0) {
@@ -84,5 +87,15 @@ void BlackboardConnection::performEvents() {
 
         buffer.resize(ret);
         recvQueue.push_back(buffer);
+    }
+}
+
+void BlackboardConnection::waitForEvents() {
+    fd_set fds;
+    while (recvQueue.size() == 0) {
+        // wait to unblock
+        FD_ZERO(&fds);
+        FD_SET(bbfd, &fds);
+        select(bbfd + 1, &fds, NULL, NULL, NULL);
     }
 }
