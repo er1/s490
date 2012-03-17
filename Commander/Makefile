@@ -1,5 +1,5 @@
 all: listen connect
-	
+
 listen: ax25listen.c
 	gcc ax25listen.c -o listen -lax25
 connect: ax25connect.c
