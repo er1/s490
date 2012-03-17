@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <sys/socket.h>
+#include <poll.h>
 #include <sys/un.h>
 #include <sys/time.h>
 
@@ -26,11 +27,41 @@ void Blackboard::eventLoop(int _socketListener) {
     for (;;) { // forever
         prepareSelect();
 
-        log(".");
-        int selectValue = select(maxfd + 1, &fd_r, &fd_w, /*&fd_x*/NULL, &select_tv);
+        log("\n watching %d file descriptor, %d in the cleaning queue", (unsigned int) fdSet.size(), (unsigned int) fdDeleteQueue.size());
+        int selectValue = select(maxfd + 1, &fd_r, &fd_w, &fd_x, &select_tv);
         if (selectValue > 0)
             log("\nreturned %d\n", selectValue);
-        errorOnFail(selectValue < 0, "select");
+        else { // ok so an error occured during select..
+            if (errno == EBADF) {
+                log("\na connection was closed. but which one of the %d", (unsigned int) fdSet.size());
+                struct pollfd fds[fdSet.size()];
+                int x = 0;
+                for (std::map<int, ConnectionDetails>::iterator it = fdSet.begin(); it != fdSet.end(); ++it) {
+                    int fd = it->first;
+                    fds[x].fd = fd;
+                    fds[x].events = POLLWRNORM | POLLRDBAND;
+                    x++;
+                }
+
+                int pollret = 0;
+                pollret = poll(fds, x, -1);
+                if (pollret >= 0) {
+                    for (int y = 0; y < x; y++) {
+                        if (fds[y].revents == POLLNVAL) {
+                            log("\n%d was improperly closed, marking it as dirty", fds[y].fd);
+                            fdDeleteQueue.push_back(fds[y].fd);
+                        }
+                    }
+                } else {
+                    log("\nCannot identify the un-properly closed socket. Crash, %d:", pollret);
+                    exit(1);
+                }
+                cleanClosedConnection();
+                continue;
+            }
+
+
+        }
 
         // if we have a new connection, accept it and add it to the fdSet
         if (FD_ISSET(socketListener, &fd_r)) {
@@ -83,24 +114,20 @@ void Blackboard::eventLoop(int _socketListener) {
                             break;
                         } else {
                             errorOnFail(FAIL, "send")
-                             
+
                         }
                     }
                 }
             }
+
+            // IF any process asked to close, clean them
+            cleanClosedConnection();
 
             // currently unused
             // if (FD_ISSET(fd, &fd_x)) {
             //     // ???
             // }
         }
-
-        for (std::deque<int>::iterator it = fdDeleteQueue.begin(); it != fdDeleteQueue.end(); ++it) {
-            // fd cleanup goes here
-                        
-            fdSet.erase(*it);
-        }
-        fdDeleteQueue.clear();
 
         // _____________________________________________________
 
@@ -113,15 +140,34 @@ void Blackboard::eventLoop(int _socketListener) {
     }
 }
 
+void Blackboard::cleanClosedConnection() {
+    log("\nCleaning %d connections", (unsigned int) fdDeleteQueue.size());
+    for (std::deque<int>::iterator it = fdDeleteQueue.begin(); it != fdDeleteQueue.end(); ++it) {
+        // fd cleanup goes here
+        int fd = *it;
+        ConnectionDetails details = fdSet[fd];
+        log("\nCleaning connection %d", fd);
+        for (std::deque<KnowledgeItem*>::iterator itKi = details.KI.begin(); itKi != details.KI.end(); ++itKi) {
+            KnowledgeItem ki = *(*itKi);
+            log("Resetting ki:%p to -1", &ki);
+            ki.ksDatasource = -1;
+        }
+
+        fdSet.erase(fd);
+    }
+    fdDeleteQueue.clear();
+
+}
+
 void Blackboard::prepareSelect() {
     // set timeout delay for health checking
     select_tv.tv_sec = 5; // FIXME: make it configurable
     select_tv.tv_usec = 0;
 
     // clear old values;
-    FD_ZERO(&fd_r);
-    FD_ZERO(&fd_w);
-    //FD_ZERO(&fd_x);
+    FD_ZERO(&fd_r); //set of fd for read
+    FD_ZERO(&fd_w); //set of fd for write
+    FD_ZERO(&fd_x); //set of fd for exceptions
 
     // determine which descriptors could have activity on them
 
@@ -143,7 +189,7 @@ void Blackboard::prepareSelect() {
             FD_SET(fd, &fd_w);
         }
 
-        //FD_SET(fd, &fd_x); // exceptions
+        FD_SET(fd, &fd_x); // exceptions
 
         if (fd > maxfd) {
             maxfd = fd;
@@ -151,7 +197,7 @@ void Blackboard::prepareSelect() {
     }
 }
 
-KnowledgeItem& Blackboard::getKI(bbtag tag) {
+KnowledgeItem & Blackboard::getKI(bbtag tag) {
     std::map<bbtag, KnowledgeItem>::iterator it = kiSet.find(tag);
     if (it == kiSet.end())
         kiSet.insert(std::pair<bbtag, KnowledgeItem > (tag, KnowledgeItem()));
@@ -159,7 +205,7 @@ KnowledgeItem& Blackboard::getKI(bbtag tag) {
     return kiSet.at(tag);
 }
 
-void Blackboard::handlePacket(int fd, const Packet& packet) {
+void Blackboard::handlePacket(int fd, const Packet & packet) {
     log("%#010x => [ ", fd);
     for (unsigned int i = 0; i < packet.size(); ++i) {
         log("%02x ", packet[i]);
@@ -249,7 +295,6 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
 
             log("%#010x BO_KS_SUBSCRIBE_AS requested\n", fd);
             uint32_t kiTag = packet.getU32(4);
-
             KnowledgeItem& ki = kiSet[kiTag];
 
             // form default response packet
@@ -261,6 +306,7 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
             if (ki.ksDatasource < 0) {
                 ki.ksDatasource = fd;
 
+                log("Assigned ki:%p to fd:%d", &ki, fd);
                 fdSet[fd].KI.push_back(&ki);
 
                 ret.setU32(0, BO_KS_SUBSCRIPTION_SUCCESS);
@@ -290,7 +336,7 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
             // check if we are the owner of this KI
             if (ki.ksDatasource == fd) {
                 ret.setU32(0, BO_KS_UPDATE_SUCCESS);
-                
+
                 ki.update(DataPoint(packet.begin() + 8, packet.end()));
             }
 
