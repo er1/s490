@@ -33,11 +33,12 @@ bool KnowledgeSource::registerForKI() {
     
     Packet response;
     
+    log("Waiting for acknowledgment from the server");
     while (true) {
         waitForEvents(); // block until we have something
-        processMsgQueue(); 
         
         // if we have a packet to work with, deal with it
+        log("Received something, is is ack?");
         if (recvPacket(response)) {
             if (response.getU32(0) == BO_KS_SUBSCRIPTION_SUCCESS) {
                 return true;

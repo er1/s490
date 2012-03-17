@@ -53,7 +53,6 @@ std::deque<DataPoint> ControlShell::getRecent(int numRequested) {
     // wait for response
     while (true) {
         waitForEvents();
-        processMsgQueue();
 
         // if we have a packet to work with, deal with it
         if (recvPacket(response)) {

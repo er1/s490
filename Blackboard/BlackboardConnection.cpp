@@ -54,13 +54,8 @@ bool BlackboardConnection::recvPacket(Packet& buffer) {
     return true;
 }
 
-/*
-  This function will "flush" the send queue and "fill" the recv queue.
-  This function will not block and should be periodically called in 
-  and event loop. 
- */ 
-void BlackboardConnection::processMsgQueue() {
-    log("processMsgQueue (send)\n");
+void BlackboardConnection::processOutgoing() {
+        log("processMsgQueue (send)\n");
     
     int ret;
     // send any queued outgoing packets
@@ -69,7 +64,7 @@ void BlackboardConnection::processMsgQueue() {
 
         if (ret >= 0) {
             sendQueue.pop_front();
-            log("send\n");
+            log("sent\n");
         } else {
             if ((errno == EAGAIN) || (errno == EWOULDBLOCK)) {
                 break;
@@ -79,7 +74,12 @@ void BlackboardConnection::processMsgQueue() {
         }
     }
 
-    log("processMsgQueue (recv)\n");
+}
+
+void BlackboardConnection::processIncoming() {
+     int ret;
+
+     log("processMsgQueue (recv)\n");
     // attempt to get any new packets and queue them to be handled
     Packet buffer;
     while (true) {
@@ -102,10 +102,18 @@ void BlackboardConnection::processMsgQueue() {
         recvQueue.push_back(buffer);
     }
 }
+/*
+  This function will "flush" the send queue and "fill" the recv queue.
+  This function will not block and should be periodically called in 
+  and event loop. 
+ */ 
+void BlackboardConnection::processMsgQueue() {
+    processOutgoing();
+    processIncoming();
+}
 
 /*
-  This function will block until we have some message waiting to
-  be recieved.
+  This function will block until we have some message received.
 */
 void BlackboardConnection::waitForEvents() {
     fd_set fds;
@@ -113,9 +121,18 @@ void BlackboardConnection::waitForEvents() {
         // wait to unblock
         FD_ZERO(&fds);
         FD_SET(bbfd, &fds);
-        select(bbfd + 1, &fds, NULL, NULL, NULL);
+        int rv = select(bbfd + 1, &fds, NULL, NULL, NULL);
 
-		//probably need to ckeck the result of select:
+        log("returned from rv with %d", rv);
+        
+        if (rv == -1) {
+                log("An error occurred: %d\n", errno);
+        }
+        
+        //Now that we know we can safely read in the file handle, read from it and turn them into incoming messages
+        processIncoming();
+
+        //probably need to ckeck the result of select:
 		// check if we can read anything (or the connection has closed (gracefully or otherwise)
 		/*if (FD_ISSET(bbfd, &fds)) {
 			//derp
