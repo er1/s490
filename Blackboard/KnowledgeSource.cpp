@@ -29,13 +29,13 @@ bool KnowledgeSource::registerForKI() {
     log("request sent\n");
     
     // TODO: handle the possibility where we get a packet and and the send queue is blocked (loop over this basically)
-    updateEvents();
+    processMsgQueue();
     
     Packet response;
     
     while (true) {
         waitForEvents(); // block until we have something
-        updateEvents(); 
+        processMsgQueue(); 
         
         // if we have a packet to work with, deal with it
         if (recvPacket(response)) {
@@ -61,7 +61,7 @@ bool KnowledgeSource::update(DataPoint point) {
     
     sendPacket(response);
      
-    this->updateEvents();
+    this->processMsgQueue();
 
     // actually confirm response 
     return true;

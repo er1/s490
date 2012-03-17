@@ -20,7 +20,7 @@ int main(int argc, char** argv) {
     
     log("updated maybe\n");
     
-    myKS.updateEvents();
+    myKS.processMsgQueue();
     
     myKS.disconnectKS();
     

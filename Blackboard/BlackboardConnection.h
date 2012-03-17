@@ -23,7 +23,7 @@ protected:
     bool recvPacket(Packet&);
     
 public:
-    void updateEvents();
+    void processMsgQueue();
     void waitForEvents();
 };
 

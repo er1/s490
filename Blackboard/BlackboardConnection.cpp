@@ -59,8 +59,8 @@ bool BlackboardConnection::recvPacket(Packet& buffer) {
   This function will not block and should be periodically called in 
   and event loop. 
  */ 
-void BlackboardConnection::updateEvents() {
-    log("updateEvents (send)\n");
+void BlackboardConnection::processMsgQueue() {
+    log("processMsgQueue (send)\n");
     
     int ret;
     // send any queued outgoing packets
@@ -79,7 +79,7 @@ void BlackboardConnection::updateEvents() {
         }
     }
 
-    log("updateEvents (recv)\n");
+    log("processMsgQueue (recv)\n");
     // attempt to get any new packets and queue them to be handled
     Packet buffer;
     while (true) {
