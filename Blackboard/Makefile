@@ -8,7 +8,7 @@
 #
 
 CSRC = 
-CXXSRC = Blackboard.cpp BlackboardConnection.cpp ControlShell.cpp KIdebug.cpp KnowledgeSource.cpp Packet.cpp Thread.cpp main.cpp monitorKSCS.cpp testKS.cpp testCS.cpp testSock.cpp
+CXXSRC = Blackboard.cpp BlackboardConnection.cpp ControlShell.cpp KIdebug.cpp KnowledgeSource.cpp Packet.cpp Thread.cpp main.cpp monitorKSCS.cpp testKS.cpp testCS.cpp testSock.cpp KnowledgeItem.cpp
 SRC = $(CSRC) $(CXXSRC)
 OBJ = $(CSRC:.c=.o) $(CXXSRC:.cpp=.o)
 BINARIES = blackboard testSock monitorKSCS testKS testCS KIdebug
@@ -29,8 +29,8 @@ all: $(BINARIES)
 # <exe>: <.o files>
 #	$(LD) $(LFLAGS) -o $@ <.o files>
 
-blackboard: main.o Blackboard.o
-	$(LD) $(LFLAGS) -o $@ main.o Blackboard.o
+blackboard: main.o Blackboard.o KnowledgeItem.o
+	$(LD) $(LFLAGS) -o $@ main.o Blackboard.o KnowledgeItem.o
 	
 testSock: testSock.o
 	$(LD) $(LFLAGS) -o $@ testSock.o

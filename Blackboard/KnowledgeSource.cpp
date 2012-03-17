@@ -13,6 +13,7 @@ bool KnowledgeSource::connectKS() {
 }
 
 void KnowledgeSource::disconnectKS() {
+    // unregister for KI
 }
 
 bool KnowledgeSource::registerForKI() {
@@ -33,9 +34,9 @@ bool KnowledgeSource::registerForKI() {
     Packet response;
     
     while (true) {
-        waitForEvents();
-        updateEvents();
-
+        waitForEvents(); // block until we have something
+        updateEvents(); 
+        
         // if we have a packet to work with, deal with it
         if (recvPacket(response)) {
             if (response.getU32(0) == BO_KS_SUBSCRIPTION_SUCCESS) {
@@ -45,6 +46,8 @@ bool KnowledgeSource::registerForKI() {
                 return true;
             } 
         }
+        
+        // TODO: handle any other possible packets (none yet)
     }
 }
 
