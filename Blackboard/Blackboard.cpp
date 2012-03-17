@@ -147,7 +147,7 @@ void Blackboard::cleanClosedConnection() {
         int fd = *it;
         ConnectionDetails details = fdSet[fd];
         log("\nCleaning connection %d", fd);
-        for (std::deque<KnowledgeItem*>::iterator itKi = details.KI.begin(); itKi != details.KI.end(); ++itKi) {
+        for (std::deque<KnowledgeItem*>::iterator itKi = details.kiList.begin(); itKi != details.kiList.end(); ++itKi) {
             KnowledgeItem ki = *(*itKi);
             log("Resetting ki:%p to -1", &ki);
             ki.ksDatasource = -1;
@@ -307,7 +307,7 @@ void Blackboard::handlePacket(int fd, const Packet & packet) {
                 ki.ksDatasource = fd;
 
                 log("Assigned ki:%p to fd:%d", &ki, fd);
-                fdSet[fd].KI.push_back(&ki);
+                fdSet[fd].kiList.push_back(&ki);
 
                 ret.setU32(0, BO_KS_SUBSCRIPTION_SUCCESS);
             }

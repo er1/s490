@@ -15,7 +15,7 @@
 
 class ConnectionDetails {
 public:
-    std::deque<KnowledgeItem*> KI;
+    std::deque<KnowledgeItem*> kiList;
     std::deque<Packet> sendQueue;
 };
 
