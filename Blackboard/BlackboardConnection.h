@@ -17,10 +17,10 @@ private:
 protected:
     void sendPacket(const Packet&);
     bool recvPacket(Packet&);
-    bool connectBB(const char*);
-    void disconnectBB();
     
 public:
+    bool connectBB(const char*);
+    void disconnectBB();
     void updateEvents();
     void waitForEvents();
 };

@@ -37,12 +37,12 @@ void BlackboardConnection::disconnectBB() {
     bbfd = -1;
 }
 
-void BlackboardConnection::sendpacket(const Packet& buffer) {
+void BlackboardConnection::sendPacket(const Packet& buffer) {
     sendQueue.push_back(buffer);
 }
 
-bool BlackboardConnection::recvpacket(Packet& buffer) {
-    if (recvQueue.size == 0) {
+bool BlackboardConnection::recvPacket(Packet& buffer) {
+    if (recvQueue.size() == 0) {
         return false;
     }
     buffer = recvQueue.front();
