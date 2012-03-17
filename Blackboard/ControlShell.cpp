@@ -48,22 +48,46 @@ std::deque<DataPoint> ControlShell::getRecent(int numRequested) {
     sendPacket(request);
 
     Packet response;
-    std::deque<DataPoint> ret;
+    std::deque<DataPoint> ret;	
+	
+	processOutgoing();
 
     // wait for response
     while (true) {
         waitForEvents();
 
+		
+		
         // if we have a packet to work with, deal with it
         if (recvPacket(response)) {
-            if (response.getU32(0) == BO_CS_RECENT) {
-                assert(response.getU32(4) == tag);
-                //int numDataPoints = response.getU32(8);
-                //int PacketPos = 12;
+			uint32_t opcode = response.getU32(0);
+			switch(opcode){
+			case BO_CS_RECENT:
+			{
+				assert(response.getU32(4) == tag);
+                uint32_t numDataPoints = response.getU32(8);
+				uint32_t pos = 12;
+				for(uint32_t i=0; i< numDataPoints; ++i) {
+					DataPoint dp;
+					uint32_t dp_size = response.getU32(pos);
+					pos += 4;
+					//now read that many bytes 
+					for(uint32_t j=0; j<dp_size; ++j) {
+						dp.push_back(response.getU8(pos));
+						log("%#X ", dp.back());
+						pos += 1;
+					}
+					log("^\n");
+				}
+				break;
+			}
+			default:
+			{
+				log("\n\nUnknown Packet %d\n\n", opcode);
+			}
+			}
 
-                //while (PacketPos < )
-
-            }
+			break;
         }
     }
 

@@ -1,5 +1,6 @@
 #include "KnowledgeSource.h"
 #include "BlackboardConnection.h"
+#include "unistd.h"
 
 int main(int argc, char** argv) {
 
@@ -16,7 +17,7 @@ int main(int argc, char** argv) {
     if (myKS.connectKS()) {
         log("connected\n");
     } else {
-        log("Could not connect, BB did not allow me to register for tag %d", tag);
+        log("Could not connect, BB did not allow me to register for tag %d\n", tag);
         return 1;
     }
 

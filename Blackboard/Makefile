@@ -31,16 +31,16 @@ all: $(BINARIES)
 
 blackboard: main.o Blackboard.o KnowledgeItem.o
 	$(LD) $(LFLAGS) -o $@ main.o Blackboard.o KnowledgeItem.o
-	
+
 testSock: testSock.o
 	$(LD) $(LFLAGS) -o $@ testSock.o
-	
+
 monitorKSCS: monitorKSCS.o BlackboardConnection.o
 	$(LD) $(LFLAGS) -o $@ monitorKSCS.o BlackboardConnection.o
 
-testCS: testCS.o BlackboardConnection.o ControlShell.o
-	$(LD) $(LFLAGS) -o $@ testCS.o BlackboardConnection.o ControlShell.o
-	
+testCS: testCS.o BlackboardConnection.o ControlShell.o KnowledgeSource.o
+	$(LD) $(LFLAGS) -o $@ testCS.o BlackboardConnection.o ControlShell.o KnowledgeSource.o
+
 testKS: testKS.o BlackboardConnection.o KnowledgeSource.o
 	$(LD) $(LFLAGS) -o $@ testKS.o BlackboardConnection.o KnowledgeSource.o
 

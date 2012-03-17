@@ -250,7 +250,7 @@ void Blackboard::handlePacket(int fd, const Packet & packet) {
             std::deque<DataPoint> retSet = ki.getRecent(numElmnt);
 
             ret.resize(12);
-            ret.setU32(0, BO_CS_UPDATE);
+            ret.setU32(0, BO_CS_RECENT);
             ret.setU32(4, kiTag);
             ret.setU32(8, retSet.size());
 
@@ -259,20 +259,30 @@ void Blackboard::handlePacket(int fd, const Packet & packet) {
             for (std::deque<DataPoint>::const_iterator it = retSet.begin(); it != retSet.end(); ++it) {
                 pktSize += it->size() + sizeof (uint32_t); // add datapoint size + size of datapoint size;
             }
+			log("pktSize = %d. retSet.size() = %d.\n", pktSize, retSet.size());
 
             if (pktSize > MAX_BUFFER_SIZE) {
                 log("Requested data set is too large! (%d)\n", (int) retSet.size());
+				//TODO: need to do something here other than just complaining
             }
 
-            // reserve space
-            ret.reserve(pktSize + ret.size());
-
+			unsigned int lastIndex = ret.size();
+			ret.resize(lastIndex + pktSize);
 
             for (std::deque<DataPoint>::const_iterator it = retSet.begin(); it != retSet.end(); ++it) {
-                unsigned int lastIndex = ret.size();
-                ret.resize(lastIndex + sizeof (uint32_t) + it->size());
-                ret.insert(ret.end(), it->begin(), it->end());
+                //ret.insert(ret.end(), it->begin(), it->end());
+				DataPoint dp = *it;
+
+				ret.setU32(lastIndex, dp.size());
+				lastIndex += 4;
+
+				for(uint32_t i=0; i<dp.size(); ++i) {
+					ret.setU8(lastIndex, dp[i]);
+					++lastIndex;
+				}
             }
+
+			fdSet[fd].sendQueue.push_back(ret);
 
             break;
         }
