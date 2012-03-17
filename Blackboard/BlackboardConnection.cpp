@@ -55,7 +55,7 @@ bool BlackboardConnection::recvPacket(Packet& buffer) {
 }
 
 void BlackboardConnection::processOutgoing() {
-        log("processMsgQueue (send)\n");
+	log("processMsgQueue (send)\n");
     
     int ret;
     // send any queued outgoing packets
@@ -100,6 +100,12 @@ void BlackboardConnection::processIncoming() {
 
         buffer.resize(ret);
         recvQueue.push_back(buffer);
+
+		log("%#010x => [ ", bbfd);
+		for (unsigned int i = 0; i < buffer.size(); ++i) {
+			log("%02x ", buffer[i]);
+		}
+		log("]\n");
     }
 }
 /*

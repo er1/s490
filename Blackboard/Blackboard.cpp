@@ -220,14 +220,20 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
 				//TODO: need to do something here other than just complaining
             }
 
-            // reserve space
-            ret.reserve(pktSize + ret.size());
-
+			unsigned int lastIndex = ret.size();
+			ret.resize(lastIndex + pktSize);
 
             for (std::deque<DataPoint>::const_iterator it = retSet.begin(); it != retSet.end(); ++it) {
-                unsigned int lastIndex = ret.size();
-                ret.resize(lastIndex + sizeof (uint32_t) + it->size());
-                ret.insert(ret.end(), it->begin(), it->end());
+                //ret.insert(ret.end(), it->begin(), it->end());
+				DataPoint dp = *it;
+
+				ret.setU32(lastIndex, dp.size());
+				lastIndex += 4;
+
+				for(uint32_t i=0; i<dp.size(); ++i) {
+					ret.setU8(lastIndex, dp[i]);
+					++lastIndex;
+				}
             }
 
 			fdSet[fd].sendQueue.push_back(ret);
