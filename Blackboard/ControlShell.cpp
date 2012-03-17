@@ -55,8 +55,6 @@ std::deque<DataPoint> ControlShell::getRecent(int numRequested) {
     // wait for response
     while (true) {
         waitForEvents();
-
-		
 		
         // if we have a packet to work with, deal with it
         if (recvPacket(response)) {
@@ -77,7 +75,7 @@ std::deque<DataPoint> ControlShell::getRecent(int numRequested) {
 						log("%#X ", dp.back());
 						pos += 1;
 					}
-					log("^\n");
+					ret.push_back(dp);					
 				}
 				break;
 			}

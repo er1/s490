@@ -39,7 +39,7 @@ bool KnowledgeSource::registerForKI() {
         waitForEvents(); // block until we have something
         
         // if we have a packet to work with, deal with it
-        log("Received something, is is ack?");
+        log("Received something, is is ack?\n");
         if (recvPacket(response)) {
             if (response.getU32(0) == BO_KS_SUBSCRIPTION_SUCCESS) {
                 return true;

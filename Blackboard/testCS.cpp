@@ -2,7 +2,7 @@
 #include "KnowledgeSource.h"
 #include "BlackboardConnection.h"
 #include "unistd.h"
-
+#include "assert.h"
 int main(int argc, char** argv) 
 {
 
@@ -46,7 +46,7 @@ int main(int argc, char** argv)
 	}
 	else
 	{
-		log("update failed");
+		log("update failed\n");
 	}
 
     myKS.disconnectKS();
@@ -57,10 +57,24 @@ int main(int argc, char** argv)
    
     myCS.connectCS();
     
-    myCS.getRecent(5);
-    
+	std::deque<DataPoint> dq1 =  myCS.getRecent(5);
+	std::deque<DataPoint> dq2 =  myCS.getRecent(5);
+    DataPoint dp = myCS.getMostRecent();
     myCS.disconnectCS();
-    
+
+	assert(dq1.size() == 1);
+	for(uint32_t i=0; i<dq1[0].size(); ++i) {
+		assert(p[i] == dq1[0][i]);
+	}
+	assert(dq2.size() == 1);
+	for(uint32_t i=0; i<dq1[0].size(); ++i) {
+		assert(p[i] == dq2[0][i]);
+	}
+	assert(dp.size() == p.size());
+	for(uint32_t i=0; i<p.size(); ++i) {
+		assert(p[i] == dp[i]);
+	}
+
     return 0;
 }
 
