@@ -204,7 +204,7 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
             std::deque<DataPoint> retSet = ki.getRecent(numElmnt);
 
             ret.resize(12);
-            ret.setU32(0, BO_CS_UPDATE);
+            ret.setU32(0, BO_CS_RECENT);
             ret.setU32(4, kiTag);
             ret.setU32(8, retSet.size());
 
