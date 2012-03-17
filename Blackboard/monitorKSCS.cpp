@@ -15,6 +15,7 @@ int main(int argc, char** argv) {
     BlackboardConnection& blackboard = *(new BlackboardConnection);
     blackboard.connectBB(BB_SOCK_PATH);
 
+    /*
     while (true) {
         Packet p;
 
@@ -39,7 +40,7 @@ int main(int argc, char** argv) {
             cout << endl;
         }
     }
-
+    */
 
     blackboard.disconnectBB();
     return 0;

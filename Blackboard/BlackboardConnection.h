@@ -14,12 +14,15 @@ private:
     std::deque<Packet> recvQueue;
     std::deque<Packet> sendQueue;
 
-public:
+protected:
+    void sendPacket(const Packet&);
+    bool recvPacket(Packet&);
     bool connectBB(const char*);
     void disconnectBB();
-    void sendpacket(const Packet&);
-    bool recvpacket(Packet&);
-    void performEvents();
+    
+public:
+    void updateEvents();
+    void waitForEvents();
 };
 
 #endif	/* BLACKBOARDCONNECTION_H */

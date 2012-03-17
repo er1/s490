@@ -14,13 +14,13 @@ void KnowledgeItem::update(DataPoint point) {
     dataChain.push_front(point);
 }
 
-const DataPoint KnowledgeItem::getMostRecent() {
+const DataPoint KnowledgeItem::getMostRecent() const {
     DataPoint ret;
     ret = dataChain.front();
     return ret;
 }
 
-std::deque<DataPoint> KnowledgeItem::getRecent(size_t numPoints) {
+std::deque<DataPoint> KnowledgeItem::getRecent(size_t numPoints) const {
     std::deque<DataPoint> ret(dataChain.begin(), dataChain.begin() + numPoints);
     return ret;
 }
@@ -192,6 +192,8 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
             //  0       4       COMMAND 
             //  4       4       KITAG
 
+            log("%#010x BO_CS_SUBSCRIBE_TO requested\n", fd);
+
             uint32_t kiTag = packet.getU32(4);
 
             kiSet[kiTag].csListeners.push_back(fd);
@@ -207,7 +209,7 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
             //  0       4       COMMAND 
             //  4       4       KITAG
             //  8       4       NUMBER OF ELEMENTS
-
+            log("%#010x BO_CS_GET_RECENT requested\n", fd);
             uint32_t kiTag = packet.getU32(4);
             uint32_t numElmnt = packet.getU32(8);
             KnowledgeItem& ki = kiSet[kiTag];
@@ -247,6 +249,8 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
 			// pos     size     data
             //  0       4       COMMAND 
             //  4       4       KITAG
+
+            log("%#010x BO_KS_SUBSCRIBE_AS requested\n", fd);
             uint32_t kiTag = packet.getU32(4);
 
             KnowledgeItem& ki = kiSet[kiTag];
@@ -276,6 +280,8 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
             //  0       4       COMMAND 
             //  4       4       KITAG
             //  8       END     DATA      
+
+            log("%#010x BO_KS_UPDATE requested\n", fd);
             uint32_t kiTag = packet.getU32(4);
 
             KnowledgeItem& ki = kiSet[kiTag];
@@ -295,6 +301,23 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
             break;
         }
 
+#ifdef DEBUG
+        case BO_DEBUG_DUMP_KISET:
+        {
+            log("%#010x BO_DEBUG_DUMP_KISET requested\n", fd);
+            for (std::map<bbtag, KnowledgeItem>::const_iterator KI = kiSet.begin(); KI != kiSet.end(); ++KI) {
+                log("%d: \n", KI->first);
+                std::deque<DataPoint> dp = KI->second.getRecent(5);
+                for (std::deque<DataPoint>::const_iterator DP = dp.begin(); DP != dp.end(); ++DP) {
+                    for (DataPoint::const_iterator CH = DP->begin(); CH != DP->end(); ++CH) {
+                        log("%02x ", *CH);
+                    }
+                    log("\n");
+                }
+            }
+            break;
+        }
+#endif
         default:
             // invalid code
             log("invalid command: %d\n", packet.getU32(0));

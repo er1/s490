@@ -18,16 +18,21 @@ class KnowledgeItem {
 private:
     std::deque<DataPoint> dataChain;
 public:
-    inline KnowledgeItem() { ksDatasource = -1; }
-    inline ~KnowledgeItem() {}
-    
+
+    inline KnowledgeItem() {
+        ksDatasource = -1;
+    }
+
+    inline ~KnowledgeItem() {
+    }
+
     void update(DataPoint);
 
     int ksDatasource;
     std::deque<int> csListeners;
 
-    const DataPoint getMostRecent();
-    std::deque<DataPoint> getRecent(size_t);
+    const DataPoint getMostRecent() const;
+    std::deque<DataPoint> getRecent(size_t) const;
 };
 
 class ConnectionDetails {
