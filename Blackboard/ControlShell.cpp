@@ -48,7 +48,9 @@ std::deque<DataPoint> ControlShell::getRecent(int numRequested) {
     sendPacket(request);
 
     Packet response;
-    std::deque<DataPoint> ret;
+    std::deque<DataPoint> ret;	
+	
+	processOutgoing();
 
     // wait for response
     while (true) {
@@ -67,8 +69,10 @@ std::deque<DataPoint> ControlShell::getRecent(int numRequested) {
 					//now read that many bytes 
 					for(uint32_t j=0; j<dp_size; ++j) {
 						dp.push_back(response.getU8(pos));
+						log("%#X ", dp.back());
 						pos += 1;
 					}
+					log("^\n");
 				}
             }
         }

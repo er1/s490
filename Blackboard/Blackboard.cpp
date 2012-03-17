@@ -213,9 +213,11 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
             for (std::deque<DataPoint>::const_iterator it = retSet.begin(); it != retSet.end(); ++it) {
                 pktSize += it->size() + sizeof (uint32_t); // add datapoint size + size of datapoint size;
             }
+			log("pktSize = %d. retSet.size() = %d.\n", pktSize, retSet.size());
 
             if (pktSize > MAX_BUFFER_SIZE) {
                 log("Requested data set is too large! (%d)\n", (int) retSet.size());
+				//TODO: need to do something here other than just complaining
             }
 
             // reserve space
@@ -227,6 +229,8 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
                 ret.resize(lastIndex + sizeof (uint32_t) + it->size());
                 ret.insert(ret.end(), it->begin(), it->end());
             }
+
+			fdSet[fd].sendQueue.push_back(ret);
 
             break;
         }

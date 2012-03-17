@@ -23,7 +23,7 @@ public:
 
     void update(DataPoint);
 
-    int ksDatasource;
+    int ksDatasource; //the owner of this KI
     std::deque<int> csListeners;
 
     const DataPoint getMostRecent() const;
