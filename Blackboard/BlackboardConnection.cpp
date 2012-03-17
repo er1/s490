@@ -54,6 +54,11 @@ bool BlackboardConnection::recvPacket(Packet& buffer) {
     return true;
 }
 
+/*
+  This function will "flush" the send queue and "fill" the recv queue.
+  This function will not block and should be periodically called in 
+  and event loop. 
+ */ 
 void BlackboardConnection::updateEvents() {
     log("updateEvents (send)\n");
     
