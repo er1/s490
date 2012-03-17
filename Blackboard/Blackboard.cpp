@@ -188,6 +188,7 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
 
         case BO_CS_SUBSCRIBE_TO:
         {
+			// pos     size     data
             //  0       4       COMMAND 
             //  4       4       KITAG
 
@@ -202,6 +203,7 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
 
         case BO_CS_GET_RECENT:
         {
+			// pos     size     data
             //  0       4       COMMAND 
             //  4       4       KITAG
             //  8       4       NUMBER OF ELEMENTS
@@ -242,6 +244,7 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
 
         case BO_KS_SUBSCRIBE_AS:
         {
+			// pos     size     data
             //  0       4       COMMAND 
             //  4       4       KITAG
             uint32_t kiTag = packet.getU32(4);
@@ -269,6 +272,7 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
 
         case BO_KS_UPDATE:
         {
+			// pos     size     data
             //  0       4       COMMAND 
             //  4       4       KITAG
             //  8       END     DATA      
