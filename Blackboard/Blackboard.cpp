@@ -10,25 +10,6 @@
 #include "bbtags.h"
 #include "bbdef.h"
 
-void KnowledgeItem::update(DataPoint point) {
-    dataChain.push_front(point);
-}
-
-const DataPoint KnowledgeItem::getMostRecent() const {
-    DataPoint ret;
-    ret = dataChain.front();
-    return ret;
-}
-
-std::deque<DataPoint> KnowledgeItem::getRecent(size_t numPoints) const {
-    if (numPoints > dataChain.size()) {
-        numPoints = dataChain.size();
-    }
-
-    std::deque<DataPoint> ret(dataChain.begin(), dataChain.begin() + numPoints);
-    return ret;
-}
-
 Blackboard* Blackboard::instance = 0;
 
 Blackboard::Blackboard() {
@@ -115,6 +96,7 @@ void Blackboard::eventLoop(int _socketListener) {
 
         for (std::deque<int>::iterator it = fdDeleteQueue.begin(); it != fdDeleteQueue.end(); ++it) {
             // fd cleanup goes here
+                        
             fdSet.erase(*it);
         }
         fdDeleteQueue.clear();
