@@ -18,6 +18,9 @@ class KnowledgeItem {
 private:
     std::deque<DataPoint> dataChain;
 public:
+    inline KnowledgeItem() { ksDatasource = -1; }
+    inline ~KnowledgeItem() {}
+    
     void update(DataPoint);
 
     int ksDatasource;

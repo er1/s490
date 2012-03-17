@@ -25,7 +25,7 @@ bool BlackboardConnection::connectBB(const char* address) {
     local.sun_family = AF_UNIX;
     strncpy(local.sun_path, address, sizeof (local.sun_path));
 
-    exitOnFail(connect(bbfd, (sockaddr*)&local, sizeof(sockaddr_un)) == -1, "connect");
+    exitOnFail(connect(bbfd, (sockaddr*) & local, sizeof (sockaddr_un)) == -1, "connect");
     return (bbfd >= 0);
 }
 

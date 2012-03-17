@@ -7,6 +7,9 @@
 #include "common.h"
 #include "Blackboard.h"
 
+#include "bbtags.h"
+#include "bbdef.h"
+
 void KnowledgeItem::update(DataPoint point) {
     dataChain.push_front(point);
 }
@@ -43,7 +46,7 @@ void Blackboard::eventLoop(int _socketListener) {
         if (selectValue > 0)
             log("\nreturned %d\n", selectValue);
         errorOnFail(selectValue < 0, "select");
-        
+
         // if we have a new connection, accept it and add it to the fdSet
         if (FD_ISSET(socketListener, &fd_r)) {
             log("%#010x attempts connect\n", socketListener);
@@ -139,7 +142,7 @@ void Blackboard::prepareSelect() {
     FD_SET(socketListener, &fd_r);
     //FD_SET(socketListener, &fd_x);
     maxfd = socketListener;
-    
+
     // every other connection based on case
     for (std::map<int, ConnectionDetails>::const_iterator it = fdSet.begin(); it != fdSet.end(); ++it) {
         int fd = it->first;
@@ -177,12 +180,126 @@ void Blackboard::handlePacket(int fd, const Packet& packet) {
     log("]\n");
 
     // isolate
-    
-    
-    
-    
+
+    Packet ret;
+
+    switch (packet.getU32(0)) {
+
+
+        case BO_CS_SUBSCRIBE_TO:
+        {
+            //  0       4       COMMAND 
+            //  4       4       KITAG
+
+            uint32_t kiTag = packet.getU32(4);
+
+            kiSet[kiTag].csListeners.push_back(fd);
+
+            // TODO: send ACK
+
+            break;
+        }
+
+        case BO_CS_GET_RECENT:
+        {
+            //  0       4       COMMAND 
+            //  4       4       KITAG
+            //  8       4       NUMBER OF ELEMENTS
+
+            uint32_t kiTag = packet.getU32(4);
+            uint32_t numElmnt = packet.getU32(8);
+            KnowledgeItem& ki = kiSet[kiTag];
+
+            std::deque<DataPoint> retSet = ki.getRecent(numElmnt);
+
+            ret.resize(12);
+            ret.setU32(0, BO_CS_UPDATE);
+            ret.setU32(4, kiTag);
+            ret.setU32(8, retSet.size());
+
+            // find out final packet size;
+            int pktSize = 0;
+            for (std::deque<DataPoint>::const_iterator it = retSet.begin(); it != retSet.end(); ++it) {
+                pktSize += it->size() + sizeof (uint32_t); // add datapoint size + size of datapoint size;
+            }
+
+            if (pktSize > MAX_BUFFER_SIZE) {
+                log("Requested data set is too large! (%d)\n", (int) retSet.size());
+            }
+
+            // reserve space
+            ret.reserve(pktSize + ret.size());
+
+
+            for (std::deque<DataPoint>::const_iterator it = retSet.begin(); it != retSet.end(); ++it) {
+                unsigned int lastIndex = ret.size();
+                ret.resize(lastIndex + sizeof (uint32_t) + it->size());
+                ret.insert(ret.end(), it->begin(), it->end());
+            }
+
+            break;
+        }
+
+        case BO_KS_SUBSCRIBE_AS:
+        {
+            //  0       4       COMMAND 
+            //  4       4       KITAG
+            uint32_t kiTag = packet.getU32(4);
+
+            KnowledgeItem& ki = kiSet[kiTag];
+
+            // form default response packet
+            ret.resize(8);
+            ret.setU32(0, BO_KS_SUBSCRIPTION_FAILED);
+            ret.setU32(4, kiTag);
+
+            // attempt action and modify response  
+            if (ki.ksDatasource < 0) {
+                ki.ksDatasource = fd;
+
+                fdSet[fd].KI.push_back(&ki);
+
+                ret.setU32(0, BO_KS_SUBSCRIPTION_SUCCESS);
+            }
+
+            // send packet
+            fdSet[fd].sendQueue.push_back(ret);
+            break;
+        }
+
+        case BO_KS_UPDATE:
+        {
+            //  0       4       COMMAND 
+            //  4       4       KITAG
+            //  8       END     DATA      
+            uint32_t kiTag = packet.getU32(4);
+
+            KnowledgeItem& ki = kiSet[kiTag];
+
+            ret.resize(8);
+            ret.setU32(0, BO_KS_UPDATE_FAILED);
+            ret.setU32(4, kiTag);
+
+            // check if we are the owner of this KI
+            if (ki.ksDatasource == fd) {
+                ret.setU32(0, BO_KS_UPDATE_SUCCESS);
+                ki.update(DataPoint(packet[8], packet.back()));
+            }
+
+            fdSet[fd].sendQueue.push_back(ret);
+
+            break;
+        }
+
+        default:
+            // invalid code
+            log("invalid command: %d\n", packet.getU32(0));
+            ;
+    }
+
+
     // end isolate
-    
-    const char* pkt = "lol";
-    fdSet[fd].sendQueue.push_back(Packet(pkt, pkt + strlen(pkt)));
+
+    //const char* pkt = "hi";
+    //fdSet[fd].sendQueue.push_back(Packet(pkt, pkt + strlen(pkt)));
 }

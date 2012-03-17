@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <string>
+#include <cstring>
 
 using namespace std;
 
@@ -16,17 +17,17 @@ int main(int argc, char** argv) {
 
     while (true) {
         Packet p;
-        
+
         p.resize(MAX_BUFFER_SIZE);
-        
-        cin.getline((char*)&(p.front()), MAX_BUFFER_SIZE);
-        
-        p.resize(strnlen((char*)&(p.front()), MAX_BUFFER_SIZE));
-        
+
+        cin.getline((char*) &(p.front()), MAX_BUFFER_SIZE);
+
+        p.resize(strlen((char*) &(p.front())));
+
         blackboard.sendpacket(p);
-        
+
         blackboard.performEvents();
-        
+
         while (blackboard.recvpacket(p)) {
             for (size_t i = 0; i < p.size(); ++i) {
                 if (p[i] <= 32 && p[i] > 127) {
@@ -38,8 +39,8 @@ int main(int argc, char** argv) {
             cout << endl;
         }
     }
-    
-    
+
+
     blackboard.disconnectBB();
     return 0;
 }

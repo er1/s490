@@ -8,15 +8,13 @@
 #include "bbdef.h"
 #include "bbtags.h"
 
-
-
 class BlackboardConnection {
 private:
     int bbfd;
     std::deque<Packet> recvQueue;
     std::deque<Packet> sendQueue;
 
-public:    
+public:
     bool connectBB(const char*);
     void disconnectBB();
     void sendpacket(const Packet&);

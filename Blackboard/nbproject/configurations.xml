@@ -2,21 +2,6 @@
 <configurationDescriptor version="80">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df name="Blackboard" root=".">
-      <df name="old">
-        <in>Blackboard.cppBlackboard.h</in>
-        <in>BlackboardConnection.cppBlackboard.h</in>
-        <in>BlackboardConnection.hBlackboard.h</in>
-        <in>Packet.cppBlackboard.h</in>
-        <in>Packet.hBlackboard.h</in>
-        <in>Thread.cppBlackboard.h</in>
-        <in>Thread.hBlackboard.h</in>
-        <in>bbdef.hBlackboard.h</in>
-        <in>bbtags.hBlackboard.h</in>
-        <in>common.hBlackboard.h</in>
-        <in>main.cppBlackboard.h</in>
-        <in>monitorCS.cppBlackboard.h</in>
-        <in>testSock.cppBlackboard.h</in>
-      </df>
       <in>Blackboard.cpp</in>
       <in>Blackboard.h</in>
       <in>BlackboardConnection.cpp</in>

@@ -63,7 +63,7 @@ int main(int argc, char** argv) {
         if (FD_ISSET(0, &r)) {
             simplePacket p;
             p.size = read(0, p.buffer, sizeof (p.buffer));
-                        if (!p.size) {
+            if (!p.size) {
                 break;
             }
             socketBuffer.push_back(p);
@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
 
 
     }
-    
+
     close(0);
     close(1);
     close(fdLocal);

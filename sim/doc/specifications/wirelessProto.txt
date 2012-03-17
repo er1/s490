@@ -1,3 +1,0 @@
-Stub
-
-We need to come up with a specification for the wireless data (packet?) protocol for communication between the sat and the base station.
