@@ -35,7 +35,8 @@ private:
 
     void prepareSelect();
     void handlePacket(int, const Packet&);
-
+    void cleanClosedConnection();
+    
     // instancing
     static Blackboard* instance;
     Blackboard();
