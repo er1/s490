@@ -45,7 +45,7 @@ bool KnowledgeSource::registerForKI() {
                 return true;
             } 
             if (response.getU32(0) == BO_KS_SUBSCRIPTION_FAILED) {
-                return true;
+                return false;
             } 
         }
         
