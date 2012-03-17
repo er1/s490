@@ -58,11 +58,18 @@ std::deque<DataPoint> ControlShell::getRecent(int numRequested) {
         if (recvPacket(response)) {
             if (response.getU32(0) == BO_CS_RECENT) {
                 assert(response.getU32(4) == tag);
-                //int numDataPoints = response.getU32(8);
-                //int PacketPos = 12;
-
-                //while (PacketPos < )
-
+                uint32_t numDataPoints = response.getU32(8);
+				uint32_t pos = 12;
+				for(uint32_t i=0; i< numDataPoints; ++i) {
+					DataPoint dp;
+					uint32_t dp_size = response.getU32(pos);
+					pos += 4;
+					//now read that many bytes 
+					for(uint32_t j=0; j<dp_size; ++j) {
+						dp.push_back(response.getU8(pos));
+						pos += 1;
+					}
+				}
             }
         }
     }
