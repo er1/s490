@@ -150,7 +150,7 @@ void Blackboard::cleanClosedConnection() {
         for (std::deque<KnowledgeItem*>::iterator itKi = details.kiList.begin(); itKi != details.kiList.end(); ++itKi) {
             KnowledgeItem ki = *(*itKi);
             log("Resetting ki:%p to -1", &ki);
-            ki.ksDatasource = -1;
+            ki.ownerFd = -1;
         }
 
         fdSet.erase(fd);
@@ -259,7 +259,7 @@ void Blackboard::handlePacket(int fd, const Packet & packet) {
             for (std::deque<DataPoint>::const_iterator it = retSet.begin(); it != retSet.end(); ++it) {
                 pktSize += it->size() + sizeof (uint32_t); // add datapoint size + size of datapoint size;
             }
-			log("pktSize = %d. retSet.size() = %d.\n", pktSize, retSet.size());
+			log("pktSize = %d. retSet.size() = %lu.\n", pktSize, retSet.size());
 
             if (pktSize > MAX_BUFFER_SIZE) {
                 log("Requested data set is too large! (%d)\n", (int) retSet.size());
@@ -303,8 +303,8 @@ void Blackboard::handlePacket(int fd, const Packet & packet) {
             ret.setU32(4, kiTag);
 
             // attempt action and modify response  
-            if (ki.ksDatasource < 0) {
-                ki.ksDatasource = fd;
+            if (ki.ownerFd < 0) {
+                ki.ownerFd = fd;
 
                 log("Assigned ki:%p to fd:%d", &ki, fd);
                 fdSet[fd].kiList.push_back(&ki);
@@ -334,7 +334,7 @@ void Blackboard::handlePacket(int fd, const Packet & packet) {
             ret.setU32(4, kiTag);
 
             // check if we are the owner of this KI
-            if (ki.ksDatasource == fd) {
+            if (ki.ownerFd == fd) {
                 ret.setU32(0, BO_KS_UPDATE_SUCCESS);
 
                 ki.update(DataPoint(packet.begin() + 8, packet.end()));
@@ -350,17 +350,19 @@ void Blackboard::handlePacket(int fd, const Packet & packet) {
         case BO_DEBUG_DUMP_KISET:
         {
             log("%#010x BO_DEBUG_DUMP_KISET requested\n", fd);
+			log("kiSet:\n");
             for (std::map<bbtag, KnowledgeItem>::const_iterator knowledgeItemIterator = kiSet.begin(); knowledgeItemIterator != kiSet.end(); ++knowledgeItemIterator) {
-                log("%d: \n", knowledgeItemIterator->first);
+                log("\t%d: \n", knowledgeItemIterator->first);
                 std::deque<DataPoint> dp = knowledgeItemIterator->second.getRecent(5);
                 for (std::deque<DataPoint>::const_iterator dataChainIterator = dp.begin(); dataChainIterator != dp.end(); ++dataChainIterator) {
-                    log("[ ");
+                    log("\t[ ");
                     for (DataPoint::const_iterator dataPointIterator = dataChainIterator->begin(); dataPointIterator != dataChainIterator->end(); ++dataPointIterator) {
                         log("%02x ", *dataPointIterator);
                     }
                     log("]\n");
                 }
             }
+			
             break;
         }
 #endif

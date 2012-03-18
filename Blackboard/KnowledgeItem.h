@@ -15,7 +15,7 @@ private:
 public:
 
     inline KnowledgeItem() {
-        ksDatasource = -1;
+        ownerFd = -1;
     }
 
     inline ~KnowledgeItem() {
@@ -23,7 +23,7 @@ public:
 
     void update(DataPoint);
 
-    int ksDatasource; //the owner of this KI
+    int ownerFd; //the owner of this KI
     std::deque<int> csListeners;
 
     const DataPoint getMostRecent() const;

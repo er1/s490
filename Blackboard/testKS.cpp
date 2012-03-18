@@ -5,13 +5,13 @@
 int main(int argc, char** argv) {
 
     int tag = 42;
-    if (argc > 1)
+    if (argc > 1){
         tag = atoi(argv[1]);
-    
+    }
     int delayBetweenUpdateInMs = 100;
-    if (argc > 2)
+    if (argc > 2){
         delayBetweenUpdateInMs = atoi(argv[2]);
-    
+    }
     KnowledgeSource myKS(tag);
 
     if (myKS.connectKS()) {
@@ -21,11 +21,10 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-
     DataPoint p;
     p.resize(4);
 
-    while (true) {
+    while (argc > 2) {
 
         p[0] = 'd';
         p[1] = 'e';
@@ -40,9 +39,6 @@ int main(int argc, char** argv) {
         // 100 ms * 1000 ns per ms;
         usleep(delayBetweenUpdateInMs * 1000);
     }
-
-
-
 
     myKS.disconnectKS();
 
