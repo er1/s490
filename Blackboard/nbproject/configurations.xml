@@ -9,6 +9,8 @@
       <in>ControlShell.cpp</in>
       <in>ControlShell.h</in>
       <in>KIdebug.cpp</in>
+      <in>KnowledgeItem.cpp</in>
+      <in>KnowledgeItem.h</in>
       <in>KnowledgeSource.cpp</in>
       <in>KnowledgeSource.h</in>
       <in>Packet.cpp</in>

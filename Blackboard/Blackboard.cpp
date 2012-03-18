@@ -145,14 +145,18 @@ void Blackboard::cleanClosedConnection() {
     for (std::deque<int>::iterator it = fdDeleteQueue.begin(); it != fdDeleteQueue.end(); ++it) {
         // fd cleanup goes here
         int fd = *it;
-        ConnectionDetails details = fdSet[fd];
+        ConnectionDetails& details = fdSet[fd];
         log("\nCleaning connection %d", fd);
         for (std::deque<KnowledgeItem*>::iterator itKi = details.kiList.begin(); itKi != details.kiList.end(); ++itKi) {
-            KnowledgeItem ki = *(*itKi);
-            log("Resetting ki:%p to -1", &ki);
-            ki.ownerFd = -1;
+            KnowledgeItem* ki = *itKi;
+            log("Resetting ki:%p to -1", ki);
+            ki->ownerFd = -1;
         }
 
+        if (details.sendQueue.size() > 0) {
+            log("%#010x died with unsent packets\n", fd);
+        }
+        
         fdSet.erase(fd);
     }
     fdDeleteQueue.clear();
@@ -259,30 +263,30 @@ void Blackboard::handlePacket(int fd, const Packet & packet) {
             for (std::deque<DataPoint>::const_iterator it = retSet.begin(); it != retSet.end(); ++it) {
                 pktSize += it->size() + sizeof (uint32_t); // add datapoint size + size of datapoint size;
             }
-			log("pktSize = %d. retSet.size() = %lu.\n", pktSize, retSet.size());
+            log("pktSize = %d. retSet.size() = %lu.\n", pktSize, retSet.size());
 
             if (pktSize > MAX_BUFFER_SIZE) {
                 log("Requested data set is too large! (%d)\n", (int) retSet.size());
-				//TODO: need to do something here other than just complaining
+                //TODO: need to do something here other than just complaining
             }
 
-			unsigned int lastIndex = ret.size();
-			ret.resize(lastIndex + pktSize);
+            unsigned int lastIndex = ret.size();
+            ret.resize(lastIndex + pktSize);
 
             for (std::deque<DataPoint>::const_iterator it = retSet.begin(); it != retSet.end(); ++it) {
                 //ret.insert(ret.end(), it->begin(), it->end());
-				DataPoint dp = *it;
+                DataPoint dp = *it;
 
-				ret.setU32(lastIndex, dp.size());
-				lastIndex += 4;
+                ret.setU32(lastIndex, dp.size());
+                lastIndex += 4;
 
-				for(uint32_t i=0; i<dp.size(); ++i) {
-					ret.setU8(lastIndex, dp[i]);
-					++lastIndex;
-				}
+                for (uint32_t i = 0; i < dp.size(); ++i) {
+                    ret.setU8(lastIndex, dp[i]);
+                    ++lastIndex;
+                }
             }
 
-			fdSet[fd].sendQueue.push_back(ret);
+            fdSet[fd].sendQueue.push_back(ret);
 
             break;
         }
@@ -350,7 +354,7 @@ void Blackboard::handlePacket(int fd, const Packet & packet) {
         case BO_DEBUG_DUMP_KISET:
         {
             log("%#010x BO_DEBUG_DUMP_KISET requested\n", fd);
-			log("kiSet:\n");
+            log("kiSet:\n");
             for (std::map<bbtag, KnowledgeItem>::const_iterator knowledgeItemIterator = kiSet.begin(); knowledgeItemIterator != kiSet.end(); ++knowledgeItemIterator) {
                 log("\t%d: \n", knowledgeItemIterator->first);
                 std::deque<DataPoint> dp = knowledgeItemIterator->second.getRecent(5);
@@ -362,7 +366,7 @@ void Blackboard::handlePacket(int fd, const Packet & packet) {
                     log("]\n");
                 }
             }
-			
+
             break;
         }
 #endif
