@@ -100,7 +100,7 @@ void Blackboard::eventLoop(int _socketListener) {
                     // we cannot remove the fd from the set just yet so save it to be swept up later
                     fdDeleteQueue.push_back(fd);
 
-                    if (details.sendQueue.size() > 0) {
+                    if (cd.sendQueue.size() > 0) {
                         log("%#010x died with unsent packets\n", fd);
                     }
                     cd.sendQueue.clear();
