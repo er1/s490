@@ -16,13 +16,13 @@ KnowledgeSource myKS(tag);
 
 ControlShell myCS(tag);
 
-static char * test_connect(){
+static const char * test_connect(){
     bool con = myCS.connectCS();
 	mu_assert("connectCS returned false!", con == true);
 	return 0;
 }
 
-static char * test_getRecent(){
+static const char * test_getRecent(){
 	std::deque<DataPoint> dq1 =  myCS.getRecent(5);
 	std::deque<DataPoint> dq2 =  myCS.getRecent(5);
 
@@ -37,7 +37,7 @@ static char * test_getRecent(){
 	return 0;
 }
 
-static char * test_getMostRecent(){
+static const char * test_getMostRecent(){
 	DataPoint dp = myCS.getMostRecent();
 
 	assert(dp.size() == p.size());
@@ -47,7 +47,7 @@ static char * test_getMostRecent(){
 	return 0;
 }
 
-static char * all_tests(){
+static const char * all_tests(){
 	mu_run_test(test_connect);
 	mu_run_test(test_getRecent);
 	mu_run_test(test_getMostRecent);
@@ -99,7 +99,7 @@ int main(int argc, char** argv)
 // setup complete
 /////////////////////////////////////////////////	
    
-	char *result = all_tests();
+	const char *result = all_tests();
 	if (result != 0) {
 		printf("%s\n", result);
 	}
