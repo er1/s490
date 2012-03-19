@@ -29,9 +29,9 @@ void Blackboard::eventLoop(int _socketListener) {
 
         log("watching %d connections\n", (unsigned int) fdSet.size());
         int selectValue = select(maxfd + 1, &fd_r, &fd_w, &fd_x, &select_tv);
-        if (selectValue > 0)
+        if (selectValue > 0) {
             log("select returned %d\n", selectValue);
-        else { // ok so an error occured during select..
+        } else { // ok so an error occured during select..
             if (errno == EBADF) {
                 log("invalid fd (closed connection) of a set of %d.\n", (unsigned int) fdSet.size());
                 struct pollfd fds[fdSet.size()];
@@ -73,7 +73,9 @@ void Blackboard::eventLoop(int _socketListener) {
         }
 
         // TODO: schedule connection handling in a more fair manner
-        //              currently: lowest descriptor first
+        //              currently: lowest descriptor first, all packets then yield
+        //              problems: starvation to newer connections
+        //                        if packet rate is too fast, we never yield
 
         // loop over all the connections we have and check if they need anything
         for (std::map<int, ConnectionDetails>::iterator it = fdSet.begin(); it != fdSet.end(); ++it) {
@@ -97,6 +99,10 @@ void Blackboard::eventLoop(int _socketListener) {
                     close(fd);
                     // we cannot remove the fd from the set just yet so save it to be swept up later
                     fdDeleteQueue.push_back(fd);
+
+                    if (cd.sendQueue.size() > 0) {
+                        log("%#010x died with unsent packets\n", fd);
+                    }
                     cd.sendQueue.clear();
                 }
             }
@@ -194,10 +200,6 @@ void Blackboard::cleanClosedConnection() {
         }
 
         log("\n");
-
-        if (details.sendQueue.size() > 0) {
-            log("%#010x died with unsent packets\n", fd);
-        }
 
         fdSet.erase(fd);
     }
