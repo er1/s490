@@ -3,6 +3,57 @@
 #include "BlackboardConnection.h"
 #include "unistd.h"
 #include "assert.h"
+#include "stdio.h"
+#include "minunit.h"
+
+int tests_run = 0;
+
+int tag = 490;
+
+DataPoint p;
+
+KnowledgeSource myKS(tag);
+
+ControlShell myCS(tag);
+
+static const char * test_connect(){
+    bool con = myCS.connectCS();
+	mu_assert("connectCS returned false!", con == true);
+	return 0;
+}
+
+static const char * test_getRecent(){
+	std::deque<DataPoint> dq1 =  myCS.getRecent(5);
+	std::deque<DataPoint> dq2 =  myCS.getRecent(5);
+
+	mu_assert("Got a number of data points != 1", dq1.size() == 1);
+	for(uint32_t i=0; i<dq1[0].size(); ++i) {
+		mu_assert("getRecent()1: Corrupt Data", p[i] == dq1[0][i]);
+	}
+	assert(dq2.size() == 1);
+	for(uint32_t i=0; i<dq1[0].size(); ++i) {
+		mu_assert("getRecent()2: Corrupt Data", p[i] == dq2[0][i]);
+	}
+	return 0;
+}
+
+static const char * test_getMostRecent(){
+	DataPoint dp = myCS.getMostRecent();
+
+	assert(dp.size() == p.size());
+	for(uint32_t i=0; i<p.size(); ++i) {
+		mu_assert("getMostRecent(): Corrupt Data", p[i] == dp[i]);
+	}
+	return 0;
+}
+
+static const char * all_tests(){
+	mu_run_test(test_connect);
+	mu_run_test(test_getRecent);
+	mu_run_test(test_getMostRecent);
+	return 0;
+}
+
 int main(int argc, char** argv) 
 {
 
@@ -14,10 +65,6 @@ int main(int argc, char** argv)
 	  and make some data.
 	*/
 
-	int tag = 490;
-
-	KnowledgeSource myKS(tag);
-
     if (myKS.connectKS()) 
 	{
         log("connected\n");
@@ -28,9 +75,7 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    DataPoint p;
     p.resize(6);
-
 
 	p[0] = 'M';
 	p[1] = 'c';
@@ -39,7 +84,6 @@ int main(int argc, char** argv)
 	p[4] = 'r';
 	p[5] = 'p';
 	
-
 	if (myKS.update(p)) 
 	{
 		log("updated with ack\n");
@@ -51,29 +95,20 @@ int main(int argc, char** argv)
 
     myKS.disconnectKS();
 
+/////////////////////////////////////////////////
+// setup complete
 /////////////////////////////////////////////////	
-
-    ControlShell myCS(tag);
    
-    myCS.connectCS();
+	const char *result = all_tests();
+	if (result != 0) {
+		printf("%s\n", result);
+	}
+	else {
+		printf("ALL TESTS PASSED\n");
+	}
+	printf("Tests run: %d\n", tests_run);
     
-	std::deque<DataPoint> dq1 =  myCS.getRecent(5);
-	std::deque<DataPoint> dq2 =  myCS.getRecent(5);
-    DataPoint dp = myCS.getMostRecent();
     myCS.disconnectCS();
-
-	assert(dq1.size() == 1);
-	for(uint32_t i=0; i<dq1[0].size(); ++i) {
-		assert(p[i] == dq1[0][i]);
-	}
-	assert(dq2.size() == 1);
-	for(uint32_t i=0; i<dq1[0].size(); ++i) {
-		assert(p[i] == dq2[0][i]);
-	}
-	assert(dp.size() == p.size());
-	for(uint32_t i=0; i<p.size(); ++i) {
-		assert(p[i] == dp[i]);
-	}
 
     return 0;
 }
