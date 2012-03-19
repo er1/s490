@@ -4,6 +4,7 @@
 #include "stdint.h"
 #include <vector>
 #include <deque>
+#include <set>
 #include "sys/types.h"
 
 #include "DataPoint.h"
@@ -20,10 +21,10 @@ public:
     inline ~KnowledgeItem() {
     }
 
-    void update(DataPoint);
+     void update(DataPoint);
 
     int ownerFd; //the owner of this KI
-    std::deque<int> csListeners;
+    std::set<int> csListeners;
 
     const DataPoint getMostRecent() const;
     std::deque<DataPoint> getRecent(size_t) const;

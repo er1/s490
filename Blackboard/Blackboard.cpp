@@ -27,13 +27,13 @@ void Blackboard::eventLoop(int _socketListener) {
     for (;;) { // forever
         prepareSelect();
 
-        log("\n watching %d file descriptor, %d in the cleaning queue", (unsigned int) fdSet.size(), (unsigned int) fdDeleteQueue.size());
+        log("watching %d connections\n", (unsigned int) fdSet.size());
         int selectValue = select(maxfd + 1, &fd_r, &fd_w, &fd_x, &select_tv);
         if (selectValue > 0)
-            log("\nreturned %d\n", selectValue);
+            log("select returned %d\n", selectValue);
         else { // ok so an error occured during select..
             if (errno == EBADF) {
-                log("\na connection was closed. but which one of the %d", (unsigned int) fdSet.size());
+                log("invalid fd (closed connection) of a set of %d.\n", (unsigned int) fdSet.size());
                 struct pollfd fds[fdSet.size()];
                 int x = 0;
                 for (std::map<int, ConnectionDetails>::iterator it = fdSet.begin(); it != fdSet.end(); ++it) {
@@ -48,12 +48,12 @@ void Blackboard::eventLoop(int _socketListener) {
                 if (pollret >= 0) {
                     for (int y = 0; y < x; y++) {
                         if (fds[y].revents == POLLNVAL) {
-                            log("\n%d was improperly closed, marking it as dirty", fds[y].fd);
+                            log("%#010x was closed but never cleaned, marking it as dirty\n", fds[y].fd);
                             fdDeleteQueue.push_back(fds[y].fd);
                         }
                     }
                 } else {
-                    log("\nCannot identify the un-properly closed socket. Crash, %d:", pollret);
+                    log("Unidentified non-cleaned fd: Blackboard cannot continue.(%d)\n\n", pollret);
                     exit(1);
                 }
                 cleanClosedConnection();
@@ -87,16 +87,17 @@ void Blackboard::eventLoop(int _socketListener) {
                 Packet vecbuffer;
                 vecbuffer.resize(MAX_BUFFER_SIZE, 0);
                 int recvResult = recv(fd, &(vecbuffer.front()), vecbuffer.size(), 0);
-                errorOnFail(recvResult < 0, "recv");
+                errorOnFail(recvResult < 0, "%#010x recv failed\n");
 
                 if (recvResult > 0) {
                     vecbuffer.resize(recvResult);
                     handlePacket(fd, vecbuffer);
-                } else {
+                } else { // recvResult == 0
                     log("%#010x close\n", fd);
                     close(fd);
                     // we cannot remove the fd from the set just yet so save it to be swept up later
                     fdDeleteQueue.push_back(fd);
+                    cd.sendQueue.clear();
                 }
             }
             if (FD_ISSET(fd, &fd_w)) {
@@ -113,23 +114,19 @@ void Blackboard::eventLoop(int _socketListener) {
                         if ((errno == EAGAIN) || (errno == EWOULDBLOCK)) {
                             break;
                         } else {
-                            errorOnFail(FAIL, "send")
-
+                            errorOnFail(FAIL, "send failed\n");
                         }
                     }
                 }
             }
-
-            // IF any process asked to close, clean them
-            cleanClosedConnection();
-
-            // currently unused
-            // if (FD_ISSET(fd, &fd_x)) {
-            //     // ???
-            // }
         }
 
-        // _____________________________________________________
+        if (fdDeleteQueue.size() > 0) {
+            // IF any process asked to close, clean them
+            // we must erase outside of the iterator to avoid SIGSEGV
+            log("%d connections to be cleaned.\n", (unsigned int) fdDeleteQueue.size());
+            cleanClosedConnection();
+        }
 
         // debug cpu burn prevention
         /*
@@ -138,29 +135,6 @@ void Blackboard::eventLoop(int _socketListener) {
         select(0, 0, 0, 0, &select_tv);
          */
     }
-}
-
-void Blackboard::cleanClosedConnection() {
-    log("\nCleaning %d connections", (unsigned int) fdDeleteQueue.size());
-    for (std::deque<int>::iterator it = fdDeleteQueue.begin(); it != fdDeleteQueue.end(); ++it) {
-        // fd cleanup goes here
-        int fd = *it;
-        ConnectionDetails& details = fdSet[fd];
-        log("\nCleaning connection %d", fd);
-        for (std::deque<KnowledgeItem*>::iterator itKi = details.kiList.begin(); itKi != details.kiList.end(); ++itKi) {
-            KnowledgeItem* ki = *itKi;
-            log("Resetting ki:%p to -1", ki);
-            ki->ownerFd = -1;
-        }
-
-        if (details.sendQueue.size() > 0) {
-            log("%#010x died with unsent packets\n", fd);
-        }
-        
-        fdSet.erase(fd);
-    }
-    fdDeleteQueue.clear();
-
 }
 
 void Blackboard::prepareSelect() {
@@ -201,12 +175,33 @@ void Blackboard::prepareSelect() {
     }
 }
 
-KnowledgeItem & Blackboard::getKI(bbtag tag) {
-    std::map<bbtag, KnowledgeItem>::iterator it = kiSet.find(tag);
-    if (it == kiSet.end())
-        kiSet.insert(std::pair<bbtag, KnowledgeItem > (tag, KnowledgeItem()));
+void Blackboard::cleanClosedConnection() {
+    for (std::deque<int>::iterator it = fdDeleteQueue.begin(); it != fdDeleteQueue.end(); ++it) {
+        // fd cleanup goes here
+        int fd = *it;
+        ConnectionDetails& details = fdSet[fd];
+        log("Cleaning connection %#010x: removing: ", fd);
+        for (std::set<KnowledgeItem*>::iterator itKS = details.ksList.begin(); itKS != details.ksList.end(); ++itKS) {
+            log(" KS");
+            KnowledgeItem* ki = *itKS;
+            ki->ownerFd = -1;
+        }
 
-    return kiSet.at(tag);
+        for (std::set<KnowledgeItem*>::iterator itCS = details.csList.begin(); itCS != details.csList.end(); ++itCS) {
+            log(" CS");
+            KnowledgeItem* ki = *itCS;
+            ki->csListeners.erase(fd);
+        }
+
+        log("\n");
+
+        if (details.sendQueue.size() > 0) {
+            log("%#010x died with unsent packets\n", fd);
+        }
+
+        fdSet.erase(fd);
+    }
+    fdDeleteQueue.clear();
 }
 
 void Blackboard::handlePacket(int fd, const Packet & packet) {
@@ -232,10 +227,16 @@ void Blackboard::handlePacket(int fd, const Packet & packet) {
             log("%#010x BO_CS_SUBSCRIBE_TO requested\n", fd);
 
             uint32_t kiTag = packet.getU32(4);
+            KnowledgeItem& ki = kiSet[kiTag];
 
-            kiSet[kiTag].csListeners.push_back(fd);
+            fdSet[fd].csList.insert(&ki);
+            kiSet[kiTag].csListeners.insert(fd);
 
-            // TODO: send ACK
+            // TODO: is there a case where this doesnt work?
+            // send ACK
+            ret.resize(8);
+            ret.setU32(0, BO_GEN_ACK); // TODO: use a proper ACK
+            ret.setU32(4, kiTag);
 
             break;
         }
@@ -263,7 +264,7 @@ void Blackboard::handlePacket(int fd, const Packet & packet) {
             for (std::deque<DataPoint>::const_iterator it = retSet.begin(); it != retSet.end(); ++it) {
                 pktSize += it->size() + sizeof (uint32_t); // add datapoint size + size of datapoint size;
             }
-            log("pktSize = %d. retSet.size() = %d.\n", pktSize, (int)retSet.size());
+            log("pktSize = %d. retSet.size() = %d.\n", pktSize, (int) retSet.size());
 
             if (pktSize > MAX_BUFFER_SIZE) {
                 log("Requested data set is too large! (%d)\n", (int) retSet.size());
@@ -308,11 +309,11 @@ void Blackboard::handlePacket(int fd, const Packet & packet) {
 
             // attempt action and modify response  
             if (ki.ownerFd < 0) {
+
+                fdSet[fd].ksList.insert(&ki);
                 ki.ownerFd = fd;
 
                 log("Assigned ki:%p to fd:%d", &ki, fd);
-                fdSet[fd].kiList.push_back(&ki);
-
                 ret.setU32(0, BO_KS_SUBSCRIPTION_SUCCESS);
             }
 
@@ -376,9 +377,5 @@ void Blackboard::handlePacket(int fd, const Packet & packet) {
             ;
     }
 
-
     // end isolate
-
-    //const char* pkt = "hi";
-    //fdSet[fd].sendQueue.push_back(Packet(pkt, pkt + strlen(pkt)));
 }

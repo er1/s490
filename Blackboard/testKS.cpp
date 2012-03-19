@@ -10,7 +10,7 @@ int main(int argc, char** argv) {
     }
     int delayBetweenUpdateInMs = 100;
     if (argc > 2){
-        delayBetweenUpdateInMs = atoi(argv[2]);
+        sscanf(argv[2], "%d", &delayBetweenUpdateInMs);
     }
     KnowledgeSource myKS(tag);
 
@@ -26,14 +26,16 @@ int main(int argc, char** argv) {
 
     while (argc > 2) {
 
+        log("updating... ");
+        
         p[0] = 'd';
         p[1] = 'e';
         p[2] = 'r';
         p[3] = 'p';
         if (myKS.update(p)) {
-            log("updated with ack\n");
+            log("success\n");
         } else {
-            log("update failed");
+            log("failed\n");
         }
 
         // 100 ms * 1000 ns per ms;

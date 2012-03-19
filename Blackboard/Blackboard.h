@@ -7,6 +7,7 @@
 #include <sys/time.h>
 #include <deque>
 #include <map>
+#include <set>
 #include <vector>
 
 #include "bbtags.h"
@@ -15,7 +16,8 @@
 
 class ConnectionDetails {
 public:
-    std::deque<KnowledgeItem*> kiList;
+    std::set<KnowledgeItem*> ksList;
+    std::set<KnowledgeItem*> csList;
     std::deque<Packet> sendQueue;
 };
 
@@ -40,8 +42,6 @@ private:
     // instancing
     static Blackboard* instance;
     Blackboard();
-
-    KnowledgeItem& getKI(bbtag);
 
 public:
     static Blackboard* getInstance();
