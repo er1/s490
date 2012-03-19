@@ -6,8 +6,7 @@
 #include <deque>
 #include "sys/types.h"
 
-
-typedef std::vector<uint8_t> DataPoint;
+#include "DataPoint.h"
 
 class KnowledgeItem {
 private:
