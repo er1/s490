@@ -354,20 +354,20 @@ void Blackboard::handlePacket(int fd, const Packet & packet) {
 
 			//now we need to update any listeners on the KI
 
-			for(set<int>::const_iterator i=ki.csListeners.begin(); i!=ki.csListeners.end(); ++i){
+			for(std::set<int>::const_iterator i=ki.csListeners.begin(); i!=ki.csListeners.end(); ++i){
 				int subscriber = *i;
 				Packet updatePacket;
 				updatePacket.resize(12 + nData.size());
 				updatePacket.setU32(0, BO_CS_UPDATE);
 				updatePacket.setU32(4, kiTag);
-				updatePacket.setU32(nData.size());
+				updatePacket.setU32(8, nData.size());
 				
 				for(uint32_t j=0; j<nData.size(); ++j){
 					updatePacket.push_back(nData[j]);
 				}
 
 				if(fdSet.count(subscriber) != 0){
-					fdSet[subscriber].sendQueeu.push_back(updatePacket);
+					fdSet[subscriber].sendQueue.push_back(updatePacket);
 				}
 				else{
 					//TODO: handle this case
