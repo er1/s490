@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "bbtags.h"
-#include "Packet.h"
+#include "../common/Packet.h"
 #include "KnowledgeItem.h"
 
 class ConnectionDetails {

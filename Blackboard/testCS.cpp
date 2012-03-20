@@ -4,7 +4,7 @@
 #include "unistd.h"
 #include "assert.h"
 #include "stdio.h"
-#include "minunit.h"
+#include "../common/minunit.h"
 
 int tests_run = 0;
 

@@ -21,7 +21,7 @@ CXX = $(PREFIX)g++
 LD = $(PREFIX)g++
 CFLAGS = -Wall -c -fPIC $(DEBUG)
 CXXFLAGS = $(CFLAGS)
-LFLAGS = -Wall -lm -pthread $(DEBUG)
+LFLAGS = -Wall $(DEBUG)
 
 all: $(BINARIES)
 

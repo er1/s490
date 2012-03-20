@@ -3,8 +3,8 @@
 #include <sys/un.h>
 #include <errno.h>
 
-#include "common.h"
-#include "Packet.h"
+#include "../common/common.h"
+#include "../common/Packet.h"
 #include "BlackboardConnection.h"
 
 bool BlackboardConnection::connectBB() {

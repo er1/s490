@@ -1,4 +1,4 @@
-#include "common.h"
+#include "../common/common.h"
 #include "bbdef.h"
 #include "bbtags.h"
 

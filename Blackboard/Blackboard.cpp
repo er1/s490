@@ -5,7 +5,6 @@
 #include <sys/un.h>
 #include <sys/time.h>
 
-#include "common.h"
 #include "Blackboard.h"
 
 #include "bbtags.h"

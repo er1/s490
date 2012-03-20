@@ -9,7 +9,7 @@
 #include "BlackboardConnection.h"
 #include <set>
 #include "bbdef.h"
-#include "Packet.h"
+#include "../common/Packet.h"
 #include <cassert>
 
 ControlShell::ControlShell(bbtag _tag) {
@@ -130,6 +130,7 @@ void ControlShell::checkForUpdates() {
 
 		} else {
 			//TODO: what now motha fucka?
+			log("checkForUpdates: recv packet that is not mine... \n");
 		}
 	}
 }

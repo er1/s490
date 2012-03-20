@@ -2,8 +2,8 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <deque>
-#include "common.h"
-#include "Packet.h"
+#include "../common/common.h"
+#include "../common/Packet.h"
 #include "bbdef.h"
 
 int main(int argc, char** argv) {

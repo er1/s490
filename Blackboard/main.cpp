@@ -2,10 +2,9 @@
 #include <csignal>
 #include <unistd.h>
 
-#include "common.h"
+#include "../common/common.h"
 #include "bbdef.h"
 #include "bbtags.h"
-#include "Thread.h"
 #include "Blackboard.h"
 
 int createSocketListener(const char*);
