@@ -340,15 +340,41 @@ void Blackboard::handlePacket(int fd, const Packet & packet) {
             ret.setU32(0, BO_KS_UPDATE_FAILED);
             ret.setU32(4, kiTag);
 
+			DataPoint nData(packet.begin() + 8, packet.end());
+
             // check if we are the owner of this KI
             if (ki.ownerFd == fd) {
                 ret.setU32(0, BO_KS_UPDATE_SUCCESS);
 
-                ki.update(DataPoint(packet.begin() + 8, packet.end()));
+                ki.update(nData);
             }
 
             //Acknowledge to the KS that its update was successful
             fdSet[fd].sendQueue.push_back(ret);
+
+			//now we need to update any listeners on the KI
+
+			for(set<int>::const_iterator i=ki.csListeners.begin(); i!=ki.csListeners.end(); ++i){
+				int subscriber = *i;
+				Packet updatePacket;
+				updatePacket.resize(12 + nData.size());
+				updatePacket.setU32(0, BO_CS_UPDATE);
+				updatePacket.setU32(4, kiTag);
+				updatePacket.setU32(nData.size());
+				
+				for(uint32_t j=0; j<nData.size(); ++j){
+					updatePacket.push_back(nData[j]);
+				}
+
+				if(fdSet.count(subscriber) != 0){
+					fdSet[subscriber].sendQueeu.push_back(updatePacket);
+				}
+				else{
+					//TODO: handle this case
+					log("listener not in fdSet!!\n");
+				}
+
+			}
 
             break;
         }
