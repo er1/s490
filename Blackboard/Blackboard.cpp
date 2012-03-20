@@ -11,10 +11,16 @@
 #include "bbtags.h"
 #include "bbdef.h"
 
+// Singleton instance
 Blackboard* Blackboard::instance = 0;
 
+// initialize blackboard
+
 Blackboard::Blackboard() {
+    // default contructors init everything needed to empty
 }
+
+// get singleton instance
 
 Blackboard* Blackboard::getInstance() {
     if (!instance)
@@ -22,45 +28,58 @@ Blackboard* Blackboard::getInstance() {
     return instance;
 }
 
+// eventloop for handling new, existing and recently closed connections
+// _socketListener: fd to new connection socket
+
 void Blackboard::eventLoop(int _socketListener) {
+    // set the listener socket
     socketListener = _socketListener;
-    for (;;) { // forever
-        prepareSelect();
+
+    // loop forever
+    while (true) {
+        prepareSelect(); // prepare for select call by collecting every open fd
 
         log("watching %d connections\n", (unsigned int) fdSet.size());
+
+        // block until one or more fd need attention or timeout 
         int selectValue = select(maxfd + 1, &fd_r, &fd_w, &fd_x, &select_tv);
-        if (selectValue > 0) {
+
+        if (selectValue >= 0) { // check that select returned properly
             log("select returned %d\n", selectValue);
-        } else { // ok so an error occured during select..
-            if (errno == EBADF) {
+        } else { // if not, check why
+            if (errno == EBADF) { // lost track of a fd (should never happen)
                 log("invalid fd (closed connection) of a set of %d.\n", (unsigned int) fdSet.size());
+
+                // find out which fd we lost track of...
+                // collect them all
                 struct pollfd fds[fdSet.size()];
-                int x = 0;
+                int i = 0;
                 for (std::map<int, ConnectionDetails>::iterator it = fdSet.begin(); it != fdSet.end(); ++it) {
                     int fd = it->first;
-                    fds[x].fd = fd;
-                    fds[x].events = POLLWRNORM | POLLRDBAND;
-                    x++;
+                    fds[i].fd = fd;
+                    fds[i].events = POLLWRNORM | POLLRDBAND;
+                    ++i;
                 }
 
+                // check them all
                 int pollret = 0;
-                pollret = poll(fds, x, -1);
+                pollret = poll(fds, i, -1);
                 if (pollret >= 0) {
-                    for (int y = 0; y < x; y++) {
-                        if (fds[y].revents == POLLNVAL) {
-                            log("%#010x was closed but never cleaned, marking it as dirty\n", fds[y].fd);
-                            fdDeleteQueue.push_back(fds[y].fd);
+                    for (int j = 0; j < i; j++) {
+                        if (fds[j].revents == POLLNVAL) {
+                            log("%#010x was closed but never cleaned, marking it as dirty\n", fds[j].fd);
+                            // push the local connection to the deleteQueue for cleaning
+                            fdDeleteQueue.push_back(fds[j].fd);
                         }
                     }
-                } else {
-                    log("Unidentified non-cleaned fd: Blackboard cannot continue.(%d)\n\n", pollret);
+                } else { // everything checks out but select still failed, panic.
+                    log("Unidentified non-cleaned fd: Blackboard cannot continue. (%d)\n\n", pollret);
                     exit(1);
                 }
-                cleanClosedConnection();
-                continue;
+                cleanClosedConnection(); // clean up anything we found
+                continue; // restart the event loop
             }
-
-
+            errorOnFail(FAIL, "select"); // select failed for some other reason
         }
 
         // if we have a new connection, accept it and add it to the fdSet
@@ -68,7 +87,7 @@ void Blackboard::eventLoop(int _socketListener) {
             log("%#010x attempts connect\n", socketListener);
             int newfd = accept(socketListener, NULL, NULL);
             log("%#010x got connection %#010x\n", socketListener, newfd);
-
+            // once we accepted the connection create a new entry for it.
             fdSet.insert(std::pair<int, ConnectionDetails > (newfd, ConnectionDetails()));
         }
 
@@ -79,7 +98,7 @@ void Blackboard::eventLoop(int _socketListener) {
 
         // loop over all the connections we have and check if they need anything
         for (std::map<int, ConnectionDetails>::iterator it = fdSet.begin(); it != fdSet.end(); ++it) {
-            // assign values for what we are dealing with
+            // assign values for what we are accessing and dealing with
             int fd = it->first;
             ConnectionDetails& cd = it->second;
 
@@ -87,29 +106,35 @@ void Blackboard::eventLoop(int _socketListener) {
             if (FD_ISSET(fd, &fd_r)) {
                 log("%#010x recv\n", fd);
                 Packet vecbuffer;
-                vecbuffer.resize(MAX_BUFFER_SIZE, 0);
+                vecbuffer.resize(MAX_BUFFER_SIZE, 0); // allocate memory for a full read
                 int recvResult = recv(fd, &(vecbuffer.front()), vecbuffer.size(), 0);
                 errorOnFail(recvResult < 0, "%#010x recv failed\n");
 
-                if (recvResult > 0) {
-                    vecbuffer.resize(recvResult);
-                    handlePacket(fd, vecbuffer);
-                } else { // recvResult == 0
+                if (recvResult > 0) { // have something
+                    vecbuffer.resize(recvResult); // trim buffer size
+                    // TODO: consider a handle queue for packet scheduling
+                    handlePacket(fd, vecbuffer); // hand packet off the the handler
+                } else { // recvResult == 0 implies the connection has gone away
                     log("%#010x close\n", fd);
-                    close(fd);
+                    close(fd); // close it on our end
                     // we cannot remove the fd from the set just yet so save it to be swept up later
                     fdDeleteQueue.push_back(fd);
 
                     if (cd.sendQueue.size() > 0) {
                         log("%#010x died with unsent packets\n", fd);
                     }
-                    cd.sendQueue.clear();
+                    cd.sendQueue.clear(); // clear the sendQueue so even if we can write for some reason, we don't
                 }
             }
+            
+            // check if we can write
             if (FD_ISSET(fd, &fd_w)) {
-                while ((cd.sendQueue.size() > 0)) {
-                    Packet& packet = cd.sendQueue.front();
+                // TODO: limit the amount to send
+                while ((cd.sendQueue.size() > 0)) { // have something to send?
+                    Packet& packet = cd.sendQueue.front(); // get it
                     log("%#010x send\n", fd);
+                    
+                    // try to send it (do not block though)
                     int sendResult = send(fd, &(packet.front()), packet.size(), MSG_DONTWAIT);
 
                     // was data sent? if so remove it from the sent queue
@@ -118,7 +143,7 @@ void Blackboard::eventLoop(int _socketListener) {
                         cd.sendQueue.pop_front();
                     } else {
                         if ((errno == EAGAIN) || (errno == EWOULDBLOCK)) {
-                            break;
+                            break; // would block so try again later
                         } else {
                             errorOnFail(FAIL, "send failed\n");
                         }
@@ -129,20 +154,14 @@ void Blackboard::eventLoop(int _socketListener) {
 
         if (fdDeleteQueue.size() > 0) {
             // IF any process asked to close, clean them
-            // we must erase outside of the iterator to avoid SIGSEGV
+            // we must erase outside of the iterator to avoid SIGSEGV due to invalidated iterator
             log("%d connections to be cleaned.\n", (unsigned int) fdDeleteQueue.size());
             cleanClosedConnection();
         }
-
-        // debug cpu burn prevention
-        /*
-        select_tv.tv_sec = 0;
-        select_tv.tv_usec = 200000;
-        select(0, 0, 0, 0, &select_tv);
-         */
     }
 }
 
+// collect all known fd for the system and put them into FDSETs
 void Blackboard::prepareSelect() {
     // set timeout delay for health checking
     select_tv.tv_sec = 5; // FIXME: make it configurable
@@ -173,7 +192,8 @@ void Blackboard::prepareSelect() {
             FD_SET(fd, &fd_w);
         }
 
-        FD_SET(fd, &fd_x); // exceptions
+        // unused
+        // FD_SET(fd, &fd_x); // exceptions
 
         if (fd > maxfd) {
             maxfd = fd;
@@ -181,18 +201,24 @@ void Blackboard::prepareSelect() {
     }
 }
 
+// clean up connections that have been marked as closed or are otherwise not active anymore
 void Blackboard::cleanClosedConnection() {
+    // go over each marked fd
     for (std::deque<int>::iterator it = fdDeleteQueue.begin(); it != fdDeleteQueue.end(); ++it) {
-        // fd cleanup goes here
         int fd = *it;
+        
+        // figure out what depends on this connection and remove the dependency
         ConnectionDetails& details = fdSet[fd];
         log("Cleaning connection %#010x: removing: ", fd);
+        
+        // removed ownership of any owned KS
         for (std::set<KnowledgeItem*>::iterator itKS = details.ksList.begin(); itKS != details.ksList.end(); ++itKS) {
             log(" KS");
             KnowledgeItem* ki = *itKS;
             ki->ownerFd = -1;
         }
 
+        // remove from each CS registered to deliver updates.
         for (std::set<KnowledgeItem*>::iterator itCS = details.csList.begin(); itCS != details.csList.end(); ++itCS) {
             log(" CS");
             KnowledgeItem* ki = *itCS;
@@ -201,11 +227,13 @@ void Blackboard::cleanClosedConnection() {
 
         log("\n");
 
-        fdSet.erase(fd);
+        fdSet.erase(fd); // finally remove from the active connection set
     }
-    fdDeleteQueue.clear();
+    fdDeleteQueue.clear(); // clean up the queue since each has been handled at this point
 }
 
+// handle incoming packets
+// TODO: break this monster function down into smaller parts
 void Blackboard::handlePacket(int fd, const Packet & packet) {
     log("%#010x => [ ", fd);
     for (unsigned int i = 0; i < packet.size(); ++i) {
@@ -340,7 +368,7 @@ void Blackboard::handlePacket(int fd, const Packet & packet) {
             ret.setU32(0, BO_KS_UPDATE_FAILED);
             ret.setU32(4, kiTag);
 
-			DataPoint nData(packet.begin() + 8, packet.end());
+            DataPoint nData(packet.begin() + 8, packet.end());
 
             // check if we are the owner of this KI
             if (ki.ownerFd == fd) {
@@ -352,29 +380,28 @@ void Blackboard::handlePacket(int fd, const Packet & packet) {
             //Acknowledge to the KS that its update was successful
             fdSet[fd].sendQueue.push_back(ret);
 
-			//now we need to update any listeners on the KI
+            //now we need to update any listeners on the KI
 
-			for(std::set<int>::const_iterator i=ki.csListeners.begin(); i!=ki.csListeners.end(); ++i){
-				int subscriber = *i;
-				Packet updatePacket;
-				updatePacket.resize(12 + nData.size());
-				updatePacket.setU32(0, BO_CS_UPDATE);
-				updatePacket.setU32(4, kiTag);
-				updatePacket.setU32(8, nData.size());
-				
-				for(uint32_t j=0; j<nData.size(); ++j){
-					updatePacket.push_back(nData[j]);
-				}
+            for (std::set<int>::const_iterator i = ki.csListeners.begin(); i != ki.csListeners.end(); ++i) {
+                int subscriber = *i;
+                Packet updatePacket;
+                updatePacket.resize(12 + nData.size());
+                updatePacket.setU32(0, BO_CS_UPDATE);
+                updatePacket.setU32(4, kiTag);
+                updatePacket.setU32(8, nData.size());
 
-				if(fdSet.count(subscriber) != 0){
-					fdSet[subscriber].sendQueue.push_back(updatePacket);
-				}
-				else{
-					//TODO: handle this case
-					log("listener not in fdSet!!\n");
-				}
+                for (uint32_t j = 0; j < nData.size(); ++j) {
+                    updatePacket.push_back(nData[j]);
+                }
 
-			}
+                if (fdSet.count(subscriber) != 0) {
+                    fdSet[subscriber].sendQueue.push_back(updatePacket);
+                } else {
+                    //TODO: handle this case
+                    log("listener not in fdSet!!\n");
+                }
+
+            }
 
             break;
         }
