@@ -45,7 +45,14 @@ void BlackboardConnection::sendPacket(const Packet& buffer) {
     sendQueue.push_back(buffer);
 }
 
+/*
+  This function will copy the first Packet in the recv
+  queue to the reference Packet passed to it. The function
+  returns true unless there were no Packets on the recv 
+  queue in which case it returns false.
+ */
 bool BlackboardConnection::recvPacket(Packet& buffer) {
+	processIncoming();
     if (recvQueue.size() == 0) {
         return false;
     }

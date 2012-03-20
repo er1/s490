@@ -21,9 +21,11 @@ public:
     void registerCallback(void (*)(bbtag, DataPoint));
     void releaseCallback(void (*)(bbtag, DataPoint));
 
+	void checkForUpdates();
+
 private:
     bbtag tag;
-    std::set<void (*)(bbtag, DataPoint) > callbacks;
+    std::set< void (*)(bbtag, DataPoint) > callbacks;
 
 };
 

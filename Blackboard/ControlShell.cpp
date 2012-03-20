@@ -100,6 +100,7 @@ DataPoint ControlShell::getMostRecent() {
     return retSet.front();
 }
 
+//TODO: make it so callbacks only happen for the corresponding tag 
 void ControlShell::registerCallback(void (*callback)(bbtag, DataPoint)) {
     callbacks.insert(callback);
 }
@@ -108,3 +109,27 @@ void ControlShell::releaseCallback(void (*callback)(bbtag, DataPoint)) {
     callbacks.erase(callback);
 }
 
+void ControlShell::checkForUpdates() {
+	Packet pack;
+	if(recvPacket(pack)){
+		uint32_t opcode = pack.getU32(0);
+		if(opcode == BO_CS_UPDATE){
+			uint32_t tag = pack.getU32(4);
+			uint32_t len = pack.getU32(8);
+			DataPoint dp;
+			
+			for(uint32_t i=0; i<len; ++i) {
+				dp.push_back(pack.getU8(12+i));
+			}
+
+			//TODO: make it so callbacks only happen for the corresponding tag 
+			std::set< void (*)(bbtag, DataPoint) >::const_iterator it;
+			for(it=callbacks.begin(); it!=callbacks.end(); ++it){
+				(*(*it))(tag, dp);
+			}
+
+		} else {
+			//TODO: what now motha fucka?
+		}
+	}
+}
