@@ -10,21 +10,21 @@
 #include "../common/satdef.h"
 #include "../common/common.h"
 #include "../common/Packet.h"
-#include "SatConnection.h"
+#include "Connector.h"
 
 
-bool SatConnection::connect(){
+bool Connector::connect(const char * addr, int channel){
 #ifdef  USE_AX25
 	struct full_sockaddr_ax25 sa_bind;
 	struct full_sockaddr_ax25 sa_connect;
-	const char* local_call = GROUND_CALLSIGN;
-	const char* dest_call = SAT_CALLSIGN;
+	const char* local_call = GROUND_CALLSIGN; //who
+	const char* dest_call = SAT_CALLSIGN; //who 
 	const char* dest_call_list[] = { 0, 0 };
 	dest_call_list[0] = dest_call;
 
 	// create socket
 	log("create socket\n");
-	exitOnFail((satfd = socket(PF_AX25, SOCK_SEQPACKET, 0)) == -1, "socket creation");	
+	exitOnFail((linkfd = socket(PF_AX25, SOCK_SEQPACKET, 0)) == -1, "socket creation");	
 
 	// define address
 	sa_bind.fsa_ax25.sax25_family = AF_AX25;
@@ -36,57 +36,54 @@ bool SatConnection::connect(){
 	ax25_aton_arglist(dest_call_list, &sa_connect);
 
 	// bind socket to address
-	exitOnFail(bind(satfd, (struct sockaddr*)&sa_bind, sizeof(struct full_sockaddr_ax25)) == -1, "bind");
+	exitOnFail(bind(linkfd, (struct sockaddr*)&sa_bind, sizeof(struct full_sockaddr_ax25)) == -1, "bind");
 	
 	// attempt to connect to address
-	exitOnFail(connect(satfd, (struct sockaddr*)&sa_connect, sizeof(struct full_sockaddr_ax25)) != 0, "connect");
+	exitOnFail(connect(linkfd, (struct sockaddr*)&sa_connect, sizeof(struct full_sockaddr_ax25)) != 0, "connect");
 #else
 	//////////////////////////////////////
 	//////////For Testing ONLY////////////
 	//////////////////////////////////////
-	
-	struct sockaddr_in benchsatServer;
-	struct sockaddr_in benchsatClient;
 
-	int sLen =  sizeof(benchsatServer);
-	int cLen =  sizeof(benchsatClient);
+	sLen =  sizeof(Server);
+	cLen =  sizeof(Client);
 	
-	exitOnFail((satfd = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0, "udp socket");
+	exitOnFail((linkfd = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0, "udp socket");
 	
-	memset(&benchsatServer, 0, sLen);       /* Clear struct */
-	benchsatServer.sin_family = AF_INET;                  /* Internet/IP */
-	benchsatServer.sin_addr.s_addr = htonl(INADDR_ANY);   /* Any IP address */
-	benchsatServer.sin_port = htons(TEST_PORT);       /* server port */
+	memset(&Server, 0, sLen);       /* Clear struct */
+	Server.sin_family = AF_INET;                  /* Internet/IP */
+	Server.sin_addr.s_addr = htonl(inet_addr(addr));   /* Any IP address */
+	Server.sin_port = htons(channel);       /* server port */
 #endif
 
-	return (satfd >= 0);
+	return (linkfd >= 0);
 }
 
-void SatConnection::disconnect(){
+void Connector::disconnect(){
 	log("disconnect\n");
 	
-	if(satfd >= 0)
-		close satfd;
+	if(linkfd >= 0)
+		close(linkfd);
 
-	satfd = -1;
+	linkfd = -1;
 }
 
-void SatConnection::sendPacket(const Packet& p){
+void Connector::sendPacket(const Packet& p){
 	sendQueue.push_back(p);
 }
 
-void SatConnection::processOutgoing(){
+void Connector::processOutgoing(){
 
 	log("processMsgQueue (send)\n");    
     int ret;
     // send any queued outgoing packets
     while (sendQueue.size() > 0) {
 #ifdef  USE_AX25
-        ret = send(satfd, &(sendQueue.front().front()), sendQueue.front().size(), MSG_DONTWAIT);
+        ret = send(linkfd, &(sendQueue.front().front()), sendQueue.front().size(), MSG_DONTWAIT);
 #else
-		ret = sendto(satfd, &(sendQueue.front().front()), sendQueue.front().size(), 0,
-					 (struct sockaddr *) &benchsatServer,
-					 &sLen)) 
+		ret = sendto(linkfd, &(sendQueue.front().front()), sendQueue.front().size(), 0,
+					 (struct sockaddr *) &Server,
+					 sLen);
 #endif
         if (ret >= 0) {
             sendQueue.pop_front();
@@ -103,7 +100,7 @@ void SatConnection::processOutgoing(){
 
 }
 
-void SatConnection::processIncoming(){
+void Connector::processIncoming(){
 	int ret;
 	
 	log("processMsgQueue (recv)\n");
@@ -113,12 +110,12 @@ void SatConnection::processIncoming(){
         buffer.resize(MAX_BUFFER_SIZE);
 
 #ifdef  USE_AX25
-		ret = recv(bbfd, &(buffer.front()), buffer.size(), MSG_DONTWAIT);
+		ret = recv(linkfd, &(buffer.front()), buffer.size(), MSG_DONTWAIT);
 #else
-		ret = recv(bbfd, &(buffer.front()), buffer.size(), MSG_DONTWAIT);
-		recvfrom(satfd, &(sendQueue.front().front()), sendQueue.front().size(), 0,
-				 (struct sockaddr *) &benchsatClient,
-				 &cLen)) 
+		ret = recv(linkfd, &(buffer.front()), buffer.size(), MSG_DONTWAIT);
+		recvfrom(linkfd, &(sendQueue.front().front()), sendQueue.front().size(), 0,
+				 (struct sockaddr *) &Client,
+				 &cLen);
 #endif
       
 
@@ -131,35 +128,34 @@ void SatConnection::processIncoming(){
         }
         if (ret == 0) {
             // connection closed;
-            bbfd = -1;
+            linkfd = -1;
         }
 
         buffer.resize(ret);
         recvQueue.push_back(buffer);
 
-		log("%#010x => [ ", bbfd);
+		log("%#010x => [ ", linkfd);
 		for (unsigned int i = 0; i < buffer.size(); ++i) {
 			log("%02x ", buffer[i]);
 		}
 		log("]\n");
     }
 
-
 }
 
-void SatConnection::processMsgQueue(){
+void Connector::processMsgQueue(){
 	processOutgoing();
 	processIncoming();
 }
 
-void SatConnection::waitForEvents(){
+void Connector::waitForEvents(){
 fd_set fds;
     while (recvQueue.size() == 0) {
         // wait to unblock
         FD_ZERO(&fds);
-        FD_SET(satfd, &fds);
+        FD_SET(linkfd, &fds);
 
-		int rv = select(satfd + 1, &fds, NULL, NULL, NULL);        
+		int rv = select(linkfd + 1, &fds, NULL, NULL, NULL);        
 
         log("returned from rv with %d\n", rv);
         
