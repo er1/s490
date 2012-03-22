@@ -1,8 +1,7 @@
-#include "KnowledgeSource.h"
-#include "BlackboardConnection.h"
+#include <common/KnowledgeSource.h>
+#include <common/minunit.h>
 #include "unistd.h"
 #include "stdio.h"
-#include "../common/minunit.h"
 
 int tests_run = 0;
 

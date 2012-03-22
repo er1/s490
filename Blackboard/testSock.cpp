@@ -2,7 +2,7 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <deque>
-#include "../common/common.h"
+#include <common/common.h>
 
 struct simplePacket {
     int size;

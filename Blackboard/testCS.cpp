@@ -1,10 +1,9 @@
-#include "ControlShell.h"
-#include "KnowledgeSource.h"
-#include "BlackboardConnection.h"
+#include <common/ControlShell.h>
+#include <common/KnowledgeSource.h>
 #include "unistd.h"
 #include "assert.h"
 #include "stdio.h"
-#include "../common/minunit.h"
+#include <common/minunit.h>
 
 int tests_run = 0;
 

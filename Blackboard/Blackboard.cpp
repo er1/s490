@@ -5,10 +5,9 @@
 #include <sys/un.h>
 #include <sys/time.h>
 
+#include <common/common.h>
 #include "Blackboard.h"
 
-#include "bbtags.h"
-#include "bbdef.h"
 
 // Singleton instance
 Blackboard* Blackboard::instance = 0;

@@ -1,6 +1,9 @@
 #ifndef COMMON_H
 #define	COMMON_H
 
+#include <common/bbtags.h>
+#include <common/bbdef.h>
+
 #include <stdlib.h>
 
 #define PI ((double)3.141592654)
