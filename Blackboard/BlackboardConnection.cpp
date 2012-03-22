@@ -130,7 +130,7 @@ void BlackboardConnection::processMsgQueue() {
 */
 void BlackboardConnection::waitForEvents() {
     fd_set fds;
-    while (recvQueue.size() == 0) { //this seems like it will loop forever
+    while (recvQueue.size() == 0) {
         // wait to unblock
         FD_ZERO(&fds);
         FD_SET(bbfd, &fds);
@@ -144,11 +144,6 @@ void BlackboardConnection::waitForEvents() {
         
         //Now that we know we can safely read in the file handle, read from it and turn them into incoming messages
         processIncoming();
-
-        //probably need to ckeck the result of select:
-		// check if we can read anything (or the connection has closed (gracefully or otherwise)
-		/*if (FD_ISSET(bbfd, &fds)) {
-			//derp
-		}*/
+     
     }
 }

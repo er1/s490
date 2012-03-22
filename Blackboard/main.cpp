@@ -1,5 +1,5 @@
-#include <cstdio>
-#include <csignal>
+#include <stdio.h>
+#include <signal.h>
 #include <unistd.h>
 
 #include "../common/common.h"

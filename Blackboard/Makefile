@@ -13,7 +13,7 @@ SRC = $(CSRC) $(CXXSRC)
 OBJ = $(CSRC:.c=.o) $(CXXSRC:.cpp=.o)
 BINARIES = blackboard testSock monitorKSCS testKS testCS KIdebug
 
-PREFIX = 
+PREFIX =
 DEBUG = -g -DDEBUG
 
 CC = $(PREFIX)gcc
@@ -21,7 +21,7 @@ CXX = $(PREFIX)g++
 LD = $(PREFIX)g++
 CFLAGS = -Wall -c -fPIC $(DEBUG)
 CXXFLAGS = $(CFLAGS)
-LFLAGS = -Wall $(DEBUG)
+LFLAGS = -Wall -static $(DEBUG)
 
 all: $(BINARIES)
 

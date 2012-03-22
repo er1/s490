@@ -6,18 +6,19 @@
 #include <vector>
 
 class SatConnection {
+
 private:
 	int satfd;
 	std::deque<Packet> recvQueue;
     std::deque<Packet> sendQueue;
     std::deque<Packet> pendingReplyQueue;
+
 protected:
-	bool connectSat();
-	void disconnectSat();
+	bool connect();
+	void disconnect();
 	void sendPacket(const Packet&);
 	void processOutgoing();
 	void processIncoming();
-
 
 public:
 	void processMsgQueue();
