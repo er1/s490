@@ -121,69 +121,6 @@
           </ccTool>
         </makeTool>
       </makefileType>
-      <item path="Blackboard/Blackboard.cpp" ex="false" tool="1" flavor="0">
-        <ccTool>
-          <preprocessorList>
-            <Elem>DEBUG</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
-      <item path="Blackboard/KIdebug.cpp" ex="false" tool="1" flavor="0">
-        <ccTool>
-          <preprocessorList>
-            <Elem>DEBUG</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
-      <item path="Blackboard/KnowledgeItem.cpp" ex="false" tool="1" flavor="0">
-        <ccTool>
-          <preprocessorList>
-            <Elem>DEBUG</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
-      <item path="Blackboard/main.cpp" ex="false" tool="1" flavor="0">
-        <ccTool>
-          <preprocessorList>
-            <Elem>DEBUG</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
-      <item path="Blackboard/monitorKSCS.cpp" ex="false" tool="1" flavor="0">
-        <ccTool>
-          <preprocessorList>
-            <Elem>DEBUG</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
-      <item path="Blackboard/testCS.cpp" ex="false" tool="1" flavor="0">
-        <ccTool>
-          <preprocessorList>
-            <Elem>DEBUG</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
-      <item path="Blackboard/testKS.cpp" ex="false" tool="1" flavor="0">
-        <ccTool>
-          <preprocessorList>
-            <Elem>DEBUG</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
-      <item path="Blackboard/testSock.cpp" ex="false" tool="1" flavor="0">
-        <ccTool>
-          <preprocessorList>
-            <Elem>DEBUG</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
-      <item path="Blackboard/udpKS.cpp" ex="false" tool="1" flavor="0">
-        <ccTool>
-          <preprocessorList>
-            <Elem>DEBUG</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
       <item path="Commander/Connector.h" ex="true" tool="3" flavor="0">
       </item>
       <item path="Commander/GroundConnector.h" ex="true" tool="3" flavor="0">
@@ -196,6 +133,13 @@
       </item>
       <item path="Commander/SatListener.h" ex="true" tool="3" flavor="0">
       </item>
+      <folder path="SpaceConcordia/Blackboard">
+        <ccTool>
+          <preprocessorList>
+            <Elem>DEBUG</Elem>
+          </preprocessorList>
+        </ccTool>
+      </folder>
       <folder path="SpaceConcordia/common">
         <ccTool>
           <preprocessorList>

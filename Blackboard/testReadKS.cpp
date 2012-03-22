@@ -1,87 +1,58 @@
-#include <stdio.h>
-#include <semaphore.h>  /* Semaphore */
 #include <time.h>
 #include <math.h>
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <errno.h>
+#include <common/common.h>
+#include <common/KnowledgeSource.h>
 
-#define PI (3.141592654)
+struct SinePoint {
+    double value;
+};
 
-void run(sem_t * semaphore);
+int main() {
+    int sysret;
+    timespec ts;
 
-#define DATAPATH ("data/testdata1.fifo")
+    ts.tv_sec = 1;
+    ts.tv_nsec = 0;
 
-void run(sem_t * semaphore)
-{
-	int sysret, now;
-	struct timespec ts;
-	struct stat filestat;
+    int p;
 
-	ts.tv_sec = 1;
-	ts.tv_nsec = 0;
-
-	int p;
-	
-	puts("Test Datareader");
-
-	// create relevant files
-	
-	// create the buffer for the data
-	if (stat(DATAPATH, &filestat) == -1) {
-	  //it seems you need to use ENOENT if the file does not exist on linux
-		if (errno == EEXIST || errno == ENOENT) { 
-			if (mkfifo(DATAPATH, 0666)) {
-				perror("mkfifo");
-				return;
-			}
-		} else {
-			perror("stat");
-			printf("errno: %d\n", errno);
-			return;
-		}
-	}
-
-	// check it still exists
-	if (stat(DATAPATH, &filestat) == -1) {
-		perror("stat");
-		return;
-	}
-
-	//TODO change to while(something) so we can stop it
-	while (1) {
-		struct timeval tv;
-		double point;
-		int i;
-		double t;
-
-		sem_wait(semaphore);
-
-		// create sample
-		
-			p = (p + 27) % 1024;
-			point = cos(p * PI / 512);
-
-		//
-
-		printf("[Read]: ");
-
-		for (t = -1; t < point; t += 1.0 / 32) {
-			putchar(' ');
-		}
-
-		printf("+\n");
+    KnowledgeSource myKS(BBTAG_TESTREAD);
+    
+    //TODO change to while(something) so we can stop it
+    while (1) {
+        double point;
+        double t;
 
 
-		ts.tv_sec = 0;
-		ts.tv_nsec = rand() % 100 * 1000000;
-		sysret = nanosleep(&ts, NULL);
-		if(sysret == -1)
-			perror("nanosleep()");
+        // create sample
+        p = (p + 27) % 1024;
+        point = cos(p * PI / 512);
 
-		sem_post(semaphore);
-	}
+        SinePoint p;
+        p.value = point;
+        
+        DataPoint dp;
+        dp.wrap(p);
+        myKS.update(dp);
+        
+        //
+
+        printf("[Read]: ");
+
+        for (t = -1; t < point; t += 1.0 / 32) {
+            putchar(' ');
+        }
+
+        printf("+\n");
+
+
+        ts.tv_sec = 0;
+        ts.tv_nsec = rand() % 100 * 1000000;
+        sysret = nanosleep(&ts, NULL);
+        if (sysret == -1)
+            perror("nanosleep()");
+
+    }
 
 }
