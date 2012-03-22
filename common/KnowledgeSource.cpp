@@ -1,5 +1,5 @@
-#include <common/KnowledgeSource.h>
-#include <common/BlackboardConnection.h>
+#include "KnowledgeSource.h"
+#include "BlackboardConnection.h"
 
 KnowledgeSource::KnowledgeSource(bbtag _tag) {
     tag = _tag;

@@ -1,8 +1,8 @@
 #ifndef COMMON_H
 #define	COMMON_H
 
-#include <common/bbtags.h>
-#include <common/bbdef.h>
+#include "bbtags.h"
+#include "bbdef.h"
 
 #include <stdlib.h>
 
