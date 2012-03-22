@@ -10,8 +10,8 @@
 #include <set>
 #include <vector>
 
-#include "bbtags.h"
-#include "../common/Packet.h"
+#include <common/common.h>
+#include <common/Packet.h>
 #include "KnowledgeItem.h"
 
 class ConnectionDetails {

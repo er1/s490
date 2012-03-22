@@ -1,9 +1,7 @@
-#include "../common/common.h"
-#include "bbdef.h"
-#include "bbtags.h"
+#include <common/common.h>
 
 #include "Blackboard.h"
-#include "BlackboardConnection.h"
+#include <common/BlackboardConnection.h>
 
 #include <iostream>
 #include <string>

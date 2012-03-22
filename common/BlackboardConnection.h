@@ -5,10 +5,8 @@
 #include <deque>
 #include <vector>
 
-#include "../common/common.h"
-#include "bbdef.h"
-#include "bbtags.h"
-#include "../common/Packet.h"
+#include <common/common.h>
+#include <common/Packet.h>
 
 class BlackboardConnection {
 private:

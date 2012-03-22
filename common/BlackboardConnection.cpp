@@ -3,9 +3,9 @@
 #include <sys/un.h>
 #include <errno.h>
 
-#include "../common/common.h"
-#include "../common/Packet.h"
-#include "BlackboardConnection.h"
+#include <common/common.h>
+#include <common/Packet.h>
+#include <common/BlackboardConnection.h>
 
 bool BlackboardConnection::connectBB() {
     const char* address = BB_SOCK_PATH;

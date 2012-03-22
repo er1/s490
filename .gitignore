@@ -3,4 +3,4 @@
 *.so
 .DS_Store
 ._*
-/Blackboard/nbproject/private/
+/nbproject/private/

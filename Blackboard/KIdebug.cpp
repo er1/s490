@@ -2,9 +2,8 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <deque>
-#include "../common/common.h"
-#include "../common/Packet.h"
-#include "bbdef.h"
+#include <common/common.h>
+#include <common/Packet.h>
 
 int main(int argc, char** argv) {
     if (argc < 2) {

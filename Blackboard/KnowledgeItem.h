@@ -1,13 +1,13 @@
 #ifndef KNOWLEDGEITEM_H
 #define	KNOWLEDGEITEM_H
 
-#include "stdint.h"
+#include <stdint.h>
 #include <vector>
 #include <deque>
 #include <set>
-#include "sys/types.h"
+#include <sys/types.h>
 
-#include "DataPoint.h"
+#include <common/DataPoint.h>
 
 class KnowledgeItem {
 private:

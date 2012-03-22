@@ -1,10 +1,9 @@
 #ifndef CONTROLSHELL_H
 #define	CONTROLSHELL_H
 
-#include "Blackboard.h"
-#include "BlackboardConnection.h"
-#include "bbtags.h"
-#include "bbdef.h"
+#include <common/BlackboardConnection.h>
+#include <common/DataPoint.h>
+#include <common/common.h>
 #include <set>
 
 class ControlShell : public BlackboardConnection {

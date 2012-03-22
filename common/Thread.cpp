@@ -1,5 +1,5 @@
-#include "common.h"
-#include "Thread.h"
+#include <common/common.h>
+#include <common/Thread.h>
 
 Mutex::Mutex() {
     pthread_mutex_init(&handle, 0);

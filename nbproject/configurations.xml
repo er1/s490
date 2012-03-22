@@ -23,19 +23,13 @@
       <df name="Blackboard">
         <in>Blackboard.cpp</in>
         <in>Blackboard.h</in>
-        <in>BlackboardConnection.cpp</in>
         <in>BlackboardConnection.h</in>
-        <in>ControlShell.cpp</in>
         <in>ControlShell.h</in>
-        <in>DataPoint.cpp</in>
         <in>DataPoint.h</in>
         <in>KIdebug.cpp</in>
         <in>KnowledgeItem.cpp</in>
         <in>KnowledgeItem.h</in>
-        <in>KnowledgeSource.cpp</in>
         <in>KnowledgeSource.h</in>
-        <in>Packet.cpp</in>
-        <in>Thread.cpp</in>
         <in>Thread.h</in>
         <in>bbdef.h</in>
         <in>bbtags.h</in>
@@ -53,7 +47,20 @@
         <in>ax25listen.c</in>
       </df>
       <df name="common">
+        <in>BlackboardConnection.cpp</in>
+        <in>BlackboardConnection.h</in>
+        <in>ControlShell.cpp</in>
+        <in>ControlShell.h</in>
+        <in>DataPoint.cpp</in>
+        <in>DataPoint.h</in>
+        <in>KnowledgeSource.cpp</in>
+        <in>KnowledgeSource.h</in>
+        <in>Packet.cpp</in>
         <in>Packet.h</in>
+        <in>Thread.cpp</in>
+        <in>Thread.h</in>
+        <in>bbdef.h</in>
+        <in>bbtags.h</in>
         <in>common.h</in>
         <in>minunit.h</in>
         <in>satdef.h</in>
@@ -109,20 +116,6 @@
           </preprocessorList>
         </ccTool>
       </item>
-      <item path="Blackboard/BlackboardConnection.cpp" ex="false" tool="1" flavor="0">
-        <ccTool>
-          <preprocessorList>
-            <Elem>DEBUG</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
-      <item path="Blackboard/ControlShell.cpp" ex="false" tool="1" flavor="0">
-        <ccTool>
-          <preprocessorList>
-            <Elem>DEBUG</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
       <item path="Blackboard/KIdebug.cpp" ex="false" tool="1" flavor="0">
         <ccTool>
           <preprocessorList>
@@ -131,13 +124,6 @@
         </ccTool>
       </item>
       <item path="Blackboard/KnowledgeItem.cpp" ex="false" tool="1" flavor="0">
-        <ccTool>
-          <preprocessorList>
-            <Elem>DEBUG</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
-      <item path="Blackboard/KnowledgeSource.cpp" ex="false" tool="1" flavor="0">
         <ccTool>
           <preprocessorList>
             <Elem>DEBUG</Elem>
@@ -179,6 +165,62 @@
           </preprocessorList>
         </ccTool>
       </item>
+      <item path="common/BlackboardConnection.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <preprocessorList>
+            <Elem>DEBUG</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="common/ControlShell.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="common/DataPoint.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="common/KnowledgeSource.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="common/Packet.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="common/Thread.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <folder path="SpaceConcordia/Blackboard">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <folder path="SpaceConcordia/Commander">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
     </conf>
   </confs>
 </configurationDescriptor>

@@ -1,8 +1,8 @@
 #ifndef KNOWLEDGESOURCE_H
 #define	KNOWLEDGESOURCE_H
 
-#include "Blackboard.h"
-#include "BlackboardConnection.h"
+#include <common/BlackboardConnection.h>
+#include <common/DataPoint.h>
 
 class KnowledgeSource : public BlackboardConnection {
 public:

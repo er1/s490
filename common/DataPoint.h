@@ -1,8 +1,9 @@
 #ifndef DATAPOINT_H
 #define	DATAPOINT_H
 
-#include "../common/common.h"
 #include "string.h"
+#include "common.h"
+#include <vector>
 
 class DataPoint : public std::vector<uint8_t> {
 public:
