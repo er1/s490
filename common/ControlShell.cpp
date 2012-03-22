@@ -5,8 +5,8 @@
  * Created on March 16, 2012, 9:45 PM
  */
 
-#include <common/ControlShell.h>
-#include <common/Packet.h>
+#include "ControlShell.h"
+#include "Packet.h"
 #include <cassert>
 
 ControlShell::ControlShell(bbtag _tag) {

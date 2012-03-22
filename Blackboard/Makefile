@@ -8,8 +8,8 @@
 #
 
 CSRC = 
-CXXSRC = Blackboard.cpp BlackboardConnection.cpp ControlShell.cpp KIdebug.cpp KnowledgeSource.cpp Packet.cpp Thread.cpp main.cpp monitorKSCS.cpp testKS.cpp testCS.cpp testSock.cpp KnowledgeItem.cpp
-BINARIES = blackboard testSock monitorKSCS testKS testCS KIdebug
+CXXSRC = Blackboard.cpp KIdebug.cpp main.cpp monitorKSCS.cpp testKS.cpp testCS.cpp testSock.cpp KnowledgeItem.cpp
+BINARIES = blackboard testSock monitorKSCS testKS testCS KIdebug udpKS
 
 include ../Makefile.inc
 
@@ -32,6 +32,9 @@ testKS: testKS.o common
 
 KIdebug: KIdebug.o
 	$(LD) $(LFLAGS) -o $@ KIdebug.o
+	
+udpKS: udpKS.o common
+	$(LD) $(LFLAGS) -o $@ udpKS.o $(PROOT)/common/BlackboardConnection.o $(PROOT)/common/KnowledgeSource.o
 
 common:
 	cd ../common; make

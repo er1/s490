@@ -6,10 +6,6 @@
 #include <common/Packet.h>
 
 int main(int argc, char** argv) {
-    if (argc < 2) {
-        fprintf(stderr, "usage: monitorCS <socket>\n");
-        return -1;
-    }
 
     sockaddr_un local;
     int fdLocal;
@@ -27,7 +23,7 @@ int main(int argc, char** argv) {
 
     // set socket path
     local.sun_family = AF_UNIX;
-    strncpy(local.sun_path, argv[1], sizeof (local.sun_path));
+    strncpy(local.sun_path, BB_SOCK_PATH, sizeof (local.sun_path));
 
     exitOnFail(connect(fdLocal, (struct sockaddr *) &local, sizeof (sockaddr_un)) == -1, "connect");
 

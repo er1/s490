@@ -23,7 +23,7 @@ LFLAGS = -Wall $(DEBUG) -I..
 %.o : %.cpp
 	$(CXX) $(CXXFLAGS) -o $@ $<
 
-all: $(BINARIES)
+all: $(OBJ) $(BINARIES) 
 
 clean:
 	rm -f $(OBJ) $(BINARIES)
