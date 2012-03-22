@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="80">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <df name="SpaceConcordia" root=".">
+      <df name="bba_proto">
+        <df name="junixsocket-1.3">
+          <df name="dist">
+          </df>
+          <df name="lib-native">
+          </df>
+        </df>
+        <df name="src">
+          <df name="protobba">
+            <df name="client">
+            </df>
+            <df name="domain">
+            </df>
+            <df name="server">
+            </df>
+          </df>
+        </df>
+      </df>
+      <df name="Blackboard">
+        <in>Blackboard.cpp</in>
+        <in>Blackboard.h</in>
+        <in>BlackboardConnection.cpp</in>
+        <in>BlackboardConnection.h</in>
+        <in>ControlShell.cpp</in>
+        <in>ControlShell.h</in>
+        <in>DataPoint.cpp</in>
+        <in>DataPoint.h</in>
+        <in>KIdebug.cpp</in>
+        <in>KnowledgeItem.cpp</in>
+        <in>KnowledgeItem.h</in>
+        <in>KnowledgeSource.cpp</in>
+        <in>KnowledgeSource.h</in>
+        <in>Packet.cpp</in>
+        <in>Thread.cpp</in>
+        <in>Thread.h</in>
+        <in>bbdef.h</in>
+        <in>bbtags.h</in>
+        <in>main.cpp</in>
+        <in>monitorKSCS.cpp</in>
+        <in>testCS.cpp</in>
+        <in>testKS.cpp</in>
+        <in>testReadKS.cpp</in>
+        <in>testSock.cpp</in>
+      </df>
+      <df name="Commander">
+        <in>SatConnection.cpp</in>
+        <in>SatConnection.h</in>
+        <in>ax25connect.c</in>
+        <in>ax25listen.c</in>
+      </df>
+      <df name="common">
+        <in>Packet.h</in>
+        <in>common.h</in>
+        <in>minunit.h</in>
+        <in>satdef.h</in>
+      </df>
+      <df name="diagram">
+      </df>
+      <df name="Dispatcher">
+        <in>common.c</in>
+        <in>common.h</in>
+        <in>dispatcher.c</in>
+        <in>jobdef.h</in>
+        <in>testProducer.c</in>
+        <in>testRead.c</in>
+      </df>
+      <df name="hw_proto">
+        <in>tcplisten.c</in>
+      </df>
+      <df name="kernel">
+        <df name="archlinux">
+        </df>
+      </df>
+    </df>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Default" type="0">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>GNU|GNU</compilerSet>
+      </toolsSet>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>${MAKE} -f Makefile all</buildCommand>
+          <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
+          <executablePath>Blackboard/blackboard</executablePath>
+        </makeTool>
+      </makefileType>
+      <item path="Blackboard/Blackboard.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <preprocessorList>
+            <Elem>DEBUG</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="Blackboard/BlackboardConnection.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <preprocessorList>
+            <Elem>DEBUG</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="Blackboard/ControlShell.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <preprocessorList>
+            <Elem>DEBUG</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="Blackboard/KIdebug.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <preprocessorList>
+            <Elem>DEBUG</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="Blackboard/KnowledgeItem.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <preprocessorList>
+            <Elem>DEBUG</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="Blackboard/KnowledgeSource.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <preprocessorList>
+            <Elem>DEBUG</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="Blackboard/main.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <preprocessorList>
+            <Elem>DEBUG</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="Blackboard/monitorKSCS.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <preprocessorList>
+            <Elem>DEBUG</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="Blackboard/testCS.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <preprocessorList>
+            <Elem>DEBUG</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="Blackboard/testKS.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <preprocessorList>
+            <Elem>DEBUG</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="Blackboard/testSock.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <preprocessorList>
+            <Elem>DEBUG</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>
