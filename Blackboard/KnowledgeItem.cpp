@@ -2,6 +2,9 @@
 
 void KnowledgeItem::update(DataPoint point) {
     dataChain.push_front(point);
+    
+    while (dataChain.size() > 50) // amortized O(1)
+        dataChain.pop_back();
 }
 
 const DataPoint KnowledgeItem::getMostRecent() const {

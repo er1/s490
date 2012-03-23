@@ -11,8 +11,12 @@
 #define MAX_BUFFER_SIZE (4096)
 
 #ifdef DEBUG
+#ifndef WORDY
+#define WORDY (0)
+#endif
 #define log(...) fprintf(stderr, __VA_ARGS__)
 #else
+#define WORDY (0)
 #define log(...) ;
 #endif
 

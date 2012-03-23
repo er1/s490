@@ -7,22 +7,24 @@
 
 int createSocketListener(const char*);
 
-void pipeBurst(int) {
-    log("PIPE BURST!!!\n");
-}
+// void pipeBurst(int) {
+//     log("PIPE BURST!!!\n");
+// }
 
 int main(int argc, char** argv) {
-    log("Starting...\n");
+    log("Starting... ");
 
+    // SIGPIPE should never happen
     // if a socket fails, we will get SIGPIPE. handle it
-    log("assign action for SIGPIPE\n");
-    signal(SIGPIPE, pipeBurst);
+    // log("assign action for SIGPIPE\n");
+    // signal(SIGPIPE, pipeBurst);
 
     Blackboard& kb = *Blackboard::getInstance();
 
-    log("create echo listener\n");
+    
     int socketListener = createSocketListener(BB_SOCK_PATH);
 
+    log("OK!\n");
     kb.eventLoop(socketListener);
 
     return 0;
@@ -36,10 +38,10 @@ int createSocketListener(const char* address) {
 
     // request socket
 #ifdef __APPLE__
-    log("create stream socket on %s\n", address);
+    log("create stream socket on %s ...", address);
     exitOnFail((fdLocal = socket(AF_UNIX, SOCK_STREAM, 0)) == -1, "socket");
 #else
-    log("create seqpacket socket on %s\n", address);
+    log("create seqpacket socket on %s ...", address);
     exitOnFail((fdLocal = socket(AF_UNIX, SOCK_SEQPACKET, 0)) == -1, "socket");
 #endif
 
@@ -56,7 +58,7 @@ int createSocketListener(const char* address) {
     // start accepting connections
     exitOnFail(listen(fdLocal, SOMAXCONN) == -1, "listen");
 
-    log("success! listening on %s as %#010x\n", address, fdLocal);
+    log("success! listening as %#010x\n", fdLocal);
 
     return fdLocal;
 }

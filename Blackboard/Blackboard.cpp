@@ -37,14 +37,13 @@ void Blackboard::eventLoop(int _socketListener) {
     while (true) {
         prepareSelect(); // prepare for select call by collecting every open fd
 
-        log("watching %d connections\n", (unsigned int) fdSet.size());
+        if (WORDY)
+            log("watching %d connections\n", (unsigned int) fdSet.size());
 
         // block until one or more fd need attention or timeout 
         int selectValue = select(maxfd + 1, &fd_r, &fd_w, &fd_x, &select_tv);
 
-        if (selectValue >= 0) { // check that select returned properly
-            log("select returned %d\n", selectValue);
-        } else { // if not, check why
+        if (selectValue < 0) { // check that select returned properly, if not, check why
             if (errno == EBADF) { // lost track of a fd (should never happen)
                 log("invalid fd (closed connection) of a set of %d.\n", (unsigned int) fdSet.size());
 
@@ -82,11 +81,15 @@ void Blackboard::eventLoop(int _socketListener) {
 
         // if we have a new connection, accept it and add it to the fdSet
         if (FD_ISSET(socketListener, &fd_r)) {
-            log("%#010x attempts connect\n", socketListener);
+            log("%#010x attempts connect... ", socketListener);
             int newfd = accept(socketListener, NULL, NULL);
-            log("%#010x got connection %#010x\n", socketListener, newfd);
-            // once we accepted the connection create a new entry for it.
-            fdSet.insert(std::pair<int, ConnectionDetails > (newfd, ConnectionDetails()));
+            if (newfd >= 0) {
+                log("got connection %#010x\n", newfd);
+                // once we accepted the connection create a new entry for it.
+                fdSet.insert(std::pair<int, ConnectionDetails > (newfd, ConnectionDetails()));
+            } else {
+                log("connect failed.\n");
+            }
         }
 
         // TODO: schedule connection handling in a more fair manner
@@ -102,7 +105,7 @@ void Blackboard::eventLoop(int _socketListener) {
 
             // check if we can read anything (or the connection has closed (gracefully or otherwise)
             if (FD_ISSET(fd, &fd_r)) {
-                log("%#010x recv\n", fd);
+                if (WORDY) log("%#010x recv\n", fd);
                 Packet vecbuffer;
                 vecbuffer.resize(MAX_BUFFER_SIZE, 0); // allocate memory for a full read
                 int recvResult = recv(fd, &(vecbuffer.front()), vecbuffer.size(), 0);
@@ -124,14 +127,14 @@ void Blackboard::eventLoop(int _socketListener) {
                     cd.sendQueue.clear(); // clear the sendQueue so even if we can write for some reason, we don't
                 }
             }
-            
+
             // check if we can write
             if (FD_ISSET(fd, &fd_w)) {
                 // TODO: limit the amount to send
                 while ((cd.sendQueue.size() > 0)) { // have something to send?
                     Packet& packet = cd.sendQueue.front(); // get it
-                    log("%#010x send\n", fd);
-                    
+                    if (WORDY) log("%#010x send\n", fd);
+
                     // try to send it (do not block though)
                     int sendResult = send(fd, &(packet.front()), packet.size(), MSG_DONTWAIT);
 
@@ -160,9 +163,10 @@ void Blackboard::eventLoop(int _socketListener) {
 }
 
 // collect all known fd for the system and put them into FDSETs
+
 void Blackboard::prepareSelect() {
     // set timeout delay for health checking
-    select_tv.tv_sec = 5; // FIXME: make it configurable
+    select_tv.tv_sec = 30; // FIXME: make it configurable
     select_tv.tv_usec = 0;
 
     // clear old values;
@@ -200,15 +204,16 @@ void Blackboard::prepareSelect() {
 }
 
 // clean up connections that have been marked as closed or are otherwise not active anymore
+
 void Blackboard::cleanClosedConnection() {
     // go over each marked fd
     for (std::deque<int>::iterator it = fdDeleteQueue.begin(); it != fdDeleteQueue.end(); ++it) {
         int fd = *it;
-        
+
         // figure out what depends on this connection and remove the dependency
         ConnectionDetails& details = fdSet[fd];
         log("Cleaning connection %#010x: removing: ", fd);
-        
+
         // removed ownership of any owned KS
         for (std::set<KnowledgeItem*>::iterator itKS = details.ksList.begin(); itKS != details.ksList.end(); ++itKS) {
             log(" KS");
@@ -232,12 +237,15 @@ void Blackboard::cleanClosedConnection() {
 
 // handle incoming packets
 // TODO: break this monster function down into smaller parts
+
 void Blackboard::handlePacket(int fd, const Packet & packet) {
-    log("%#010x => [ ", fd);
-    for (unsigned int i = 0; i < packet.size(); ++i) {
-        log("%02x ", packet[i]);
+    if (WORDY) {
+        log("%#010x => [ ", fd);
+        for (unsigned int i = 0; i < packet.size(); ++i) {
+            log("%02x ", packet[i]);
+        }
+        log("]\n");
     }
-    log("]\n");
 
     // isolate
 

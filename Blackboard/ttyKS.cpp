@@ -12,9 +12,11 @@
 #include <common/KnowledgeSource.h>
 
 int main(int argc, char** argv) {
-    struct termios tio;
+    termios tio;
     int tty_fd;
-    struct timeval tv;
+    timeval tv;
+    fd_set fdr;
+    
 
     memset(&tio, 0, sizeof (tio));
     tio.c_iflag = 0;
@@ -59,6 +61,7 @@ int main(int argc, char** argv) {
             reqPend = true;
         }
 
+        if (select(tty_fd + 1, &fdr, 0, 0, 0) == 1)
         {
             char ch;
             int ret = read(tty_fd, &ch, 1);
@@ -71,6 +74,9 @@ int main(int argc, char** argv) {
                     value.push_back(ch);
                 }
             }
+        } else {
+            // something went wrong
+            exit(1);
         }
     }
 
