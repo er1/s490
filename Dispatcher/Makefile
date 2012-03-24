@@ -1,33 +1,31 @@
-# Makefile for Iteration2
+# Makefile for Blackboard
 #
 # Author:
-#	Corey Clayton, November 2011
+#	Corey Clayton, February 2012
 #	Eric Chan, February 2012
 #
-# Build everything needed for Iteration2
+# Build everything needed for Blackboard
 #
 
-SRC = common.c dispatcher.c testRead.c
-OBJ = $(SRC:.c=.o)
+CSRC = testRead.c testProducer.c
+CXXSRC = main.cpp
+BINARIES = dispatcher testRead testProducer
 
-CC = gcc
-DEBUG = -g -DDEBUG
-CFLAGS = -Wall -c -fPIC $(DEBUG)
-LFLAGS = -Wall -lm $(DEBUG)
+include ../Makefile.inc
 
-all : dispatcher testRead testProducer
+PROOT = ..
 
-dispatcher : dispatcher.o common.o
-	$(CC) $(LFLAGS) -o $@ dispatcher.o common.o
+dispatcher: main.o Job.o
+	$(LD) $(LFLAGS) -o $@ main.o 
 
-testRead : testRead.o common.o
-	$(CC) $(LFLAGS) -o $@ testRead.o common.o
+testProducer: testProducer.o
+	$(LD) $(LFLAGS) -o $@ testProducer.o 
+	
+testRead: testRead.o
+	$(LD) $(LFLAGS) -o $@ testRead.o 
 
-testProducer : testProducer.o common.o
-	$(CC) $(LFLAGS) -o $@ testProducer.o common.o
+# testCS: testCS.o common
+# 	$(LD) $(LFLAGS) -o $@ testCS.o $(PROOT)/common/BlackboardConnection.o $(PROOT)/common/ControlShell.o $(PROOT)/common/KnowledgeSource.o
 
-%.o : %.c
-	$(CC) $(CFLAGS) -o $@ $<
-
-clean:
-	rm -f *.o dispatcher testRead testProducer
+common:
+	cd ../common; make

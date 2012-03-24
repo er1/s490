@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "common.h"
 
 typedef unsigned long long int u64;
 typedef struct {

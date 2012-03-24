@@ -15,7 +15,7 @@ CXX = $(PREFIX)g++
 LD = $(PREFIX)g++
 CFLAGS = -Wall -c -fPIC $(DEBUG) -I.. -fdata-sections -ffunction-sections
 CXXFLAGS = $(CFLAGS)
-LFLAGS = -Wall $(DEBUG) -I.. -Wl,--gc-sections
+LFLAGS = -Wall $(DEBUG) -I..
 
 %.o : %.c
 	$(CC) $(CFLAGS) -o $@ $<

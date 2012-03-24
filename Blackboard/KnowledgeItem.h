@@ -10,15 +10,16 @@
 #include <common/DataPoint.h>
 
 class KnowledgeItem {
-private:
-    std::deque<DataPoint> dataChain;
 public:
-	
+    std::deque<DataPoint> dataChain;
+    int updates;
+    
     int ownerFd; //the owner of this KI
     std::set<int> csListeners;
 
     inline KnowledgeItem() {
         ownerFd = -1;
+        updates = 0;
     }
 	
     inline ~KnowledgeItem() {

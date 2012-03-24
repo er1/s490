@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <signal.h>
-#include "common.h"
+#include <common/common.h>
 
 double aquire_sample();
 
@@ -27,7 +27,7 @@ int main() {
 	// define it
 	sig_usr1->sa_handler = sig_usr1_handler;
 	sig_usr1->sa_flags = 0;
-	sig_usr1->sa_mask = 0;
+	sigemptyset(&sig_usr1->sa_mask);
 
 	// create the handler
 	sigaction(SIGUSR1, sig_usr1, NULL);
@@ -64,7 +64,7 @@ double aquire_sample() {
 	double point;
 
 	// simulate a blocking read delay
-	delay(rand() % 100 * 1000000);
+	//delay(rand() % 100 * 1000000);
 
 	// generate a sample and return it
 	p = (p + 27) % 1024;

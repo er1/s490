@@ -413,19 +413,22 @@ void Blackboard::handlePacket(int fd, const Packet & packet) {
         }
 
 #ifdef DEBUG
+#define QUIETDEBUG
+#endif
+#ifdef QUIETDEBUG
         case BO_DEBUG_DUMP_KISET:
         {
-            log("%#010x BO_DEBUG_DUMP_KISET requested\n", fd);
-            log("kiSet:\n");
+            printf("%#010x BO_DEBUG_DUMP_KISET requested\n", fd);
+            printf("kiSet:\n");
             for (std::map<bbtag, KnowledgeItem>::const_iterator knowledgeItemIterator = kiSet.begin(); knowledgeItemIterator != kiSet.end(); ++knowledgeItemIterator) {
-                log("\t%d: \n", knowledgeItemIterator->first);
-                std::deque<DataPoint> dp = knowledgeItemIterator->second.getRecent(5);
+                printf("\t%d: (%d updates)\n", knowledgeItemIterator->first, knowledgeItemIterator->second.updates);
+                std::deque<DataPoint> dp = knowledgeItemIterator->second.dataChain;
                 for (std::deque<DataPoint>::const_iterator dataChainIterator = dp.begin(); dataChainIterator != dp.end(); ++dataChainIterator) {
-                    log("\t[ ");
+                    printf("\t[ ");
                     for (DataPoint::const_iterator dataPointIterator = dataChainIterator->begin(); dataPointIterator != dataChainIterator->end(); ++dataPointIterator) {
-                        log("%02x ", *dataPointIterator);
+                        printf("%02x ", *dataPointIterator);
                     }
-                    log("]\n");
+                    printf("]\n");
                 }
             }
 

@@ -4,6 +4,14 @@
 #include <common/common.h>
 #include <common/KnowledgeSource.h>
 
+/*
+ * TestRead
+ * Author: Eric Chan
+ * 
+ * This is a Knowledge
+ */
+
+
 struct SinePoint {
     double value;
 };
@@ -18,6 +26,8 @@ int main() {
     int p;
 
     KnowledgeSource myKS(BBTAG_TESTREAD);
+    
+    myKS.connectKS();
     
     //TODO change to while(something) so we can stop it
     while (1) {

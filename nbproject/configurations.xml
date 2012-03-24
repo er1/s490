@@ -78,10 +78,11 @@
       <df name="diagram">
       </df>
       <df name="Dispatcher">
-        <in>common.c</in>
+        <in>Job.cpp</in>
+        <in>Job.h</in>
         <in>common.h</in>
-        <in>dispatcher.c</in>
         <in>jobdef.h</in>
+        <in>main.cpp</in>
         <in>testProducer.c</in>
         <in>testRead.c</in>
       </df>
@@ -124,96 +125,34 @@
           </ccTool>
         </makeTool>
       </makefileType>
-      <item path="Blackboard/Blackboard.cpp" ex="false" tool="1" flavor="0">
-        <ccTool>
-          <preprocessorList>
-            <Elem>DEBUG</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
-      <item path="Blackboard/KIdebug.cpp" ex="false" tool="1" flavor="0">
-        <ccTool>
-          <preprocessorList>
-            <Elem>DEBUG</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
-      <item path="Blackboard/KnowledgeItem.cpp" ex="false" tool="1" flavor="0">
-        <ccTool>
-          <preprocessorList>
-            <Elem>DEBUG</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
-      <item path="Blackboard/main.cpp" ex="false" tool="1" flavor="0">
-        <ccTool>
-          <preprocessorList>
-            <Elem>DEBUG</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
-      <item path="Blackboard/monitorKSCS.cpp" ex="false" tool="1" flavor="0">
-        <ccTool>
-          <preprocessorList>
-            <Elem>DEBUG</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
-      <item path="Blackboard/slamKS.cpp" ex="false" tool="1" flavor="0">
-        <ccTool>
-          <preprocessorList>
-            <Elem>DDEBUG</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
-      <item path="Blackboard/testCS.cpp" ex="false" tool="1" flavor="0">
-        <ccTool>
-          <preprocessorList>
-            <Elem>DEBUG</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
-      <item path="Blackboard/testKS.cpp" ex="false" tool="1" flavor="0">
-        <ccTool>
-          <preprocessorList>
-            <Elem>DEBUG</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
-      <item path="Blackboard/testReadKS.cpp" ex="false" tool="1" flavor="0">
-        <ccTool>
-          <preprocessorList>
-            <Elem>DEBUG</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
-      <item path="Blackboard/testSock.cpp" ex="false" tool="1" flavor="0">
-        <ccTool>
-          <preprocessorList>
-            <Elem>DEBUG</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
-      <item path="Blackboard/ttyKS.cpp" ex="false" tool="1" flavor="0">
-        <ccTool>
-          <preprocessorList>
-            <Elem>DEBUG</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
-      <item path="Blackboard/udpKS.cpp" ex="false" tool="1" flavor="0">
-        <ccTool>
-          <preprocessorList>
-            <Elem>DEBUG</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
       <item path="Commander/GroundListener.h" ex="true" tool="3" flavor="0">
       </item>
       <item path="Commander/SatConnector.h" ex="true" tool="3" flavor="0">
       </item>
       <item path="Commander/SatListener.h" ex="true" tool="3" flavor="0">
       </item>
+      <folder path="SpaceConcordia/Blackboard">
+        <ccTool>
+          <preprocessorList>
+            <Elem>DEBUG</Elem>
+          </preprocessorList>
+        </ccTool>
+      </folder>
+      <folder path="SpaceConcordia/Dispatcher">
+        <cTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>DEBUG</Elem>
+          </preprocessorList>
+        </cTool>
+        <ccTool>
+          <preprocessorList>
+            <Elem>DEBUG</Elem>
+          </preprocessorList>
+        </ccTool>
+      </folder>
       <folder path="SpaceConcordia/common">
         <ccTool>
           <preprocessorList>
