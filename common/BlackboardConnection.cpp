@@ -9,7 +9,7 @@
 
 bool BlackboardConnection::connectBB() {
     const char* address = BB_SOCK_PATH;
-    
+
     sockaddr_un local;
 
     memset(&local, 0, sizeof (sockaddr_un));
@@ -35,7 +35,7 @@ void BlackboardConnection::disconnectBB() {
     // TODO: clear buffers, we assume at this point, they are empty
 
     log("disconnect\n");
-    
+
     if (bbfd >= 0)
         close(bbfd);
     bbfd = -1;
@@ -52,7 +52,7 @@ void BlackboardConnection::sendPacket(const Packet& buffer) {
   queue in which case it returns false.
  */
 bool BlackboardConnection::recvPacket(Packet& buffer) {
-	processIncoming();
+    processIncoming();
     if (recvQueue.size() == 0) {
         return false;
     }
@@ -62,8 +62,8 @@ bool BlackboardConnection::recvPacket(Packet& buffer) {
 }
 
 void BlackboardConnection::processOutgoing() {
-	log("processMsgQueue (send)\n");
-    
+    log("processMsgQueue (send)\n");
+
     int ret;
     // send any queued outgoing packets
     while (sendQueue.size() > 0) {
@@ -84,9 +84,9 @@ void BlackboardConnection::processOutgoing() {
 }
 
 void BlackboardConnection::processIncoming() {
-     int ret;
+    int ret;
 
-     log("processMsgQueue (recv)\n");
+    log("processMsgQueue (recv)\n");
     // attempt to get any new packets and queue them to be handled
     Packet buffer;
     while (true) {
@@ -98,28 +98,31 @@ void BlackboardConnection::processIncoming() {
                 break;
             } else {
                 errorOnFail(FAIL, "recv");
+                break;
             }
         }
         if (ret == 0) {
             // connection closed;
             bbfd = -1;
+            break;
         }
 
         buffer.resize(ret);
         recvQueue.push_back(buffer);
 
-		log("%#010x => [ ", bbfd);
-		for (unsigned int i = 0; i < buffer.size(); ++i) {
-			log("%02x ", buffer[i]);
-		}
-		log("]\n");
+        log("%#010x => [ ", bbfd);
+        for (unsigned int i = 0; i < buffer.size(); ++i) {
+            log("%02x ", buffer[i]);
+        }
+        log("]\n");
     }
 }
+
 /*
   This function will "flush" the send queue and "fill" the recv queue.
   This function will not block and should be periodically called in 
   and event loop. 
- */ 
+ */
 void BlackboardConnection::processMsgQueue() {
     processOutgoing();
     processIncoming();
@@ -127,7 +130,7 @@ void BlackboardConnection::processMsgQueue() {
 
 /*
   This function will block until we have some message received.
-*/
+ */
 void BlackboardConnection::waitForEvents() {
     fd_set fds;
     while (recvQueue.size() == 0) {
@@ -137,13 +140,13 @@ void BlackboardConnection::waitForEvents() {
         int rv = select(bbfd + 1, &fds, NULL, NULL, NULL);
 
         log("returned from rv with %d\n", rv);
-        
+
         if (rv == -1) {
-                log("An error occurred: %d\n", errno);
+            log("An error occurred: %d\n", errno);
         }
-        
+
         //Now that we know we can safely read in the file handle, read from it and turn them into incoming messages
         processIncoming();
-     
+
     }
 }

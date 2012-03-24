@@ -36,12 +36,12 @@ public:
 
     inline void setU16(const int index, const uint16_t val) {
         uint8_t* ptr = &front();
-        *(short*)(ptr+index) = htons(val);
+        *(short*) (ptr + index) = htons(val);
     }
 
     inline void setU32(const int index, const uint32_t val) {
         uint8_t* ptr = &front();
-        *(long*)(ptr+index) = htonl(val);
+        *(long*) (ptr + index) = htonl(val);
     }
 
 };

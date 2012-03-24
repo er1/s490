@@ -87,6 +87,6 @@ bool Job::enterGrace() {
     if (state == GRACE) {
         return true;
     }
-    
+
     return false; // never hit
 }

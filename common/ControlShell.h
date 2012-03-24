@@ -13,16 +13,17 @@ public:
 
     bool connectCS();
     void disconnectCS();
-    
+
     std::deque<DataPoint> getRecent(int);
     DataPoint getMostRecent();
 
     void registerCallback(void (*)(bbtag, DataPoint));
     void releaseCallback(void (*)(bbtag, DataPoint));
 
-	void checkForUpdates();
+    void checkForUpdates();
 
 private:
+    bool registerToKI();
     bbtag tag;
     std::set< void (*)(bbtag, DataPoint) > callbacks;
 

@@ -13,9 +13,11 @@ bool loadJobs() {
     while (!jobfile.fail()) {
         std::getline(jobfile, line);
         std::ostringstream linestream(line);
-        
-        
+
+
     }
+    
+    return true;
 }
 
 int main(int argc, char** argv) {

@@ -13,7 +13,7 @@ class KnowledgeItem {
 public:
     std::deque<DataPoint> dataChain;
     int updates;
-    
+
     int ownerFd; //the owner of this KI
     std::set<int> csListeners;
 
@@ -21,11 +21,11 @@ public:
         ownerFd = -1;
         updates = 0;
     }
-	
+
     inline ~KnowledgeItem() {
     }
-	
-	void update(DataPoint);
+
+    void update(DataPoint);
     const DataPoint getMostRecent() const;
     std::deque<DataPoint> getRecent(size_t) const;
 };

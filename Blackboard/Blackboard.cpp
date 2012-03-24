@@ -396,10 +396,8 @@ void Blackboard::handlePacket(int fd, const Packet & packet) {
                 updatePacket.setU32(4, kiTag);
                 updatePacket.setU32(8, nData.size());
 
-                for (uint32_t j = 0; j < nData.size(); ++j) {
-                    updatePacket.push_back(nData[j]);
-                }
-
+                memcpy(&updatePacket.at(12), &nData.front(), nData.size());
+                
                 if (fdSet.count(subscriber) != 0) {
                     fdSet[subscriber].sendQueue.push_back(updatePacket);
                 } else {

@@ -22,7 +22,7 @@ protected:
     void processOutgoing();
     void processIncoming();
 
-    
+
 public:
     void processMsgQueue();
     void waitForEvents();

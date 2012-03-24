@@ -26,9 +26,9 @@ int main() {
     int p;
 
     KnowledgeSource myKS(BBTAG_TESTREAD);
-    
+
     myKS.connectKS();
-    
+
     //TODO change to while(something) so we can stop it
     while (1) {
         double point;
@@ -41,11 +41,11 @@ int main() {
 
         SinePoint p;
         p.value = point;
-        
+
         DataPoint dp;
         dp.wrap(p);
         myKS.update(dp);
-        
+
         //
 
         printf("[Read]: ");

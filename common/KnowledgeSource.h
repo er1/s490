@@ -13,7 +13,7 @@ public:
     void disconnectKS();
 
     bool update(DataPoint);
-    
+
 private:
     bool registerForKI();
     bbtag tag;

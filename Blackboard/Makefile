@@ -8,8 +8,8 @@
 #
 
 CSRC = 
-CXXSRC = Blackboard.cpp KIdebug.cpp KnowledgeItem.cpp main.cpp monitorKSCS.cpp slamKS.cpp testCS.cpp testKS.cpp testReadKS.cpp testSock.cpp ttyKS.cpp udpKS.cpp
-BINARIES = blackboard testSock monitorKSCS testKS testCS KIdebug udpKS testReadKS ttyKS slamKS
+CXXSRC = Blackboard.cpp KIdebug.cpp KnowledgeItem.cpp main.cpp monitorCS.cpp slamKS.cpp testCS.cpp testKS.cpp testReadKS.cpp testSock.cpp ttyKS.cpp udpKS.cpp
+BINARIES = blackboard testSock monitorCS testKS testCS KIdebug udpKS testReadKS ttyKS slamKS
 
 include ../Makefile.inc
 
@@ -21,8 +21,8 @@ blackboard: main.o Blackboard.o KnowledgeItem.o
 testSock: testSock.o
 	$(LD) $(LFLAGS) -o $@ testSock.o
 
-monitorKSCS: monitorKSCS.o common
-	$(LD) $(LFLAGS) -o $@ monitorKSCS.o $(PROOT)/common/BlackboardConnection.o
+monitorCS: monitorCS.o common
+	$(LD) $(LFLAGS) -o $@ monitorCS.o $(PROOT)/common/BlackboardConnection.o $(PROOT)/common/ControlShell.o
 
 testCS: testCS.o common
 	$(LD) $(LFLAGS) -o $@ testCS.o $(PROOT)/common/BlackboardConnection.o $(PROOT)/common/ControlShell.o $(PROOT)/common/KnowledgeSource.o

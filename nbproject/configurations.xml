@@ -34,7 +34,7 @@
         <in>bbdef.h</in>
         <in>bbtags.h</in>
         <in>main.cpp</in>
-        <in>monitorKSCS.cpp</in>
+        <in>monitorCS.cpp</in>
         <in>slamKS.cpp</in>
         <in>testCS.cpp</in>
         <in>testKS.cpp</in>

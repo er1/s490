@@ -4,23 +4,22 @@
 
 int main(int argc, char** argv) {
 
-    if (argc < 2)
-    {
+    if (argc < 2) {
         fprintf(stderr, "usage: slamKS <tag>\n");
         exit(-1);
     }
-    
+
     int tag;
-    
+
     sscanf(argv[1], "%d", &tag);
 
     KnowledgeSource myks(tag);
 
     if (!myks.connectKS())
-	exit(-1);
-    
+        exit(-1);
+
     int prngfd = open("/dev/urandom", O_RDONLY);
-                
+
     DataPoint p;
     p.resize(64);
 

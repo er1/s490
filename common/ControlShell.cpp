@@ -18,12 +18,36 @@ ControlShell::~ControlShell() {
 
 bool ControlShell::connectCS() {
     log("connect\n");
-    return connectBB();
+    return (connectBB() && registerToKI());
 }
 
 void ControlShell::disconnectCS() {
     log("disconnect\n");
     disconnectBB();
+}
+
+bool ControlShell::registerToKI() {
+    log("Register for %d\n", tag);
+
+    // send request
+    Packet request;
+    request.resize(8);
+    request.setU32(0, BO_CS_SUBSCRIBE_TO);
+    request.setU32(4, tag);
+    sendPacket(request);
+
+    log("request sent\n");
+
+    // TODO: handle the possibility where we get a packet and and the send queue is blocked (loop over this basically)
+    processOutgoing();
+    //    processMsgQueue();
+
+    //Packet response;
+
+    //log("Waiting for acknowledgment from the server");
+
+    // TODO: get confirmation
+    return true;
 }
 
 /*
@@ -45,44 +69,44 @@ std::deque<DataPoint> ControlShell::getRecent(int numRequested) {
     sendPacket(request);
 
     Packet response;
-    std::deque<DataPoint> ret;	
-	
-	processOutgoing();
+    std::deque<DataPoint> ret;
+
+    processOutgoing();
 
     // wait for response
     while (true) {
         waitForEvents();
-		
+
         // if we have a packet to work with, deal with it
         if (recvPacket(response)) {
-			uint32_t opcode = response.getU32(0);
-			switch(opcode){
-			case BO_CS_RECENT:
-			{
-				assert(response.getU32(4) == tag);
-                uint32_t numDataPoints = response.getU32(8);
-				uint32_t pos = 12;
-				for(uint32_t i=0; i< numDataPoints; ++i) {
-					DataPoint dp;
-					uint32_t dp_size = response.getU32(pos);
-					pos += 4;
-					//now read that many bytes 
-					for(uint32_t j=0; j<dp_size; ++j) {
-						dp.push_back(response.getU8(pos));
-						log("%#X ", dp.back());
-						pos += 1;
-					}
-					ret.push_back(dp);					
-				}
-				break;
-			}
-			default:
-			{
-				log("\n\nUnknown Packet %d\n\n", opcode);
-			}
-			}
+            uint32_t opcode = response.getU32(0);
+            switch (opcode) {
+                case BO_CS_RECENT:
+                {
+                    assert(response.getU32(4) == tag);
+                    uint32_t numDataPoints = response.getU32(8);
+                    uint32_t pos = 12;
+                    for (uint32_t i = 0; i < numDataPoints; ++i) {
+                        DataPoint dp;
+                        uint32_t dp_size = response.getU32(pos);
+                        pos += 4;
+                        //now read that many bytes 
+                        for (uint32_t j = 0; j < dp_size; ++j) {
+                            dp.push_back(response.getU8(pos));
+                            log("%#X ", dp.back());
+                            pos += 1;
+                        }
+                        ret.push_back(dp);
+                    }
+                    break;
+                }
+                default:
+                {
+                    log("\nUnknown Packet %d\n", opcode);
+                }
+            }
 
-			break;
+            break;
         }
     }
 
@@ -98,6 +122,7 @@ DataPoint ControlShell::getMostRecent() {
 }
 
 //TODO: make it so callbacks only happen for the corresponding tag 
+
 void ControlShell::registerCallback(void (*callback)(bbtag, DataPoint)) {
     callbacks.insert(callback);
 }
@@ -107,27 +132,31 @@ void ControlShell::releaseCallback(void (*callback)(bbtag, DataPoint)) {
 }
 
 void ControlShell::checkForUpdates() {
-	Packet pack;
-	if(recvPacket(pack)){
-		uint32_t opcode = pack.getU32(0);
-		if(opcode == BO_CS_UPDATE){
-			uint32_t tag = pack.getU32(4);
-			uint32_t len = pack.getU32(8);
-			DataPoint dp;
-			
-			for(uint32_t i=0; i<len; ++i) {
-				dp.push_back(pack.getU8(12+i));
-			}
+    Packet pack;
+    if (recvPacket(pack)) {
+        uint32_t opcode = pack.getU32(0);
+        if (opcode == BO_CS_UPDATE) {
+            uint32_t tag = pack.getU32(4);
+            uint32_t len = pack.getU32(8);
 
-			//TODO: make it so callbacks only happen for the corresponding tag 
-			std::set< void (*)(bbtag, DataPoint) >::const_iterator it;
-			for(it=callbacks.begin(); it!=callbacks.end(); ++it){
-				(*(*it))(tag, dp);
-			}
+            // TODO: do this properly
+            if (len != (pack.size() - 12)) {
+                log("packet size error have %d, told %d\n", pack.size() - 12, len);
+            }
+                        
+            DataPoint dp;
+            dp.resize(len);
+            memcpy(&dp.front(), &pack.at(12), len);
 
-		} else {
-			//TODO: what now motha fucka?
-			log("checkForUpdates: recv packet that is not mine... \n");
-		}
-	}
+            //TODO: make it so callbacks only happen for the corresponding tag 
+            std::set< void (*)(bbtag, DataPoint) >::const_iterator it;
+            for (it = callbacks.begin(); it != callbacks.end(); ++it) {
+                (*(*it))(tag, dp);
+            }
+
+        } else {
+            //TODO: handle packets destined for other uses (none yet, but still)
+            log("checkForUpdates: recv packet that is not mine... \n");
+        }
+    }
 }

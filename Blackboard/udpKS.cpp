@@ -22,16 +22,15 @@ int main(int argc, char** argv) {
     int s;
     unsigned int slen = sizeof (si_other);
 
-    if (argc < 2)
-    {
+    if (argc < 2) {
         fprintf(stderr, "usage: updKS <port>\n");
         exit(-1);
     }
-    
+
     int port;
-    
+
     sscanf(argv[1], "%d", &port);
-    
+
     if ((s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
         diep("socket");
 
@@ -39,7 +38,7 @@ int main(int argc, char** argv) {
     si_me.sin_family = AF_INET;
     si_me.sin_port = htons(port);
     si_me.sin_addr.s_addr = htonl(INADDR_ANY);
-    if (bind(s, (sockaddr*)&si_me, sizeof (si_me)) == -1)
+    if (bind(s, (sockaddr*) & si_me, sizeof (si_me)) == -1)
         diep("bind");
 
     KnowledgeSource myks(port);
@@ -52,13 +51,13 @@ int main(int argc, char** argv) {
     while (true) {
         p.resize(BUFLEN);
 
-        int ret = recvfrom(s, &p.front(), p.size(), 0, (sockaddr*)&si_other, &slen);
-        
+        int ret = recvfrom(s, &p.front(), p.size(), 0, (sockaddr*) & si_other, &slen);
+
         if (ret < 0)
             diep("recvfrom()");
 
         p.resize(ret);
-        
+
         myks.update(p);
 
     }

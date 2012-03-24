@@ -19,11 +19,13 @@ int main(int argc, char** argv) {
     // log("assign action for SIGPIPE\n");
     // signal(SIGPIPE, pipeBurst);
 
+    // get the instance of the blackboard
     Blackboard& kb = *Blackboard::getInstance();
 
-    
+    // get the socket to listen to blackboard requests on
     int socketListener = createSocketListener(BB_SOCK_PATH);
 
+    // begin the event loop with the aquired socket
     log("OK!\n");
     kb.eventLoop(socketListener);
 
@@ -62,19 +64,3 @@ int createSocketListener(const char* address) {
 
     return fdLocal;
 }
-/*
-int handleSocketListener(int local) {
-    sockaddr_un remote;
-    int fdLocal = local;
-
-    memset(&remote, 0, sizeof (sockaddr_un));
-
-    int fdRemote;
-    log("%#010x listening...\n", fdLocal);
-    socklen_t sizeof_sockaddr_un = sizeof (sockaddr_un);
-    errorOnFail((fdRemote = accept(fdLocal, (struct sockaddr *) &remote, &sizeof_sockaddr_un)) == -1, "accept");
-    log("%#010x accepted connection %#010x\n", fdLocal, fdRemote);
-
-    return fdRemote;
-}
- */
