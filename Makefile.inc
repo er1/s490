@@ -13,9 +13,9 @@ DEBUG = -g -DDEBUG
 CC = $(PREFIX)gcc
 CXX = $(PREFIX)g++
 LD = $(PREFIX)g++
-CFLAGS = -Wall -c -fPIC $(DEBUG) -I..
+CFLAGS = -Wall -c -fPIC $(DEBUG) -I.. -fdata-sections -ffunction-sections
 CXXFLAGS = $(CFLAGS)
-LFLAGS = -Wall $(DEBUG) -I..
+LFLAGS = -Wall $(DEBUG) -I.. -Wl,--gc-sections
 
 %.o : %.c
 	$(CC) $(CFLAGS) -o $@ $<

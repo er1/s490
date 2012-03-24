@@ -8,7 +8,7 @@
 #
 
 CSRC = 
-CXXSRC = Blackboard.cpp KIdebug.cpp main.cpp monitorKSCS.cpp testKS.cpp testCS.cpp testSock.cpp KnowledgeItem.cpp
+CXXSRC = Blackboard.cpp KIdebug.cpp KnowledgeItem.cpp main.cpp monitorKSCS.cpp slamKS.cpp testCS.cpp testKS.cpp testReadKS.cpp testSock.cpp ttyKS.cpp udpKS.cpp
 BINARIES = blackboard testSock monitorKSCS testKS testCS KIdebug udpKS testReadKS ttyKS slamKS
 
 include ../Makefile.inc
