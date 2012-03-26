@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <deque>
 #include <vector>
+#include <time.h>
 
 #include "common.h"
 #include "Packet.h"
@@ -26,6 +27,8 @@ protected:
 public:
     void processMsgQueue();
     void waitForEvents();
+    
+    static int multiWait(std::deque<BlackboardConnection*>, timeval* = 0);
 };
 
 

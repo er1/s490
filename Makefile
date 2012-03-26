@@ -2,11 +2,13 @@ all:
 	cd common; make
 	cd Blackboard; make
 	cd Dispatcher; make
+	cd test; make
 
 clean:
 	cd common; make clean
 	cd Blackboard; make clean
 	cd Dispatcher; make clean
+	cd test; make clean
 
 bundle:
 	mkdir -p bin
@@ -14,4 +16,4 @@ bundle:
 	cd common; make bundle
 	cd Blackboard; make bundle
 	cd Dispatcher; make bundle
-
+	cd test; make bundle
