@@ -8,7 +8,7 @@ SRC = $(CSRC) $(CXXSRC)
 OBJ = $(CSRC:.c=.o) $(CXXSRC:.cpp=.o)
 
 PREFIX = 
-DEBUG = -g -DDEBUG
+DEBUG =
 
 CC = $(PREFIX)gcc
 CXX = $(PREFIX)g++
@@ -27,3 +27,6 @@ all: $(OBJ) $(BINARIES)
 
 clean:
 	rm -f $(OBJ) $(BINARIES)
+
+bundle:
+	cp $(BINARIES) $(PROOT)/bin || true
