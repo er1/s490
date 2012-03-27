@@ -9,7 +9,7 @@
 
 #define PI ((double)3.141592654)
 
-#define MAX_BUFFER_SIZE (4096)
+#define MAX_BUFFER_SIZE (16384)
 
 #ifdef DEBUG
 #ifndef WORDY

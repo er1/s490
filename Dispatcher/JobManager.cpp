@@ -34,27 +34,27 @@ void JobManager::reload(std::deque<JobStruct> jobstruct) {
     }
 }
 
-void JobManager::update() {
+void JobManager::update(bbtag, const DataPoint&) {
 
 }
 
 void JobManager::eventLoop() {
     // loop forever
     while(true) {
-        std::deque<ControlShell*> allCS;
+        std::deque<BlackboardConnection*> allCS;
         // decide what might need attention
         
-        for (std::map<bbtag, CSDetails>::const_iterator it = CSSet.begin(); it != CSSet.end(); ++it) {
+        for (std::map<bbtag, CSDetails>::iterator it = CSSet.begin(); it != CSSet.end(); ++it) {
             allCS.push_back(&(it->second.controlShell));
         }
         
         // wait for one (or more) to call for attention
-        ControlShell::multiWait(allCS);
+        BlackboardConnection::multiWait(allCS);
         
         // act based on that
-        for (std::deque<ControlShell*>::const_iterator it = allCS.begin(); it != allCS.end(); ++it) {
-            it->processMsgQueue();
-            it->checkForUpdates();
+        for (std::deque<BlackboardConnection*>::iterator it = allCS.begin(); it != allCS.end(); ++it) {
+            ((ControlShell*)*it)->processMsgQueue();
+            ((ControlShell*)*it)->checkForUpdates();
         }   
     }
 }

@@ -93,7 +93,7 @@ std::deque<DataPoint> ControlShell::getRecent(int numRequested) {
                         //now read that many bytes 
                         for (uint32_t j = 0; j < dp_size; ++j) {
                             dp.push_back(response.getU8(pos));
-                            log("%#X ", dp.back());
+                            log("%02x ", dp.back());
                             pos += 1;
                         }
                         ret.push_back(dp);

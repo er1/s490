@@ -8,8 +8,8 @@
 #
 
 CSRC = 
-CXXSRC = Blackboard.cpp KnowledgeItem.cpp main.cpp ttyKS.cpp timeKS.cpp
-BINARIES = blackboard ttyKS timeKS
+CXXSRC = Blackboard.cpp KnowledgeItem.cpp main.cpp ttyKS.cpp timeKS.cpp timePR.cpp
+BINARIES = blackboard ttyKS timeKS timePR
 
 include ../Makefile.inc
 
@@ -23,6 +23,9 @@ ttyKS: ttyKS.o common
 
 timeKS: timeKS.o common
 	$(LD) $(LFLAGS) -o $@ timeKS.o $(PROOT)/common/BlackboardConnection.o $(PROOT)/common/KnowledgeSource.o
+	
+timePR: timePR.o common
+	$(LD) $(LFLAGS) -o $@ timePR.o $(PROOT)/common/BlackboardConnection.o $(PROOT)/common/KnowledgeSource.o $(PROOT)/common/ControlShell.o 
 
 common:
 	cd ../common; make

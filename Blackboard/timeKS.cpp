@@ -11,16 +11,21 @@ int main(int argc, char** argv) {
 
     KnowledgeSource myKS(BBTAG_SIMPLETIME);
     if (!myKS.connectKS())
-            exit(1);
+        exit(1);
 
     DataPoint value;
-    value.resize(4);
+    time_t lastTime;
     while (true) {
-            tv.tv_sec = 0;
-            tv.tv_usec = 100000;
-            select(0, 0, 0, 0, &tv);
-            *(uint32_t*)&value.front() = time(0);
+        tv.tv_sec = 0;
+        tv.tv_usec = 100000;
+        select(0, 0, 0, 0, &tv);
+        time_t t = time(0);
 
+        if (lastTime != t) {
+            value.wrap(t);
             myKS.update(value);
+        }
+        
+        lastTime = t;
     }
 }

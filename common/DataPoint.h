@@ -31,7 +31,9 @@ public:
 
     template <typename T>
     T unwrap() const {
-        exitOnFail(sizeof (T) == size(), "DataPoint was unwraped as wrong type");
+        if (sizeof (T) != size()) {
+            log("DataPoint was unwrapped as wrong type got %d bytes for a %d byte type.\n", size(), sizeof (T));
+        }
         return *(T*) & front();
     }
 

@@ -23,7 +23,7 @@ class JobManager {
 public:
     void reload(std::deque<JobStruct>);
 
-    void update(bbtag);
+    void update(bbtag, const DataPoint&);
 
     void eventLoop();
     

@@ -159,6 +159,9 @@ int BlackboardConnection::multiWait(std::deque<BlackboardConnection*> conns, tim
 
     for (std::deque<BlackboardConnection*>::const_iterator it = conns.begin(); it != conns.end(); ++it) {
         FD_SET((*it)->bbfd, &fds);
+        if (maxfd < (*it)->bbfd) {
+            maxfd = (*it)->bbfd;
+        }
     }
     return select(maxfd + 1, &fds, NULL, NULL, tv);
 }
