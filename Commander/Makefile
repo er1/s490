@@ -1,6 +1,6 @@
 CSRC = 
-CXXSRC = testGS.cpp Connector.cpp GroundConnector.cpp
-BINARIES = testGS
+CXXSRC = testUplink.cpp Uplink.cpp 
+BINARIES = testUplink 
 
 include ../Makefile.inc
 
@@ -11,11 +11,8 @@ PROOT = ..
 LFLAGS := $(LFLAGS) -lax25
 
 
-
-testGS: testGS.o Connector.o GroundConnector.o
-	$(LD) $(LFLAGS) -o $@ testGS.o Connector.o GroundConnector.o
-
-
+testUplink: testUplink.o Uplink.o
+	$(LD) $(LFLAGS) -o $@ testUplink.o Uplink.o
 
 
 
