@@ -7,9 +7,13 @@
 
 Job::Job() {
     pid = -1;
+    psName.clear();
+    state = STOPPED;
 }
 
 Job::~Job() {
+    if (pid > 0)
+        kill(pid, SIGKILL);
 }
 
 bool Job::start() {

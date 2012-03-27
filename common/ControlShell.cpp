@@ -123,11 +123,11 @@ DataPoint ControlShell::getMostRecent() {
 
 //TODO: make it so callbacks only happen for the corresponding tag 
 
-void ControlShell::registerCallback(void (*callback)(bbtag, DataPoint)) {
+void ControlShell::registerCallback(void (*callback)(bbtag, const DataPoint&)) {
     callbacks.insert(callback);
 }
 
-void ControlShell::releaseCallback(void (*callback)(bbtag, DataPoint)) {
+void ControlShell::releaseCallback(void (*callback)(bbtag, const DataPoint&)) {
     callbacks.erase(callback);
 }
 
@@ -149,7 +149,7 @@ void ControlShell::checkForUpdates() {
             memcpy(&dp.front(), &pack.at(12), len);
 
             //TODO: make it so callbacks only happen for the corresponding tag 
-            std::set< void (*)(bbtag, DataPoint) >::const_iterator it;
+            std::set< void (*)(bbtag, const DataPoint&) >::const_iterator it;
             for (it = callbacks.begin(); it != callbacks.end(); ++it) {
                 (*(*it))(tag, dp);
             }

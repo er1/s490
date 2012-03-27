@@ -7,7 +7,7 @@
 
 using namespace std;
 
-void update(bbtag tag, DataPoint dp) {
+void update(bbtag tag, const DataPoint& dp) {
     cout << tag << "\t[ ";
 
     for (DataPoint::const_iterator it = dp.begin(); it != dp.end(); ++it) {

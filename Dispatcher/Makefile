@@ -8,24 +8,21 @@
 #
 
 CSRC = testRead.c testProducer.c
-CXXSRC = main.cpp
+CXXSRC = main.cpp Job.cpp JobManager.cpp RunCondition.cpp
 BINARIES = dispatcher testRead testProducer
 
 include ../Makefile.inc
 
 PROOT = ..
 
-dispatcher: main.o Job.o
-	$(LD) $(LFLAGS) -o $@ main.o 
+dispatcher: main.o JobManager.o Job.o RunCondition.o common
+	$(LD) $(LFLAGS) -o $@ main.o JobManager.o Job.o RunCondition.o $(PROOT)/common/BlackboardConnection.o $(PROOT)/common/ControlShell.o
 
 testProducer: testProducer.o
 	$(LD) $(LFLAGS) -o $@ testProducer.o 
 	
 testRead: testRead.o
 	$(LD) $(LFLAGS) -o $@ testRead.o 
-
-# testCS: testCS.o common
-# 	$(LD) $(LFLAGS) -o $@ testCS.o $(PROOT)/common/BlackboardConnection.o $(PROOT)/common/ControlShell.o $(PROOT)/common/KnowledgeSource.o
 
 common:
 	cd ../common; make

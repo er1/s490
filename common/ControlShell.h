@@ -17,15 +17,15 @@ public:
     std::deque<DataPoint> getRecent(int);
     DataPoint getMostRecent();
 
-    void registerCallback(void (*)(bbtag, DataPoint));
-    void releaseCallback(void (*)(bbtag, DataPoint));
+    void registerCallback(void (*)(bbtag, const DataPoint&));
+    void releaseCallback(void (*)(bbtag, const DataPoint&));
 
     void checkForUpdates();
 
 private:
     bool registerToKI();
     bbtag tag;
-    std::set< void (*)(bbtag, DataPoint) > callbacks;
+    std::set< void (*)(bbtag, const DataPoint&) > callbacks;
 
 };
 
