@@ -150,3 +150,15 @@ void BlackboardConnection::waitForEvents() {
 
     }
 }
+
+int BlackboardConnection::multiWait(std::deque<BlackboardConnection*> conns, timeval* tv) {
+    fd_set fds;
+    int maxfd = 0;
+    // wait to unblock
+    FD_ZERO(&fds);
+
+    for (std::deque<BlackboardConnection*>::const_iterator it = conns.begin(); it != conns.end(); ++it) {
+        FD_SET((*it)->bbfd, &fds);
+    }
+    return select(maxfd + 1, &fds, NULL, NULL, tv);
+}
