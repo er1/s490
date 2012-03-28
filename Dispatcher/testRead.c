@@ -3,6 +3,7 @@
 #include <math.h>
 #include <signal.h>
 #include <common/common.h>
+#include <unistd.h>
 
 double aquire_sample();
 
@@ -63,7 +64,10 @@ double aquire_sample() {
     double point;
 
     // simulate a blocking read delay
-    //delay(rand() % 100 * 1000000);
+    struct timeval tv;
+    tv.tv_sec = 0;
+    tv.tv_usec = 20000;
+    select(0, 0, 0, 0, &tv);
 
     // generate a sample and return it
     p = (p + 27) % 1024;

@@ -432,6 +432,17 @@ void Blackboard::handlePacket(int fd, const Packet & packet) {
 
             break;
         }
+        
+        case BO_GEN_HUP:
+        {
+            log("%#010x BO_GEN_HUP requested\n", fd);
+            
+            // TODO: cleanup
+            
+            // quit without error
+            exit(0);
+            break;
+        }
 #endif
         default:
             // invalid code

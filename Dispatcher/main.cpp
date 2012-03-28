@@ -6,6 +6,7 @@
 
 const std::string jobfileName = "jobs.txt";
 
+// TODO: merge this with JobManager (i think)
 bool loadJobs() {
     std::ifstream jobfile(jobfileName.c_str());
     std::string line;
@@ -35,6 +36,8 @@ int main(int argc, char** argv) {
     // load joblist
     loadJobs();
 
+    JobManager::getInstance()->__debug__print();
+    
     // CS event loop
     JobManager::getInstance()->eventLoop();
 

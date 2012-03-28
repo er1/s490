@@ -1,6 +1,7 @@
 #ifndef JOBMANAGER_H
 #define	JOBMANAGER_H
 
+#include <set>
 #include <map>
 #include <deque>
 #include "Job.h"
@@ -29,6 +30,8 @@ public:
     
     static JobManager* getInstance();
 
+    void __debug__print();
+    
 private:
     std::map<jobID, jobDetails> jobSet;
     std::map<bbtag, CSDetails> CSSet;

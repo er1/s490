@@ -1,2 +1,2 @@
-101 ./timeKS 43 44
-102 ./testRead 44
+101 ./timeKS
+102 ./testRead 1210

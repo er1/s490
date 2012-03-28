@@ -8,6 +8,8 @@
 #define BO_GEN_PONG             (2)
 #define BO_GEN_ACK              (6)
 #define BO_GEN_NAK              (19)
+#define BO_GEN_HUP              (4)
+#define BO_GEN_ECHO             (32)
 
 
 ///////////////////////////////
