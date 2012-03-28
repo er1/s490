@@ -6,9 +6,10 @@
 
 SRC = $(CSRC) $(CXXSRC)
 OBJ = $(CSRC:.c=.o) $(CXXSRC:.cpp=.o)
+ETC = 
 
 PREFIX = 
-DEBUG =
+DEBUG = -g -DQUIETDEBUG
 
 CC = $(PREFIX)gcc
 CXX = $(PREFIX)g++
@@ -29,4 +30,4 @@ clean:
 	rm -f $(OBJ) $(BINARIES)
 
 bundle:
-	cp $(BINARIES) $(PROOT)/bin || true
+	cp $(BINARIES) $(ETC) $(PROOT)/bin || true

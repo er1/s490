@@ -9,6 +9,7 @@ clean:
 	cd Blackboard; make clean
 	cd Dispatcher; make clean
 	cd test; make clean
+	rm -rf bin
 
 bundle:
 	mkdir -p bin

@@ -26,19 +26,16 @@
         <in>KnowledgeItem.cpp</in>
         <in>KnowledgeItem.h</in>
         <in>main.cpp</in>
+        <in>timeKS.cpp</in>
+        <in>timePR.cpp</in>
         <in>ttyKS.cpp</in>
       </df>
       <df name="Commander">
-        <in>Connector.cpp</in>
-        <in>Connector.h</in>
-        <in>GroundConnector.cpp</in>
-        <in>GroundConnector.h</in>
-        <in>GroundListener.h</in>
-        <in>Listener.cpp</in>
-        <in>Listener.h</in>
-        <in>SatConnector.h</in>
-        <in>SatListener.h</in>
-        <in>testGS.cpp</in>
+        <in>Uplink.cpp</in>
+        <in>Uplink.h</in>
+        <in>ax25connect.c</in>
+        <in>ax25listen.c</in>
+        <in>testUplink.cpp</in>
       </df>
       <df name="common">
         <in>BlackboardConnection.cpp</in>
@@ -64,6 +61,10 @@
       <df name="Dispatcher">
         <in>Job.cpp</in>
         <in>Job.h</in>
+        <in>JobManager.cpp</in>
+        <in>JobManager.h</in>
+        <in>RunCondition.cpp</in>
+        <in>RunCondition.h</in>
         <in>main.cpp</in>
         <in>testProducer.c</in>
         <in>testRead.c</in>
@@ -78,6 +79,7 @@
       <df name="test">
         <in>KIdebug.cpp</in>
         <in>monitorCS.cpp</in>
+        <in>slamCS.cpp</in>
         <in>slamKS.cpp</in>
         <in>testCS.cpp</in>
         <in>testKS.cpp</in>
@@ -117,12 +119,6 @@
           </ccTool>
         </makeTool>
       </makefileType>
-      <item path="Commander/GroundListener.h" ex="true" tool="3" flavor="0">
-      </item>
-      <item path="Commander/SatConnector.h" ex="true" tool="3" flavor="0">
-      </item>
-      <item path="Commander/SatListener.h" ex="true" tool="3" flavor="0">
-      </item>
       <item path="common/ControlShell.cpp" ex="false" tool="1" flavor="0">
         <ccTool>
           <preprocessorList>
