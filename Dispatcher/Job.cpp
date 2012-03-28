@@ -94,3 +94,19 @@ bool Job::enterGrace() {
 
     return false; // never hit
 }
+
+void Job::updateState(const std::map<bbtag, DataPoint>& tagmap) {
+    bool shouldRun = false;
+    for (std::deque<RunCondition>::iterator it = conditions.begin(); it != conditions.end(); ++it) {
+        if (it->canRun(tagmap)) {
+            shouldRun = true;
+            break; 
+        }
+    }
+
+    if (shouldRun) {
+        start();
+    } else {
+        enterGrace();
+    }
+}

@@ -8,14 +8,14 @@
 #include <common/DataPoint.h>
 #include <common/ControlShell.h>
 
-struct jobDetails {
+struct JobDetails {
     Job job;
-    std::set<bbtag> depends;
 };
 
 struct CSDetails {
+    inline CSDetails() : controlShell(0) { }
+    
     ControlShell controlShell;
-    std::set<jobID> depends;
 };
 
 void jobManagerUpdateCallback(bbtag, const DataPoint&);
@@ -33,9 +33,10 @@ public:
     void __debug__print();
     
 private:
-    std::map<jobID, jobDetails> jobSet;
-    std::map<bbtag, CSDetails> CSSet;
-
+    std::map<jobID, JobDetails> jobSet;
+    std::map<bbtag, CSDetails> csSet;
+    std::map<bbtag, DataPoint> dataMap;
+    
     // instancing
     static JobManager* instance;
     JobManager();

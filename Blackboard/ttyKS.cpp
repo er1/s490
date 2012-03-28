@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <errno.h>
+#include <string>
 
 #include <common/common.h>
 #include <common/KnowledgeSource.h>
@@ -38,7 +39,8 @@ int main(int argc, char** argv) {
     bool reqPend = false;
     bool delayPend = true;
 
-    DataPoint value;
+    std::string value;
+    DataPoint point;
 
     KnowledgeSource myKS(BBTAG_TESTREAD);
     if (!myKS.connectKS())
@@ -46,10 +48,10 @@ int main(int argc, char** argv) {
 
     while (true) {
         if (reqPend) {
-            puts(">");
+            log(">");
             value.clear();
             int ret = write(tty_fd, "A", 1);
-            puts("A");
+            log("A");
             exitOnFail((ret < 0) && (errno != EAGAIN) && (errno != EWOULDBLOCK), "write")
 
             if (ret == 1)
@@ -62,7 +64,7 @@ int main(int argc, char** argv) {
         }
 
         if (delayPend) {
-            puts("_");
+            log("_");
 
             tv.tv_sec = 1;
             tv.tv_usec = 20000;
@@ -80,12 +82,15 @@ int main(int argc, char** argv) {
         int ret = read(tty_fd, &ch, 1);
         exitOnFail((ret < 0) && (errno != EAGAIN) && (errno != EWOULDBLOCK), "read")
         if (ret == 1) {
-            putchar(ch);
             if (ch == '\n') {
-                myKS.update(value);
+                int x;
+                sscanf(value.c_str(), "%d", &x);
+                point.wrap(x);
+                myKS.update(point);
                 delayPend = true;
             } else {
-                value.push_back(ch);
+                if (ch != '\r')
+                        value.push_back(ch);
             }
         }
 

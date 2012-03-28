@@ -10,8 +10,8 @@
 #
 
 CSRC = 
-CXXSRC = KIdebug.cpp monitorCS.cpp slamKS.cpp testCS.cpp testKS.cpp testReadKS.cpp testSock.cpp udpKS.cpp
-BINARIES = testSock monitorCS testKS testCS KIdebug udpKS testReadKS slamKS
+CXXSRC = KIdebug.cpp monitorCS.cpp slamKS.cpp slamCS.cpp testCS.cpp testKS.cpp testReadKS.cpp testSock.cpp udpKS.cpp
+BINARIES = testSock monitorCS testKS testCS KIdebug udpKS testReadKS slamKS slamCS
 
 include ../Makefile.inc
 
@@ -43,6 +43,9 @@ ttyKS: ttyKS.o common
 
 slamKS: slamKS.o common
 	$(LD) $(LFLAGS) -o $@ slamKS.o $(PROOT)/common/BlackboardConnection.o $(PROOT)/common/KnowledgeSource.o
+
+slamCS: slamCS.o common
+	$(LD) $(LFLAGS) -o $@ slamCS.o $(PROOT)/common/BlackboardConnection.o $(PROOT)/common/ControlShell.o
 
 common:
 	cd ../common; make
