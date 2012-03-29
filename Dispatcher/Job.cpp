@@ -100,13 +100,14 @@ void Job::updateState(const std::map<bbtag, DataPoint>& tagmap) {
     for (std::deque<RunCondition>::iterator it = conditions.begin(); it != conditions.end(); ++it) {
         if (it->canRun(tagmap)) {
             shouldRun = true;
-            break; 
+            break;
         }
     }
 
     if (shouldRun) {
         start();
     } else {
-        enterGrace();
+        stop();
+        // enterGrace();
     }
 }

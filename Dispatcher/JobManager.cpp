@@ -32,14 +32,18 @@ void JobManager::reload(std::deque<JobStruct> jobstruct) {
 
         for (std::deque<bbtag>::const_iterator rcit = js.conditions.begin(); rcit != js.conditions.end(); ++rcit) {
             bbtag tag = *rcit;
+            
+            // create and register for a CS if we need it (w/ callback)
             if (csSet.find(tag) == csSet.end()) {
                 csSet[tag].controlShell = ControlShell(tag);
                 csSet[tag].controlShell.connectCS();
                 dataMap[tag] = csSet[tag].controlShell.getMostRecent();
+                csSet[tag].controlShell.registerCallback(jobManagerUpdateCallback);
                 if (updates.find(tag) == updates.end()) {
                     updates.insert(tag);
                 }
             }
+            
             job.conditions.push_back(RunCondition(*rcit));
         }
     }
@@ -56,8 +60,6 @@ void JobManager::update(bbtag tag, const DataPoint& p) {
     for (std::map<jobID, JobDetails>::iterator it = jobSet.begin(); it != jobSet.end(); ++it) {
         it->second.job.updateState(dataMap);
     }
-    
-    __debug__print();
 }
 
 void JobManager::eventLoop() {

@@ -37,9 +37,9 @@ public:
     bool start();
     bool stop();
     bool enterGrace();
-    
+
     void updateState(const std::map<bbtag, DataPoint>&);
-//private:
+    //private:
 
     std::deque<RunCondition> conditions;
     std::map<bbtag, RunCondition*> reverseMapping;

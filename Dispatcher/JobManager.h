@@ -13,8 +13,10 @@ struct JobDetails {
 };
 
 struct CSDetails {
-    inline CSDetails() : controlShell(0) { }
-    
+
+    inline CSDetails() : controlShell(0) {
+    }
+
     ControlShell controlShell;
 };
 
@@ -27,16 +29,16 @@ public:
     void update(bbtag, const DataPoint&);
 
     void eventLoop();
-    
+
     static JobManager* getInstance();
 
     void __debug__print();
-    
+
 private:
     std::map<jobID, JobDetails> jobSet;
     std::map<bbtag, CSDetails> csSet;
     std::map<bbtag, DataPoint> dataMap;
-    
+
     // instancing
     static JobManager* instance;
     JobManager();

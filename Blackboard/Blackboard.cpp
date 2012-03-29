@@ -397,7 +397,7 @@ void Blackboard::handlePacket(int fd, const Packet & packet) {
                 updatePacket.setU32(8, nData.size());
 
                 memcpy(&updatePacket.at(12), &nData.front(), nData.size());
-                
+
                 if (fdSet.count(subscriber) != 0) {
                     fdSet[subscriber].sendQueue.push_back(updatePacket);
                 } else {
@@ -432,13 +432,13 @@ void Blackboard::handlePacket(int fd, const Packet & packet) {
 
             break;
         }
-        
+
         case BO_GEN_HUP:
         {
             log("%#010x BO_GEN_HUP requested\n", fd);
-            
+
             // TODO: cleanup
-            
+
             // quit without error
             exit(0);
             break;

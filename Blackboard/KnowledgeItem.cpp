@@ -1,6 +1,7 @@
 #include "KnowledgeItem.h"
 
 // update the KI with a new DataPoint
+
 void KnowledgeItem::update(DataPoint point) {
     // add the data point to the front of data chain
     dataChain.push_front(point);
@@ -13,6 +14,7 @@ void KnowledgeItem::update(DataPoint point) {
 }
 
 // return the first most recent data point
+
 const DataPoint KnowledgeItem::getMostRecent() const {
     DataPoint ret;
     ret = dataChain.front();
@@ -20,6 +22,7 @@ const DataPoint KnowledgeItem::getMostRecent() const {
 }
 
 // return the n most recent data points
+
 std::deque<DataPoint> KnowledgeItem::getRecent(size_t numPoints) const {
     if (numPoints > dataChain.size()) {
         numPoints = dataChain.size();

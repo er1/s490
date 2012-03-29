@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
             value.wrap(t);
             myKS.update(value);
         }
-        
+
         lastTime = t;
     }
 }

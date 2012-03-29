@@ -25,6 +25,9 @@ bool loadJobs() {
             break;
         }
 
+        std::cout << line << std::endl;
+
+
         std::istringstream linestream(line);
         linestream >> js.id >> js.psName;
         while (!linestream.fail()) {
@@ -41,6 +44,8 @@ bool loadJobs() {
     }
 
     JobManager::getInstance()->reload(jobList);
+    
+    std::cout << "Loaded" << std::endl;
 
     return true;
 }
@@ -57,7 +62,7 @@ int main(int argc, char** argv) {
     p.wrap(1);
     b.update(p);
     b.disconnectKS();
-    
+
     // load joblist
     log("Loading initial jobs...\n");
     loadJobs();

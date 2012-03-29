@@ -90,7 +90,7 @@ int main(int argc, char** argv) {
                 delayPend = true;
             } else {
                 if (ch != '\r')
-                        value.push_back(ch);
+                    value.push_back(ch);
             }
         }
 
