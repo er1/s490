@@ -23,10 +23,17 @@ void KnowledgeItem::update(DataPoint point) {
     dataChain.push_front(point);
 
     // clean out unneeded data points
-    while (dataChain.size() > 50) // amortized O(1)
-        dataChain.pop_back();
+	if(maxDataPts){
+		while (dataChain.size() > maxDataPts){ // amortized O(1)
+			dataChain.pop_back();
+		}
+	}
 
     ++updates;
+}
+
+void KnowledgeItem::setMaxDataPts(unsigned int m){
+	maxDataPts = m;
 }
 
 // return the first most recent data point
@@ -47,3 +54,4 @@ std::deque<DataPoint> KnowledgeItem::getRecent(size_t numPoints) const {
     std::deque<DataPoint> ret(dataChain.begin(), dataChain.begin() + numPoints);
     return ret;
 }
+

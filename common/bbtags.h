@@ -25,9 +25,11 @@ typedef uint32_t bbtag;
 #define BBTAG_SIMPLETIME ((bbtag)1200)
 #define BBTAG_DEMO10BOOL ((bbtag)1210)
 
-#define POWER_VOLTAGE_BATTERIES_TAG ((bbtag)1)
-#define POWER_CURRENT_TAG ((bbtag)2)
-#define POWER_VOLTAGE_PANELS_TAG ((bbtag)3)
+#define BB_SETTINGS ((bbtag)0)
+#define BB_ALL_TAGS ((bbtag)1)
+#define POWER_VOLTAGE_BATTERIES_TAG ((bbtag)2)
+#define POWER_CURRENT_TAG ((bbtag)3)
+#define POWER_VOLTAGE_PANELS_TAG ((bbtag)4)
 
 #endif	/* BBTAGS_H */
 

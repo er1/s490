@@ -28,7 +28,8 @@
 class KnowledgeItem {
 public:
     std::deque<DataPoint> dataChain;
-    int updates;
+	unsigned int maxDataPts; 
+    unsigned int updates;
 
     int ownerFd; //the owner of this KI
     std::set<int> csListeners;
@@ -36,12 +37,14 @@ public:
     inline KnowledgeItem() {
         ownerFd = -1;
         updates = 0;
+		maxDataPts = 50;
     }
 
     inline ~KnowledgeItem() {
     }
 
     void update(DataPoint);
+	void setMaxDataPts(unsigned int);
     const DataPoint getMostRecent() const;
     std::deque<DataPoint> getRecent(size_t) const;
 };
