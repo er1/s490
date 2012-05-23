@@ -31,12 +31,20 @@ KnowledgeSource myKS(tag);
 
 ControlShell myCS(tag);
 
+/*
+  need to be able to connect
+*/
 static const char * test_connect() {
     bool con = myCS.connectCS();
     mu_assert("connectCS returned false!", con == true);
     return 0;
 }
 
+/*
+  Get the last n DataPoints.
+
+  Todo: n = 0, n > total DPs
+*/
 static const char * test_getRecent() {
     std::deque<DataPoint> dq1 = myCS.getRecent(5);
     std::deque<DataPoint> dq2 = myCS.getRecent(5);
