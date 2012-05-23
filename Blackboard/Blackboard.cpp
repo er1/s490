@@ -32,6 +32,17 @@ Blackboard* Blackboard::instance = 0;
 
 Blackboard::Blackboard() {
     // default contructors init everything needed to empty
+
+	//create the internal knowledge items
+	kiSet[BB_SETTINGS];
+	kiSet[BB_ALL_TAGS];
+
+	//populate the tags knowlege item
+	DataPoint dp;
+	dp.wrap(BB_SETTINGS);
+	dp.push_back(BB_ALL_TAGS);
+	kiSet[BB_ALL_TAGS].update(dp);
+	
 }
 
 // get singleton instance
@@ -352,6 +363,14 @@ void Blackboard::handlePacket(int fd, const Packet & packet) {
 
             log("%#010x BO_KS_SUBSCRIBE_AS requested\n", fd);
             uint32_t kiTag = packet.getU32(4);
+
+			//keep track of KIs by tag
+			if(kiSet.count(kiTag) == 0){
+				//add it to the ki of tags (confusing?)
+				DataPoint dptmp;
+				dptmp.wrap(kiTag);
+				kiSet[BB_ALL_TAGS].update(dptmp);
+			}
             KnowledgeItem& ki = kiSet[kiTag];
 
             // form default response packet
@@ -371,7 +390,7 @@ void Blackboard::handlePacket(int fd, const Packet & packet) {
 
             // send packet
             fdSet[fd].sendQueue.push_back(ret);
-
+#ifdef DEBUG
 			//we want to see if we are keeping track of all the KIs...
 			{
 				std::map<int, ConnectionDetails>::const_iterator fdit;
@@ -393,7 +412,7 @@ void Blackboard::handlePacket(int fd, const Packet & packet) {
 				}
 				log("\n");
 			}
-
+#endif
             break;
         }
 
