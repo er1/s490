@@ -141,7 +141,7 @@ void ControlShell::checkForUpdates() {
 
             // TODO: do this properly
             if (len != (pack.size() - 12)) {
-                log("packet size error have %d, told %d\n", pack.size() - 12, len);
+                log("packet size error have %lu, told %u\n", pack.size() - 12, len);
             }
                         
             DataPoint dp;

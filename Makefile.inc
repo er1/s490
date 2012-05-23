@@ -9,7 +9,7 @@ OBJ = $(CSRC:.c=.o) $(CXXSRC:.cpp=.o)
 ETC = 
 
 PREFIX = 
-DEBUG = -g -DQUIETDEBUG
+DEBUG = -g -DDEBUG#-DQUIETDEBUG
 
 CC = $(PREFIX)gcc
 CXX = $(PREFIX)g++

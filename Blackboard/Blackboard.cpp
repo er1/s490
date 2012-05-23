@@ -365,12 +365,35 @@ void Blackboard::handlePacket(int fd, const Packet & packet) {
                 fdSet[fd].ksList.insert(&ki);
                 ki.ownerFd = fd;
 
-                log("Assigned ki:%p to fd:%d", &ki, fd);
+                log("Assigned ki:%p to fd:%d\n", &ki, fd);
                 ret.setU32(0, BO_KS_SUBSCRIPTION_SUCCESS);
             }
 
             // send packet
             fdSet[fd].sendQueue.push_back(ret);
+
+			//we want to see if we are keeping track of all the KIs...
+			{
+				std::map<int, ConnectionDetails>::const_iterator fdit;
+				for(fdit = fdSet.begin(); fdit != fdSet.end(); ++fdit){
+					//looping through all the fds...
+					log("FD: %d\n", fdit->first);
+
+					std::set<KnowledgeItem*>::const_iterator kit;
+					for(kit = fdit->second.ksList.begin(); kit != fdit->second.ksList.end(); ++kit){
+						//looping through all KS
+						log("\tKS: %p\n", *kit);
+					}
+				}
+
+				log("\nList of all KI:\n");
+				std::map<bbtag, KnowledgeItem>::const_iterator kiit;
+				for(kiit = kiSet.begin(); kiit != kiSet.end(); ++kiit){
+					log("%d -> %p\n", kiit->first, &(kiit->second));
+				}
+				log("\n");
+			}
+
             break;
         }
 
