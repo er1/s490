@@ -30,7 +30,7 @@
 
 int main(int argc, char** argv) {
     termios tio;
-    int tty_fd;
+    int tty_fd = 0;
     timeval tv;
     //fd_set fdr;
 
