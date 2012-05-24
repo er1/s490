@@ -48,6 +48,20 @@ int main(int argc, char** argv) {
         exit(-1);
     }
 
+	cout << "Monitoring tag " << tag << endl << "The last 10 data points are:" << endl;
+
+	std::deque<DataPoint> dq = myCS.getRecent(10);
+	std::deque<DataPoint>::const_iterator dit;
+	for(dit = dq.begin(); dit != dq.end(); ++dit){
+		cout << "DataPoint [ " << endl;
+		
+		for(DataPoint::const_iterator it = (*dit).begin(); it!= (*dit).end(); ++it){
+			cout  << (int)(*it) << " ";
+		}
+
+		cout << "]" << endl;
+	}
+
     myCS.registerCallback(update);
 
     while (true) {
