@@ -40,7 +40,8 @@ Blackboard::Blackboard() {
 	//populate the tags knowlege item
 	DataPoint dp;
 	dp.wrap(BB_SETTINGS);
-	dp.push_back(BB_ALL_TAGS);
+	kiSet[BB_ALL_TAGS].update(dp);
+	dp.wrap(BB_ALL_TAGS);
 	kiSet[BB_ALL_TAGS].update(dp);
 	
 }
