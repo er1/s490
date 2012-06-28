@@ -19,38 +19,7 @@
 */
 
 
-/*Take Magnetometer Readings*/
-   //Request magnetometer activation
-   //Check registration with magnetometer KS
-   //Check magnetometer activation
-   //Listen for KS updates
-   //Take KS updates
-   //Request magnetometer deactivation
-
-
-/*Filter Magnetometer Reading*/
-
-
-/*Import Position Data From ODS*/
-
-
-/*Calculate Attitude*/
-
-
-/*Verify Attitude Calculation*/
-
-
-/*Update Blackboard with Attitude Data*/
-
-
-/*Take Photosensor Reading*/
-
-
-/*Filter Photosensor Reading*/
-
-
-/*Calculate Spin Rate*/
-
-
-/*Update Blackboard with Spin Rate Data*/
+/*Configure i2c*/
+   //3 speeds - 100kbps, 400kbps, 3.4Mbps
+   
    

@@ -20,7 +20,7 @@
 
 /*Subsystem Check*/
    //check related thermistors
-   //
+   //Check magnetometer
 
 
 /*Take Magnetometer Readings*/
@@ -39,21 +39,12 @@
 
 
 /*Calculate Attitude*/
-
+   //Take IGRF values at given position
+   //Compare IGRF values to magnetometer reading
+   //Vector difference = attitude
 
 /*Verify Attitude Calculation*/
 
 
 /*Update Blackboard with Attitude Data*/
 
-
-/*Take Photosensor Reading*/
-
-
-/*Filter Photosensor Reading*/
-
-
-/*Calculate Spin Rate*/
-
-
-/*Update Blackboard with Spin Rate Data*/

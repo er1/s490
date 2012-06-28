@@ -24,8 +24,15 @@
 #define COMMAND_TYPE_O 0x20      //For data leaving the radio
 #define HEADER_SIZE 8
 
-const unsigned double SNR_LIMIT = 1; //in dBm ||FIGURE OUT WHAT THE LIMIT IS||
-const unsigned char SYNC_CHARACTERS[2] = ['H','e'];
+const double SNR_LIMIT = 1; //in dBm ||FIGURE OUT WHAT THE LIMIT IS||
+const unsigned char SYNC_CHARACTERS[2] = {'H','e'};
+
+struct Transceiver_Command{
+unsigned char command_type;
+unsigned int command;
+unsigned char * payload_data;
+unsigned int payload_size;
+};
 
 
 //COMMAND_TYPE_I Op Codes
@@ -71,11 +78,15 @@ const unsigned char SYNC_CHARACTERS[2] = ['H','e'];
    //load prepared data from C&DH into RAM
    //||LOOK INTO PACKET TRANSMISSION FOR TRANSCEIVER||
    //Configure transceiver registers (e.g. Power Level)
-int transceiver_config(unsigned char command_type, unsigned char command, unsigned int payload_data){ //||include any configurable variables as parameters
-   
+int command_transceiver(Transceiver_Command inputCommand){ 
+
+   unsigned char command_type = inputCommand.command_type;
+   unsigned int command = inputCommand.command; 
+   unsigned char * payload_data = inputCommand.payload_data; 
+   unsigned int payload_size = inputCommand.payload_size;
+
    //configure header
    unsigned char header_bytes[8];
-   unsigned short int payload_size = sizeof(payload_data);  //||corey - will this do the sizeof the payload_data or the short int?
    unsigned char header_checksum_A = 0;
    unsigned char header_checksum_B = 0;
    header_bytes[0] = SYNC_CHARACTERS[0];
@@ -86,7 +97,7 @@ int transceiver_config(unsigned char command_type, unsigned char command, unsign
    header_bytes[5] = (payload_size >> 8) & 0xff;
 
    //perform header checksum
-   for (int i = 0; i< header_size - 2; i++){
+   for (int i = 0; i< HEADER_SIZE - 2; i++){
       header_checksum_A += header_bytes[i];
       header_checksum_B += header_checksum_A;
    }
@@ -96,14 +107,13 @@ int transceiver_config(unsigned char command_type, unsigned char command, unsign
    header_bytes[7] = header_checksum_B;
 
    //set payload
-   char payload[] = payload_data; //||HMMM - TRYING TO FIND THE MOST EFFICIENT WAY TO DO THIS 
    unsigned char payload_checksum_A = 0;
    unsigned char payload_checksum_B = 0;
 
 
    //perform payload checksum
    for (int i = 0; i< payload_size; i++){
-      payload_checksum_A += payload[i];
+      payload_checksum_A += payload_data[i];
       payload_checksum_B += payload_checksum_A;
    }
 
@@ -115,10 +125,15 @@ int transceiver_config(unsigned char command_type, unsigned char command, unsign
    }
 
    for (int i = HEADER_SIZE; i < HEADER_SIZE + payload_size; i++){
-      command_buffer[i] = payload[i];
+      command_buffer[i] = payload_data[i];
    }
    command_buffer[HEADER_SIZE + payload_size] = payload_checksum_A;
    command_buffer[HEADER_SIZE + payload_size + 1] = payload_checksum_B;
+
+   //Serial Communication
+   //start serial communication
+   //send data
+   //receive return message
 }
 
 
