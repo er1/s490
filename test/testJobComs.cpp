@@ -16,9 +16,10 @@
 
 #include "../Jobs/coms.cpp"
 #include <cstddef>
+#include <unistd.h>
+#include <iostream>
 
 int main(int argc, char** argv) {
-
   Transceiver_Command no_op;
   no_op.command_type = COMMAND_TYPE_I;
   no_op.command = I_NO_OP;
@@ -47,17 +48,17 @@ int main(int argc, char** argv) {
   unsigned char * set_config_data = new unsigned char[42];  //||use received data from get_config
   set_config.payload_data = set_config_data;
 
-  command_transceiver(no_op);
-    sleep(1000);
+  std::cout << "NO_OP:" <<command_transceiver(no_op) << std::endl;
+    sleep(1);
 
-  command_transceiver(transmit);
-    sleep(1000);
+  std::cout << "TRANSMIT:" << command_transceiver(transmit) << std::endl;
+    sleep(1);
 
-  command_transceiver(get_config);
-    sleep(1000);
+  std::cout << "GET_CONFIG:" << command_transceiver(get_config) << std::endl;
+    sleep(1);
 
-  command_transceiver(set_config);
-    sleep(1000);
+  std::cout << "SET_CONFIG" << command_transceiver(set_config) << std::endl;
+    sleep(1);
 
 
   return 0;
