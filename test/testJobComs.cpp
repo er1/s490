@@ -41,30 +41,33 @@ int main(int argc, char** argv) {
   uint8_t get_config_data = NULL;
   get_config.payload_data = &get_config_data;
 
-  Transceiver_Command set_config;
-  set_config.command_type = COMMAND_TYPE_I;
-  set_config.command = I_SET_CONFIG;
-  set_config.payload_size = 42;
-  uint8_t * set_config_data = new uint8_t[42];  //||use received data from get_config
-  set_config.payload_data = set_config_data;
+  // Transceiver_Command set_config;
+  // set_config.command_type = COMMAND_TYPE_I;
+  // set_config.command = I_SET_CONFIG;
+  // set_config.payload_size = 62;
+  // uint8_t * set_config_data = new uint8_t[42];  //||use received data from get_config
+  // set_config.payload_data = set_config_data;
 
-  while (1){
     std::cout << "\n\n\n\n\n------------------NO_OP-----------------------" << std::endl;
     std::cout << command_transceiver(no_op) << std::endl;
       sleep(1);
 
     std::cout << "\n\n\n\n\n---------------TRANSMIT------------------------" << std::endl;
     std::cout << command_transceiver(transmit) << std::endl;
-      sleep(1);
+      sleep(2);
 
     std::cout << "\n\n\n\n\n---------------GET_CONFIG---------------------" << std::endl;
     std::cout << command_transceiver(get_config) << std::endl;
       sleep(1);
 
     std::cout << "\n\n\n\n\n---------------SET_CONFIG---------------------" << std::endl;
-    std::cout << command_transceiver(set_config) << std::endl;
+    std::cout << speedUpTester(true) << std::endl;
       sleep(1);
-  }
+  
+    // std::cout << "\n\n\n\n\n---------------SET_CONFIG---------------------" << std::endl;
+    // std::cout << command_transceiver(set_config) << std::endl;
+    //   sleep(1);
+  
 
   return 0;
 }

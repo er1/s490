@@ -21,6 +21,32 @@
 #include "coms.h"
 
 
+std::string speedUpTester(bool do_increase_speed){
+
+   Radio_Configuration_t config;
+   
+   // Transceiver_Command get_config;    
+   // get_config.command_type = COMMAND_TYPE_I;
+   // get_config.command = I_GET_CONFIG;
+   // get_config.payload_size = 0;
+   // uint8_t get_config_data = NULL;
+   // get_config.payload_data = &get_config_data;
+   //config = command_transceiver(get_config); //NYI - need to get data back from commands
+
+   config = default_radio_config;
+
+   Transceiver_Command set_config;
+   set_config.command_type = COMMAND_TYPE_I;
+   set_config.command = I_SET_CONFIG;
+   set_config.payload_size = 46;
+   config.tx_rf_baud_rate = (do_increase_speed) ? 0x04 : 0x02;
+   set_config.payload_data = (uint8_t *) &config;
+
+  return command_transceiver(set_config);
+
+}
+
+
 std::string command_transceiver(Transceiver_Command inputCommand){ 
 
    uint8_t command_type = inputCommand.command_type;
@@ -79,14 +105,12 @@ std::string command_transceiver(Transceiver_Command inputCommand){
    command_buffer[HEADER_SIZE + payload_size + 1] = payload_checksum_B;
 
    return serialWrite(command_buffer);
-
-
 }
 
 std::string serialWrite(uint8_t * command){
    int fd; //device handle
 
-   const char *device = "/dev/tty.usbmodem621";
+   const char *device = "/dev/tty.usbmodem411";
    fd = open(device, O_RDWR | O_NOCTTY | O_NDELAY);
    if(fd == -1) {
      printf( "failed to open port\n" );
@@ -96,65 +120,36 @@ std::string serialWrite(uint8_t * command){
 
    if(!isatty(fd)) { std::cout << "Not a TTY" << std::endl; }
    if(tcgetattr(fd, &config) < 0) {std::cout << "Termios structure is broken" << std::endl;}
-   //
-   // Input flags - Turn off input processing
-   // convert break to null byte, no CR to NL translation,
-   // no NL to CR translation, don't mark parity errors or breaks
-   // no input parity check, don't strip high bit off,
-   // no XON/XOFF software flow control
-   //
-   config.c_iflag &= ~(IGNBRK | BRKINT | ICRNL |
-                       INLCR | PARMRK | INPCK | ISTRIP | IXON);
-   //
-   // Output flags - Turn off output processing
-   // no CR to NL translation, no NL to CR-NL translation,
-   // no NL to CR translation, no column 0 CR suppression,
-   // no Ctrl-D suppression, no fill characters, no case mapping,
-   // no local output processing
-   //
-   // config.c_oflag &= ~(OCRNL | ONLCR | ONLRET |
-   //                     ONOCR | ONOEOT| OFILL | OLCUC | OPOST);
-   config.c_oflag = 0;
-   //
-   // No line processing:
-   // echo off, echo newline off, canonical mode off, 
-   // extended input processing off, signal chars off
-   //
-   config.c_lflag &= ~(ECHO | ECHONL | ICANON | IEXTEN | ISIG);
-   //
-   // Turn off character processing
-   // clear current char size mask, no parity checking,
-   // no output processing, force 8 bit input
-   //
-   config.c_cflag &= ~(CSIZE | PARENB);
-   config.c_cflag |= CS8;
-   //
-   // One input byte is enough to return from read()
-   // Inter-character timer off
-   //
-   config.c_cc[VMIN]  = 1;
-   config.c_cc[VTIME] = 0;
-   //
-   // Communication speed (simple version, using the predefined
-   // constants)
-   //
+
+   config.c_iflag  = 0;//&= ~(IGNBRK | BRKINT | ICRNL | INLCR | PARMRK | INPCK | ISTRIP | IXON);
+   config.c_oflag = 0; //&= ~(OCRNL | ONLCR | ONLRET | ONOCR | CSTOPB | ONOEOT| OFILL | OPOST);
+   config.c_cflag &= ~(CSIZE | PARENB | CSTOPB); // 8bits, no parity, 1 stop
+   config.c_cflag |= CS8 | CREAD | HUPCL;
+   config.c_cc[VMIN]  = 0;
+   config.c_cc[VTIME] = 1;
+
+   // Communication speed (simple version, using the predefined constants)
    if(cfsetispeed(&config, B9600) < 0 || cfsetospeed(&config, B9600) < 0) {
        std::cout << "Speed is messed up" << std::endl;
    }
-   //
+
    // Finally, apply the configuration
-   //
    if(tcsetattr(fd, TCSAFLUSH, &config) < 0) { std::cout << "Applied Configuration is broken" << std::endl;}
 
-   char c ='D';
-   write(fd,&command,1);
+   // uint8_t c[2] = {'D','A'};
+   // write(fd,&c,2);
+    //write(fd,&command[6],2);
 
-   // for (int i = 0; i < command[5]+10; i++){
-   //    std::cout << "BIN" << i << ": " << std::setw(8) << std::bitset<CHAR_BIT>(command[i]);
-   //    std::cout << "\t\t\tHex" << i << ": " << std::setw(8) << std::hex << (unsigned int) command[i];
-   //    std::cout << "\t\t\tDec" << i << ": " << std::setw(10) << std::dec << (unsigned int) command[i];
-   //    std::cout << "\t\t\tASCII" << i << ": " << command[i] << std::endl;
-   // }
+   write(fd,command,command[5]+10);
+
+
+   //DEBUGGER CODE - COMMENT OUT
+   for (int i = 0; i < command[5]+10; i++){
+      std::cout << "BIN" << i << ": " << std::setw(8) << std::bitset<CHAR_BIT>(command[i]);
+      std::cout << "\t\t\tHex" << i << ": " << std::setw(8) << std::hex << (unsigned int) command[i];
+      std::cout << "\t\t\tDec" << i << ": " << std::setw(10) << std::dec << (unsigned int) command[i];
+      std::cout << "\t\t\tASCII" << i << ": " << command[i] << std::endl;
+   }
 
 
    close(fd);
