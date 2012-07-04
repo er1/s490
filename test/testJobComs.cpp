@@ -24,42 +24,47 @@ int main(int argc, char** argv) {
   no_op.command_type = COMMAND_TYPE_I;
   no_op.command = I_NO_OP;
   no_op.payload_size = 0;
-  unsigned char no_op_data = NULL;
+  uint8_t no_op_data = NULL;
   no_op.payload_data = &no_op_data;
 
   Transceiver_Command transmit;
   transmit.command_type = COMMAND_TYPE_I;
   transmit.command = I_TRANSMIT;
-  transmit.payload_size = 255;    //||fix size determination code - where does it live?
-  unsigned char transmit_data = 4;
-  transmit.payload_data = &transmit_data;
+  transmit.payload_size = 10;    //||fix size determination code - where does it live?
+  uint8_t transmit_data[10] = {100,101,102,103,104,105,106,107,108,109};
+  transmit.payload_data = transmit_data;
 
   Transceiver_Command get_config; //||get data back from commands
   get_config.command_type = COMMAND_TYPE_I;
   get_config.command = I_GET_CONFIG;
   get_config.payload_size = 0;
-  unsigned char get_config_data = NULL;
+  uint8_t get_config_data = NULL;
   get_config.payload_data = &get_config_data;
 
   Transceiver_Command set_config;
   set_config.command_type = COMMAND_TYPE_I;
   set_config.command = I_SET_CONFIG;
-  set_config.payload_size = 255;
-  unsigned char * set_config_data = new unsigned char[42];  //||use received data from get_config
+  set_config.payload_size = 42;
+  uint8_t * set_config_data = new uint8_t[42];  //||use received data from get_config
   set_config.payload_data = set_config_data;
 
-  std::cout << "NO_OP:" <<command_transceiver(no_op) << std::endl;
-    sleep(1);
+  while (1){
+    std::cout << "\n\n\n\n\n------------------NO_OP-----------------------" << std::endl;
+    std::cout << command_transceiver(no_op) << std::endl;
+      sleep(1);
 
-  std::cout << "TRANSMIT:" << command_transceiver(transmit) << std::endl;
-    sleep(1);
+    std::cout << "\n\n\n\n\n---------------TRANSMIT------------------------" << std::endl;
+    std::cout << command_transceiver(transmit) << std::endl;
+      sleep(1);
 
-  std::cout << "GET_CONFIG:" << command_transceiver(get_config) << std::endl;
-    sleep(1);
+    std::cout << "\n\n\n\n\n---------------GET_CONFIG---------------------" << std::endl;
+    std::cout << command_transceiver(get_config) << std::endl;
+      sleep(1);
 
-  std::cout << "SET_CONFIG" << command_transceiver(set_config) << std::endl;
-    sleep(1);
-
+    std::cout << "\n\n\n\n\n---------------SET_CONFIG---------------------" << std::endl;
+    std::cout << command_transceiver(set_config) << std::endl;
+      sleep(1);
+  }
 
   return 0;
 }

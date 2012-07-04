@@ -19,38 +19,22 @@
 */
 
 
-/*Take Magnetometer Readings*/
-   //Request magnetometer activation
-   //Check registration with magnetometer KS
-   //Check magnetometer activation
-   //Listen for KS updates
-   //Take KS updates
-   //Request magnetometer deactivation
+/*Subsystem Check*/
+   //check related thermistors
+   //check current sensors
+   //check voltage sensors
+   //relate battery voltage to battery capacity
 
+/*Enable 3.3V Line*/
+   //Toggle GPIO
+   //||think about redundancy
 
-/*Filter Magnetometer Reading*/
+/*Enable 15V Line*/
+   //Toggle GPIO 
+   //||think about redundancy
 
+/*Interrupt on Line Failure*/
+   //Power off warning (or brownout or overcurrent) for each 3.3v, 5v or 15v
+   //Save all telemetry ASAP
+   //Save all data from subsystems connected to failing line
 
-/*Import Position Data From ODS*/
-
-
-/*Calculate Attitude*/
-
-
-/*Verify Attitude Calculation*/
-
-
-/*Update Blackboard with Attitude Data*/
-
-
-/*Take Photosensor Reading*/
-
-
-/*Filter Photosensor Reading*/
-
-
-/*Calculate Spin Rate*/
-
-
-/*Update Blackboard with Spin Rate Data*/
-   
