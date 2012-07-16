@@ -67,7 +67,8 @@ std::string command_transceiver(Transceiver_Command inputCommand){
    header_bytes[5] = payload_size & 0xff; //for LSB of payload_size
    
    //perform header checksum
-   for (int i = 0; i< HEADER_SIZE - 2; i++){
+   //note that 'H' and 'e' are not counted
+   for (int i = 2; i< HEADER_SIZE - 2; i++){
       header_checksum_A += header_bytes[i];
       header_checksum_B += header_checksum_A;
       //std::cout << (int) header_checksum_A << "\t" <<  (int) header_checksum_B << std::endl;
@@ -109,6 +110,8 @@ std::string command_transceiver(Transceiver_Command inputCommand){
 
 std::string serialWrite(uint8_t * command){
    int fd; //device handle
+   uint8_t response[255+8+2];
+   char returnResponse[255+8+2];
 
    const char *device = "/dev/tty.usbmodem411";
    fd = open(device, O_RDWR | O_NOCTTY | O_NDELAY);
@@ -142,8 +145,15 @@ std::string serialWrite(uint8_t * command){
 
    write(fd,command,command[5]+10);
 
+   //Read if data available on serial
+   bool responseReceived = false;
+   if (read(fd,response,1)>0){
+      sprintf(returnResponse,"%d", (int) *response);
+      responseReceived = true;
+   }  
 
-   //DEBUGGER CODE - COMMENT OUT
+
+//   DEBUGGER CODE - COMMENT OUT
    for (int i = 0; i < command[5]+10; i++){
       std::cout << "BIN" << i << ": " << std::setw(8) << std::bitset<CHAR_BIT>(command[i]);
       std::cout << "\t\t\tHex" << i << ": " << std::setw(8) << std::hex << (unsigned int) command[i];
@@ -154,6 +164,6 @@ std::string serialWrite(uint8_t * command){
 
    close(fd);
 
-   return "successful";
+   return (responseReceived) ? returnResponse : "Transmit successful, but no response";
 }
 

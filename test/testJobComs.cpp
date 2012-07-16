@@ -52,22 +52,21 @@ int main(int argc, char** argv) {
     std::cout << command_transceiver(no_op) << std::endl;
       sleep(1);
 
-    std::cout << "\n\n\n\n\n---------------TRANSMIT------------------------" << std::endl;
-    std::cout << command_transceiver(transmit) << std::endl;
-      sleep(2);
+    // std::cout << "\n\n\n\n\n---------------TRANSMIT------------------------" << std::endl;
+    // std::cout << command_transceiver(transmit) << std::endl;
+    //   sleep(2);
 
-    std::cout << "\n\n\n\n\n---------------GET_CONFIG---------------------" << std::endl;
-    std::cout << command_transceiver(get_config) << std::endl;
-      sleep(1);
+    // std::cout << "\n\n\n\n\n---------------GET_CONFIG---------------------" << std::endl;
+    // std::cout << command_transceiver(get_config) << std::endl;
+    //   sleep(1);
 
-    std::cout << "\n\n\n\n\n---------------SET_CONFIG---------------------" << std::endl;
-    std::cout << speedUpTester(true) << std::endl;
-      sleep(1);
+    // std::cout << "\n\n\n\n\n---------------SET_CONFIG---------------------" << std::endl;
+    // std::cout << speedUpTester(true) << std::endl;
+    //   sleep(1);
   
     // std::cout << "\n\n\n\n\n---------------SET_CONFIG---------------------" << std::endl;
     // std::cout << command_transceiver(set_config) << std::endl;
     //   sleep(1);
-  
 
   return 0;
 }
