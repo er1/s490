@@ -31,9 +31,6 @@
         <in>ttyKS.cpp</in>
       </df>
       <df name="Commander">
-        <in>Connector.h</in>
-        <in>GroundConnector.h</in>
-        <in>Listener.h</in>
         <in>Uplink.cpp</in>
         <in>Uplink.h</in>
         <in>ax25connect.c</in>
@@ -75,16 +72,52 @@
       <df name="hw_proto">
         <in>tcplisten.c</in>
       </df>
+      <df name="Jobs">
+        <in>acs.cpp</in>
+        <in>cdh.cpp</in>
+        <in>coms.cpp</in>
+        <in>coms.h</in>
+        <in>mech.cpp</in>
+        <in>payload.cpp</in>
+        <in>power.cpp</in>
+        <in>system.cpp</in>
+        <in>testJob.cpp</in>
+      </df>
       <df name="kernel">
         <df name="archlinux">
         </df>
       </df>
       <df name="test">
+        <df name="testJobComs">
+          <df name="build">
+            <df name="Debug">
+              <df name="GNU-Linux-x86">
+                <df name="_ext">
+                  <df name="1472">
+                  </df>
+                </df>
+              </df>
+            </df>
+          </df>
+          <df name="dist">
+            <df name="Debug">
+              <df name="GNU-Linux-x86">
+                <in>testjobcoms</in>
+              </df>
+            </df>
+          </df>
+          <df name="nbproject">
+            <df name="private">
+            </df>
+          </df>
+        </df>
         <in>KIdebug.cpp</in>
+        <in>load.c</in>
         <in>monitorCS.cpp</in>
         <in>slamCS.cpp</in>
         <in>slamKS.cpp</in>
         <in>testCS.cpp</in>
+        <in>testJobComs.cpp</in>
         <in>testKS.cpp</in>
         <in>testReadKS.cpp</in>
         <in>testSock.cpp</in>
@@ -125,7 +158,7 @@
       <folder path="SpaceConcordia/Blackboard">
         <ccTool>
           <preprocessorList>
-            <Elem>QUIETDEBUG</Elem>
+            <Elem>DEBUG</Elem>
           </preprocessorList>
         </ccTool>
       </folder>
@@ -135,29 +168,92 @@
             <pElem>.</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>QUIETDEBUG</Elem>
+            <Elem>DEBUG</Elem>
           </preprocessorList>
         </cTool>
         <ccTool>
           <preprocessorList>
-            <Elem>QUIETDEBUG</Elem>
+            <Elem>DEBUG</Elem>
           </preprocessorList>
         </ccTool>
       </folder>
       <folder path="SpaceConcordia/common">
         <ccTool>
           <preprocessorList>
-            <Elem>QUIETDEBUG</Elem>
+            <Elem>DEBUG</Elem>
           </preprocessorList>
         </ccTool>
       </folder>
-      <folder path="SpaceConcordia/test">
+      <item path="test/KIdebug.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <preprocessorList>
+            <Elem>DEBUG</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="test/monitorCS.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <preprocessorList>
+            <Elem>DEBUG</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="test/slamCS.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <preprocessorList>
+            <Elem>DEBUG</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="test/slamKS.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <preprocessorList>
+            <Elem>DEBUG</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="test/testCS.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <preprocessorList>
+            <Elem>DEBUG</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="test/testJobComs.cpp" ex="false" tool="1" flavor="0">
         <ccTool>
           <preprocessorList>
             <Elem>QUIETDEBUG</Elem>
           </preprocessorList>
         </ccTool>
-      </folder>
+      </item>
+      <item path="test/testKS.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <preprocessorList>
+            <Elem>DEBUG</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="test/testReadKS.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <preprocessorList>
+            <Elem>DEBUG</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="test/testSock.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <preprocessorList>
+            <Elem>DEBUG</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="test/udpKS.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <preprocessorList>
+            <Elem>DEBUG</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
     </conf>
   </confs>
 </configurationDescriptor>

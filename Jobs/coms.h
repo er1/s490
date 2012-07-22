@@ -25,6 +25,8 @@
 #include <fcntl.h>
 #include <bitset>
 #include <iomanip>
+#include <stdint.h>
+#include <limits.h>
 
 
 
@@ -98,7 +100,7 @@ static const Radio_Configuration_t default_radio_config = {
 #define I_NO_OP 0x1001           //Simply increment command processing counter
 #define I_RESET 0x1002           //Reset radio processors and systems
 #define I_TRANSMIT 0x1003        //Send n bytes to radio
-#define I_GET_CONFIG 0x1004      //Get radio configuration
+#define I_GET_CONFIG 0x1005      //Get radio configuration
 #define I_SET_CONFIG 0x1005      //Set radio configuration
 #define I_BUFFER_QUERY 0x1006    //Request # of buffers in transmission queue
 #define I_TELEMETRY 0x100A       //query a telemetry frame
@@ -106,7 +108,7 @@ static const Radio_Configuration_t default_radio_config = {
 //COMMAND_TYPE_O Op Codes
 #define O_NO_OP 0x2001           //Acknowledge No-Op
 #define O_RESET 0x2002           //Acknowledge radio processors and systems reset
-#define O_TRANSMIT 0x2003        //Acknowledge valid transmit command
+#define O_TRANSMIT 0x2003        //Acknowledge valid transmit command   
 #define O_GET_CONFIG 0x2004      //Response to read radio configuration (returns struct of radio config)
 #define O_SET_CONFIG 0x2005      //Acknowledge radio configuration set
 #define O_BUFFER_QUERY 0x2006    //Response to buffer query (returns depth of transmission buffer)
