@@ -30,8 +30,10 @@ int main(int argc, char** argv) {
   Transceiver_Command transmit;
   transmit.command_type = COMMAND_TYPE_I;
   transmit.command = I_TRANSMIT;
-  transmit.payload_size = 10;    //||fix size determination code - where does it live?
-  uint8_t transmit_data[10] = {100,101,102,103,104,105,106,107,108,109};
+  transmit.payload_size = 100;    //||fix size determination code - where does it live?
+  uint8_t transmit_data[100];
+  for (int i = 0; i<100; i++)
+      transmit_data[i] = i + 100;
   transmit.payload_data = transmit_data;
 
   Transceiver_Command get_config; //||get data back from commands
@@ -48,21 +50,25 @@ int main(int argc, char** argv) {
   // uint8_t * set_config_data = new uint8_t[42];  //||use received data from get_config
   // set_config.payload_data = set_config_data;
 
-    std::cout << "\n\n\n\n\n------------------NO_OP-----------------------" << std::endl;
-    std::cout << command_transceiver(no_op) << std::endl;
-    sleep(1);
+  while (true) {
+    // std::cout  << "\n\n\n\n\n------------------NO_OP-----------------------" << std::endl;
+    // std::cout << command_transceiver(no_op) << std::endl;
+    // sleep(1);
 
+    // std::cout << "\n\n\n\n\n---------------SET_CONFIG---------------------" << std::endl;
+    // std::cout << speedUpTester(false) << std::endl;
+    // sleep(1);
+    
     std::cout << "\n\n\n\n\n---------------TRANSMIT------------------------" << std::endl;
     std::cout << command_transceiver(transmit) << std::endl;
     sleep(1);
 
-    std::cout << "\n\n\n\n\n---------------GET_CONFIG---------------------" << std::endl;
-    std::cout << command_transceiver(get_config) << std::endl;
-    sleep(1);
+    // std::cout << "\n\n\n\n\n---------------GET_CONFIG---------------------" << std::endl;
+    // std::cout << command_transceiver(get_config) << std::endl;
+    // sleep(1);
+  }
 
-    // std::cout << "\n\n\n\n\n---------------SET_CONFIG---------------------" << std::endl;
-    // std::cout << speedUpTester(true) << std::endl;
-    //   sleep(1);
+
   
     // std::cout << "\n\n\n\n\n---------------SET_CONFIG---------------------" << std::endl;
     // std::cout << command_transceiver(set_config) << std::endl;

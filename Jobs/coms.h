@@ -72,7 +72,7 @@ typedef struct {
 } Radio_Configuration_t;
 
 static const Radio_Configuration_t default_radio_config = {
-   0x01,//Radio Interface mode = AX.25  
+   0x00,//Radio Interface mode = binary 
    0x0000,//Radio Time = ?????????
    0x02,//Radio Interface Baud Rate = 9600 
    0x02, //Radio TX RF Baud Rate  = 9600
@@ -82,8 +82,8 @@ static const Radio_Configuration_t default_radio_config = {
    0x0A, //Tx Power Amp level  = 3W
    0x00, //Channel Rx Mode (do not implement)
    0x00, //Channel Tx Mode (do not implement)
-   436000, //Channel Rx Frequency (default radio specific)
-   144000, //Channel Tx Frequency (default radio specific)
+   144990, //Channel Rx Frequency (default radio specific)
+   434200, //Channel Tx Frequency (default radio specific)
    {'N','O','C','A','L','L'}, //AX25 Mode Source Call Sign  
    {'N','O','C','A','L','L'}, //AX25 Mode Destination Call Sign 
    10, //AX25 Mode Tx Delay 

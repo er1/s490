@@ -28,13 +28,6 @@ std::string speedUpTester(bool do_increase_speed){
 
    Radio_Configuration_t config;
    
-   // Transceiver_Command get_config;    
-   // get_config.command_type = COMMAND_TYPE_I;
-   // get_config.command = I_GET_CONFIG;
-   // get_config.payload_size = 0;
-   // uint8_t get_config_data = NULL;
-   // get_config.payload_data = &get_config_data;
-   //config = command_transceiver(get_config); //NYI - need to get data back from commands
 
    config = default_radio_config;
 
@@ -141,26 +134,24 @@ std::string serialWrite(uint8_t * command){
 
    // Finally, apply the configuration
    if(tcsetattr(fd, TCSAFLUSH, &config) < 0) { std::cout << "Applied Configuration is broken" << std::endl;}
-
+   
    // uint8_t c[2] = {'D','A'};
    // write(fd,&c,2);
    //uint8_t TESTSEND[8] = {0x48, 0x65, 0x10, 0x01, 0x00, 0x00, 0x11, 0x43};
 //   uint8_t TESTSEND[8] = {0x48, 0x65, 0x10, 0x05, 0x00, 0x00, 0x15, 0x4F};
 //   write(fd,TESTSEND,8);
 
-   printf("%d\n", command[0]);
-   printf("%d\n", command[1]);
-   printf("%d\n", command[2]);
-   printf("%d\n", command[3]);
-   printf("%d\n", command[4]);
-   printf("%d\n", command[5]);
-   printf("%d\n", command[6]);
-   printf("%d\n", command[7]);
+   printf("%s\n", "---------------COMMAND -----------");
+   int i = 0;
+   for (i = 0; i != 8; i++) {
+       printf("%d\n", command[i]);
+   }     
+   printf("%s\n", "---------------COMMAND END -----------");
    
    int size = 8;
    if (command[5] > 0) { //Has payload data
        size = command[5] + 10; //8 bytes for header + 2 for payload checksums
-   }
+   }    
    write(fd, command, size);
    
    //Read if data available on serial
